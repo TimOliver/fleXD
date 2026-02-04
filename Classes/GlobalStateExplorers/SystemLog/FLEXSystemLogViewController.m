@@ -46,6 +46,8 @@
 
 @property (nonatomic, readonly) FLEXMutableListSection<FLEXSystemLogMessage *> *logMessages;
 @property (nonatomic, readonly) id<FLEXLogController> logController;
+@property (nonatomic) BOOL isPaused;
+@property (nonatomic, strong) UIBarButtonItem *pauseButton;
 
 @end
 
@@ -86,13 +88,19 @@
         target:self
         action:@selector(scrollToFirstRow)
     ];
+    self.pauseButton = [[UIBarButtonItem alloc]
+        initWithImage:[UIImage systemImageNamed:@"pause.fill"]
+        style:UIBarButtonItemStylePlain
+        target:self
+        action:@selector(togglePause)
+    ];
     UIBarButtonItem *settings = [UIBarButtonItem
         flex_itemWithImage:FLEXResources.gearIcon
         target:self
         action:@selector(showLogSettings)
     ];
 
-    [self addToolbarItems:@[scrollDown, settings]];
+    [self addToolbarItems:@[scrollDown, self.pauseButton, settings]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -135,6 +143,10 @@
 #pragma mark - Private
 
 - (void)handleUpdateWithNewMessages:(NSArray<FLEXSystemLogMessage *> *)newMessages {
+    if (self.isPaused) {
+        return;
+    }
+
     self.title = [self.class globalsEntryTitle:FLEXGlobalsRowSystemLog];
 
     [self.logMessages mutate:^(NSMutableArray *list) {
@@ -156,6 +168,12 @@
                               atScrollPosition:UITableViewScrollPositionTop
                                       animated:YES];
     }
+}
+
+- (void)togglePause {
+    self.isPaused = !self.isPaused;
+    UIImage *newIcon = self.isPaused ? [UIImage systemImageNamed:@"play.fill"] : [UIImage systemImageNamed:@"pause.fill"];
+    self.pauseButton.image = newIcon;
 }
 
 - (void)showLogSettings {
