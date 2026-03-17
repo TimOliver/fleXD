@@ -73,7 +73,6 @@ public class Commit: NSObject, Codable {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
-        _ = try! decoder.decode([Commit].self, from: data)
         if let commits = try? decoder.decode([Commit].self, from: data) {
             return commits
         }
@@ -91,7 +90,7 @@ public class Commit: NSObject, Codable {
     /// Details does not contain avi URLs for users
     public private(set) var details: CommitDetails
     /// This does have the (g)avatar URL
-    public private(set) var committer: CommitIdentity
+    public private(set) var committer: CommitIdentity?
     
     public func matches(query: String) -> Bool {
         return sha ~ query ||

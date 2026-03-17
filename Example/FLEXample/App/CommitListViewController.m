@@ -110,13 +110,16 @@
 //            cell.textLabel.numberOfLines = 2;
 //            cell.detailTextLabel.numberOfLines = 3;
         
-            UIImage *avi = self.avatars[commit.committer.login];
+            NSString *login = commit.committer.login;
+            UIImage *avi = login ? self.avatars[login] : nil;
             if (avi) {
                 cell.imageView.image = avi;
             } else {
                 cell.tag = commit.identifier;
                 [self loadImage:commit.committer.avatarUrl completion:^(UIImage *image) {
-                    self.avatars[commit.committer.login] = image;
+                    if (login) {
+                        self.avatars[login] = image;
+                    }
                     if (cell.tag == commit.identifier) {
                         cell.imageView.image = image;
                     } else {
