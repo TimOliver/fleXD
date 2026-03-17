@@ -3,11 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		223145762F69331E003FE94F /* Reflex in Frameworks */ = {isa = PBXBuildFile; productRef = 223145752F69331E003FE94F /* Reflex */; };
+		2231457F2F694153003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 2231457E2F694153003FE94F /* FLEX */; };
+		223145852F6941C1003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145842F6941C1003FE94F /* FLEX */; };
 		C386D6D02419975A00699085 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6CF2419975A00699085 /* AppDelegate.swift */; };
 		C386D6D22419975A00699085 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6D12419975A00699085 /* SceneDelegate.swift */; };
 		C386D6D62419975B00699085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C386D6D52419975B00699085 /* Assets.xcassets */; };
@@ -62,7 +63,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				223145762F69331E003FE94F /* Reflex in Frameworks */,
+				2231457F2F694153003FE94F /* FLEX in Frameworks */,
+				223145852F6941C1003FE94F /* FLEX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,7 +185,8 @@
 			);
 			name = FLEXample;
 			packageProductDependencies = (
-				223145752F69331E003FE94F /* Reflex */,
+				2231457E2F694153003FE94F /* FLEX */,
+				223145842F6941C1003FE94F /* FLEX */,
 			);
 			productName = FLEXample;
 			productReference = C386D6CC2419975A00699085 /* FLEXample.app */;
@@ -195,8 +198,9 @@
 		C386D6C42419975A00699085 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 2640;
 				ORGANIZATIONNAME = Flipboard;
 				TargetAttributes = {
 					C386D6CB2419975A00699085 = {
@@ -215,7 +219,7 @@
 			);
 			mainGroup = C386D6C32419975A00699085;
 			packageReferences = (
-				223145742F69331E003FE94F /* XCRemoteSwiftPackageReference "Reflex" */,
+				223145832F6941C1003FE94F /* XCLocalSwiftPackageReference "../../FLEX-D" */,
 			);
 			productRefGroup = C386D6CD2419975A00699085 /* Products */;
 			projectDirPath = "";
@@ -310,8 +314,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S6N2F22V2Z;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -331,6 +337,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -371,8 +378,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S6N2F22V2Z;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -385,6 +394,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
@@ -398,7 +408,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"FLEXample/Supporting Files/Preview Content\"";
-				DEVELOPMENT_TEAM = S6N2F22V2Z;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "FLEXample/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -422,7 +431,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"FLEXample/Supporting Files/Preview Content\"";
-				DEVELOPMENT_TEAM = S6N2F22V2Z;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "FLEXample/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -461,22 +469,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		223145742F69331E003FE94F /* XCRemoteSwiftPackageReference "Reflex" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/TimOliver/Reflex";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		223145832F6941C1003FE94F /* XCLocalSwiftPackageReference "../../FLEX-D" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../FLEX-D";
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		223145752F69331E003FE94F /* Reflex */ = {
+		2231457E2F694153003FE94F /* FLEX */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 223145742F69331E003FE94F /* XCRemoteSwiftPackageReference "Reflex" */;
-			productName = Reflex;
+			productName = FLEX;
+		};
+		223145842F6941C1003FE94F /* FLEX */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FLEX;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

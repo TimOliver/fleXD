@@ -95,7 +95,7 @@ public class Commit: NSObject, Codable {
     public func matches(query: String) -> Bool {
         return sha ~ query ||
             details.matches(query: query) ||
-            committer.matches(query: query)
+            (committer?.matches(query: query) ?? false)
     }
     
     // You're crazy if you think I'm going to slice strings with Swift.String
