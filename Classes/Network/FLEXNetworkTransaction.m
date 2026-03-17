@@ -185,7 +185,7 @@
             _cachedRequestBody = self.request.HTTPBody;
         } else if ([self.request.HTTPBodyStream conformsToProtocol:@protocol(NSCopying)]) {
             NSInputStream *bodyStream = [self.request.HTTPBodyStream copy];
-            const NSUInteger bufferSize = 1024;
+            enum { bufferSize = 1024 };
             uint8_t buffer[bufferSize];
             NSMutableData *data = [NSMutableData new];
             [bodyStream open];
