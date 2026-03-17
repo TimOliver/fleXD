@@ -56,7 +56,7 @@
     
     _avatars = [NSMutableDictionary new];
     
-    self.title = @"FLEX Commit History";
+    self.title = @"Swift Commit History";
     self.showsSearchBar = YES;
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem
         flex_itemWithTitle:@"FLEX" target:FLEXManager.sharedManager action:@selector(toggleExplorer)
@@ -68,7 +68,7 @@
     ];
     
     // Load and process commits
-    NSString *commitsURL = @"https://api.github.com/repos/Flipboard/FLEX/commits";
+    NSString *commitsURL = @"https://api.github.com/repos/apple/swift/commits";
     [self startDataTask:commitsURL completion:^(NSData *data, NSInteger statusCode, NSError *error) {
         if (statusCode == 200) {
             self.commits.list = [Commit commitsFrom:data];
