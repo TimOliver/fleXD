@@ -17,7 +17,7 @@
                BlueprintIdentifier = "C386D6CB2419975A00699085"
                BuildableName = "FLEXample.app"
                BlueprintName = "FLEXample"
-               ReferencedContainer = "container:FLEXample-SPM.xcodeproj">
+               ReferencedContainer = "container:FLEXample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "C386D6CB2419975A00699085"
             BuildableName = "FLEXample.app"
             BlueprintName = "FLEXample"
-            ReferencedContainer = "container:FLEXample-SPM.xcodeproj">
+            ReferencedContainer = "container:FLEXample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "C386D6CB2419975A00699085"
             BuildableName = "FLEXample.app"
             BlueprintName = "FLEXample"
-            ReferencedContainer = "container:FLEXample-SPM.xcodeproj">
+            ReferencedContainer = "container:FLEXample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
