@@ -9,7 +9,11 @@
 #import "FLEXExplorerToolbar.h"
 
 @class FLEXWindow;
-@protocol FLEXExplorerViewControllerDelegate;
+@class FLEXExplorerViewController;
+
+@protocol FLEXExplorerViewControllerDelegate <NSObject>
+- (void)explorerViewControllerDidFinish:(FLEXExplorerViewController *)explorerViewController;
+@end
 
 /// A view controller that manages the FLEX toolbar.
 @interface FLEXExplorerViewController : UIViewController
@@ -55,7 +59,3 @@
 
 @end
 
-#pragma mark -
-@protocol FLEXExplorerViewControllerDelegate <NSObject>
-- (void)explorerViewControllerDidFinish:(FLEXExplorerViewController *)explorerViewController;
-@end
