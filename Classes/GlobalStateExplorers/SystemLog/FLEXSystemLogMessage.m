@@ -10,41 +10,6 @@
 
 @implementation FLEXSystemLogMessage
 
-+ (instancetype)logMessageFromASLMessage:(aslmsg)aslMessage {
-    NSDate *date = nil;
-    NSString *sender = nil, *text = nil;
-    long long identifier = 0;
-
-    const char *timestamp = asl_get(aslMessage, ASL_KEY_TIME);
-    if (timestamp) {
-        NSTimeInterval timeInterval = [@(timestamp) integerValue];
-        const char *nanoseconds = asl_get(aslMessage, ASL_KEY_TIME_NSEC);
-        if (nanoseconds) {
-            timeInterval += [@(nanoseconds) doubleValue] / NSEC_PER_SEC;
-        }
-        date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
-    }
-
-    const char *s = asl_get(aslMessage, ASL_KEY_SENDER);
-    if (s) {
-        sender = @(s);
-    }
-
-    const char *messageText = asl_get(aslMessage, ASL_KEY_MSG);
-    if (messageText) {
-        text = @(messageText);
-    }
-
-    const char *messageID = asl_get(aslMessage, ASL_KEY_MSG_ID);
-    if (messageID) {
-        identifier = [@(messageID) longLongValue];
-    }
-
-    FLEXSystemLogMessage *message = [[self alloc] initWithDate:date sender:sender text:text messageID:identifier];
-    message->_aslMessage = aslMessage;
-    return message;
-}
-
 + (instancetype)logMessageFromDate:(NSDate *)date text:(NSString *)text {
     return [[self alloc] initWithDate:date sender:nil text:text messageID:0];
 }

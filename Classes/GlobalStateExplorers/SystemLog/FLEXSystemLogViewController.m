@@ -7,7 +7,6 @@
 //
 
 #import "FLEXSystemLogViewController.h"
-#import "FLEXASLLogController.h"
 #import "FLEXOSLogController.h"
 #import "FLEXSystemLogCell.h"
 #import "FLEXMutableListSection.h"
@@ -105,11 +104,7 @@ static BOOL my_os_log_shim_enabled(void *addr) {
         [self handleUpdateWithNewMessages:newMessages];
     };
 
-    if (FLEXOSLogAvailable() && !FLEXNSLogHookWorks) {
-        _logController = [FLEXOSLogController withUpdateHandler:logHandler];
-    } else {
-        _logController = [FLEXASLLogController withUpdateHandler:logHandler];
-    }
+    _logController = [FLEXOSLogController withUpdateHandler:logHandler];
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.title = @"Waiting for Logs...";
