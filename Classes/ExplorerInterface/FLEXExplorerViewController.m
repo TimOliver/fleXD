@@ -62,7 +62,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 @property (nonatomic) UIView *selectedViewOverlay;
 
 /// Used to actuate changes in view selection on iOS 10+
-@property (nonatomic, readonly) UISelectionFeedbackGenerator *selectionFBG API_AVAILABLE(ios(10.0));
+@property (nonatomic, readonly) UISelectionFeedbackGenerator *selectionFBG;
 
 /// self.view.window as a \c FLEXWindow
 @property (nonatomic, readonly) FLEXWindow *window;

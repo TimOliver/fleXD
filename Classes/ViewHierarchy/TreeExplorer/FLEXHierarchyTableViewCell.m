@@ -26,10 +26,6 @@
 
 @implementation FLEXHierarchyTableViewCell
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier {
-    return [self initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
-}
-
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {

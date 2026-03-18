@@ -74,13 +74,13 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask delegate:(id<NSUR
 - (void)URLSessionTaskWillResume:(NSURLSessionTask *)task;
 
 - (void)websocketTask:(NSURLSessionWebSocketTask *)task
-        sendMessagage:(NSURLSessionWebSocketMessage *)message API_AVAILABLE(ios(13.0));
+        sendMessagage:(NSURLSessionWebSocketMessage *)message;
 - (void)websocketTaskMessageSendCompletion:(NSURLSessionWebSocketMessage *)message
-                                     error:(NSError *)error API_AVAILABLE(ios(13.0));
+                                     error:(NSError *)error;
 
 - (void)websocketTask:(NSURLSessionWebSocketTask *)task
      receiveMessagage:(NSURLSessionWebSocketMessage *)message
-                error:(NSError *)error API_AVAILABLE(ios(13.0));
+                error:(NSError *)error;
 
 @end
 
@@ -1616,7 +1616,7 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     ];
 }
 
-+ (void)injectWebsocketSendMessage:(Class)cls API_AVAILABLE(ios(13.0)) {
++ (void)injectWebsocketSendMessage:(Class)cls {
     SEL selector = @selector(sendMessage:completionHandler:);
     SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
 
@@ -1657,7 +1657,7 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     ];
 }
 
-+ (void)injectWebsocketReceiveMessage:(Class)cls API_AVAILABLE(ios(13.0)) {
++ (void)injectWebsocketReceiveMessage:(Class)cls {
     SEL selector = @selector(receiveMessageWithCompletionHandler:);
     SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
 

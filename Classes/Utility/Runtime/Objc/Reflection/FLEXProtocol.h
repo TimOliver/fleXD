@@ -38,9 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSArray<FLEXProperty *> *properties API_DEPRECATED("Use the more specific accessors below", ios(2.0, 10.0));
 
 /// The required properties in the protocol, if any.
-@property (nonatomic, readonly) NSArray<FLEXProperty *> *requiredProperties API_AVAILABLE(ios(10.0));
+@property (nonatomic, readonly) NSArray<FLEXProperty *> *requiredProperties;
 /// The optional properties in the protocol, if any.
-@property (nonatomic, readonly) NSArray<FLEXProperty *> *optionalProperties API_AVAILABLE(ios(10.0));
+@property (nonatomic, readonly) NSArray<FLEXProperty *> *optionalProperties;
 
 /// For internal use
 @property (nonatomic) id tag;

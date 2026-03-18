@@ -70,7 +70,9 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
 
     // Preserve selection between presentations
     self.clearsSelectionOnViewWillAppear = NO;
-    
+
+    [self.tableView registerClass:[FLEXHierarchyTableViewCell class] forCellReuseIdentifier:@"Cell"];
+
     // A little more breathing room
     self.tableView.rowHeight = 50.0;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -214,11 +216,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"Cell";
-    FLEXHierarchyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (!cell) {
-        cell = [[FLEXHierarchyTableViewCell alloc] initWithReuseIdentifier:CellIdentifier];
-    }
+    FLEXHierarchyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     
     UIView *view = self.displayedViews[indexPath.row];
 

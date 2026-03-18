@@ -100,18 +100,18 @@ typedef NS_ENUM(NSUInteger, FLEXWebsocketMessageDirection) {
 
 + (instancetype)withMessage:(NSURLSessionWebSocketMessage *)message
                        task:(NSURLSessionWebSocketTask *)task
-                  direction:(FLEXWebsocketMessageDirection)direction API_AVAILABLE(ios(13.0));
+                  direction:(FLEXWebsocketMessageDirection)direction;
 
 + (instancetype)withMessage:(NSURLSessionWebSocketMessage *)message
                        task:(NSURLSessionWebSocketTask *)task
                   direction:(FLEXWebsocketMessageDirection)direction
-                  startTime:(NSDate *)started API_AVAILABLE(ios(13.0));
+                  startTime:(NSDate *)started;
 
 //@property (nonatomic, readonly) NSURLSessionWebSocketTask *task;
-@property (nonatomic, readonly) NSURLSessionWebSocketMessage *message API_AVAILABLE(ios(13.0));
-@property (nonatomic, readonly) FLEXWebsocketMessageDirection direction API_AVAILABLE(ios(13.0));
+@property (nonatomic, readonly) NSURLSessionWebSocketMessage *message;
+@property (nonatomic, readonly) FLEXWebsocketMessageDirection direction;
 
-@property (nonatomic, readonly) int64_t dataLength API_AVAILABLE(ios(13.0));
+@property (nonatomic, readonly) int64_t dataLength;
 
 @end
 

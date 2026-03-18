@@ -88,7 +88,10 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
+    [self.tableView registerClass:[FLEXFileBrowserTableViewCell class] forCellReuseIdentifier:@"textCell"];
+    [self.tableView registerClass:[FLEXFileBrowserTableViewCell class] forCellReuseIdentifier:@"imageCell"];
+
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceForAsyncSearch;
     [self addToolbarItems:@[
@@ -204,21 +207,15 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         subtitle = [NSString stringWithFormat:@"%@ - %@", sizeString, attributes.fileModificationDate ?: @"Never modified"];
     }
 
-    static NSString *textCellIdentifier = @"textCell";
-    static NSString *imageCellIdentifier = @"imageCell";
-    UITableViewCell *cell = nil;
-
     // Separate image and text only cells because otherwise the separator lines get out-of-whack on image cells reused with text only.
     UIImage *image = [UIImage imageWithContentsOfFile:fullPath];
-    NSString *cellIdentifier = image ? imageCellIdentifier : textCellIdentifier;
+    NSString *cellIdentifier = image ? @"imageCell" : @"textCell";
 
-    if (!cell) {
-        cell = [[FLEXFileBrowserTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-        cell.textLabel.font = UIFont.flex_defaultTableCellFont;
-        cell.detailTextLabel.font = UIFont.flex_defaultTableCellFont;
-        cell.detailTextLabel.textColor = UIColor.grayColor;
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    }
+    FLEXFileBrowserTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    cell.textLabel.font = UIFont.flex_defaultTableCellFont;
+    cell.detailTextLabel.font = UIFont.flex_defaultTableCellFont;
+    cell.detailTextLabel.textColor = UIColor.grayColor;
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     NSString *cellTitle = [fullPath lastPathComponent];
     cell.textLabel.text = cellTitle;
     cell.detailTextLabel.text = subtitle;

@@ -10,8 +10,6 @@
 
 @interface FLEXHierarchyTableViewCell : UITableViewCell
 
-- (id)initWithReuseIdentifier:(NSString *)reuseIdentifier;
-
 @property (nonatomic) NSInteger viewDepth;
 @property (nonatomic) UIColor *randomColorTag;
 @property (nonatomic) UIColor *indicatedViewColor;

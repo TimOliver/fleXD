@@ -49,7 +49,7 @@ typedef NS_ENUM(NSUInteger, FLEXNetworkTransactionKind) {
 /// Array of FLEXHTTPTransaction objects ordered by start time with the newest first.
 @property (nonatomic, readonly) NSArray<FLEXHTTPTransaction *> *HTTPTransactions;
 /// Array of FLEXWebsocketTransaction objects ordered by start time with the newest first.
-@property (nonatomic, readonly) NSArray<FLEXWebsocketTransaction *> *websocketTransactions API_AVAILABLE(ios(13.0));
+@property (nonatomic, readonly) NSArray<FLEXWebsocketTransaction *> *websocketTransactions;
 /// Array of FLEXFirebaseTransaction objects ordered by start time with the newest first.
 @property (nonatomic, readonly) NSArray<FLEXFirebaseTransaction *> *firebaseTransactions;
 
@@ -87,12 +87,12 @@ typedef NS_ENUM(NSUInteger, FLEXNetworkTransactionKind) {
 - (void)recordMechanism:(NSString *)mechanism forRequestID:(NSString *)requestID;
 
 - (void)recordWebsocketMessageSend:(NSURLSessionWebSocketMessage *)message
-                              task:(NSURLSessionWebSocketTask *)task API_AVAILABLE(ios(13.0));
+                              task:(NSURLSessionWebSocketTask *)task;
 - (void)recordWebsocketMessageSendCompletion:(NSURLSessionWebSocketMessage *)message
-                                       error:(NSError *)error API_AVAILABLE(ios(13.0));
+                                       error:(NSError *)error;
 
 - (void)recordWebsocketMessageReceived:(NSURLSessionWebSocketMessage *)message
-                                  task:(NSURLSessionWebSocketTask *)task API_AVAILABLE(ios(13.0));
+                                  task:(NSURLSessionWebSocketTask *)task;
 
 - (void)recordFIRQueryWillFetch:(FIRQuery *)query withTransactionID:(NSString *)transactionID;
 - (void)recordFIRDocumentWillFetch:(FIRDocumentReference *)document withTransactionID:(NSString *)transactionID;

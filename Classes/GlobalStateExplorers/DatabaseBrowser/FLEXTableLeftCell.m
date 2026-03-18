@@ -8,26 +8,30 @@
 
 #import "FLEXTableLeftCell.h"
 
+static NSString * const kFLEXTableLeftCellIdentifier = @"FLEXTableLeftCell";
+
 @implementation FLEXTableLeftCell
 
-+ (instancetype)cellWithTableView:(UITableView *)tableView {
-    static NSString *identifier = @"FLEXTableLeftCell";
-    FLEXTableLeftCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    
-    if (!cell) {
-        cell = [[FLEXTableLeftCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
-        UILabel *textLabel               = [UILabel new];
-        textLabel.textAlignment          = NSTextAlignmentCenter;
-        textLabel.font                   = [UIFont systemFontOfSize:13.0];
-        [cell.contentView addSubview:textLabel];
-        cell.titlelabel = textLabel;
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        UILabel *textLabel           = [UILabel new];
+        textLabel.textAlignment      = NSTextAlignmentCenter;
+        textLabel.font               = [UIFont systemFontOfSize:13.0];
+        [self.contentView addSubview:textLabel];
+        self.titlelabel = textLabel;
     }
-    
-    return cell;
+    return self;
+}
+
++ (instancetype)cellWithTableView:(UITableView *)tableView {
+    [tableView registerClass:[self class] forCellReuseIdentifier:kFLEXTableLeftCellIdentifier];
+    return [tableView dequeueReusableCellWithIdentifier:kFLEXTableLeftCellIdentifier];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.titlelabel.frame = self.contentView.frame;
 }
+
 @end

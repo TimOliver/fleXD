@@ -264,7 +264,7 @@
     return [self withMessage:message task:task direction:direction startTime:NSDate.date];
 }
 
-- (NSArray<NSString *> *)details API_AVAILABLE(ios(13.0)) {
+- (NSArray<NSString *> *)details {
     return @[
         self.direction == FLEXWebsocketOutgoing ? @"SENT →" : @"→ RECEIVED",
         [NSByteCountFormatter

@@ -103,22 +103,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// By default, this is the title of the row.
 /// @return The title of the context menu, if any.
-- (nullable NSString *)menuTitleForRow:(NSInteger)row API_AVAILABLE(ios(13.0));
+- (nullable NSString *)menuTitleForRow:(NSInteger)row;
 /// Protected, not intended for public use. \c menuTitleForRow:
 /// already includes the value returned from this method.
 /// 
 /// By default, this returns \c @"". Subclasses may override to
 /// provide a detailed description of the target of the context menu.
-- (NSString *)menuSubtitleForRow:(NSInteger)row API_AVAILABLE(ios(13.0));
+- (NSString *)menuSubtitleForRow:(NSInteger)row;
 /// The context menu items, if any. Subclasses may override.
 /// By default, only inludes items for \c copyMenuItemsForRow:.
-- (nullable NSArray<UIMenuElement *> *)menuItemsForRow:(NSInteger)row sender:(UIViewController *)sender API_AVAILABLE(ios(13.0));
+- (nullable NSArray<UIMenuElement *> *)menuItemsForRow:(NSInteger)row sender:(UIViewController *)sender;
 /// Subclasses may override to return a list of copiable items.
 ///
 /// Every two elements in the list compose a key-value pair, where the key
 /// should be a description of what will be copied, and the values should be
 /// the strings to copy. Return an empty string as a value to show a disabled action.
-- (nullable NSArray<NSString *> *)copyMenuItemsForRow:(NSInteger)row API_AVAILABLE(ios(13.0));
+- (nullable NSArray<NSString *> *)copyMenuItemsForRow:(NSInteger)row;
 
 #pragma mark - Cell Configuration
 

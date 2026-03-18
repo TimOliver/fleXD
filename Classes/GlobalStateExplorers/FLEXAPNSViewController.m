@@ -31,11 +31,11 @@
 @property (nonatomic, class) NSError *registrationError;
 @property (nonatomic, readonly, class) NSString *deviceTokenString;
 @property (nonatomic, readonly, class) NSMutableArray<NSDictionary *> *remoteNotifications;
-@property (nonatomic, readonly, class) NSMutableArray<UNNotification *> *userNotifications API_AVAILABLE(ios(10.0));
+@property (nonatomic, readonly, class) NSMutableArray<UNNotification *> *userNotifications;
 
 @property (nonatomic) FLEXSingleRowSection *deviceToken;
 @property (nonatomic) FLEXMutableListSection<NSDictionary *> *remoteNotifications;
-@property (nonatomic) FLEXMutableListSection<UNNotification *> *userNotifications API_AVAILABLE(ios(10.0));
+@property (nonatomic) FLEXMutableListSection<UNNotification *> *userNotifications;
 @end
 
 @implementation FLEXAPNSViewController
@@ -152,7 +152,7 @@
     );
 }
 
-+ (void)hookUNUserNotificationCenterDelegateClass:(Class)delegate API_AVAILABLE(ios(10.0)) {
++ (void)hookUNUserNotificationCenterDelegateClass:(Class)delegate {
     // Selector
     auto sel_didReceiveNotification =
         @selector(userNotificationCenter:willPresentNotification:withCompletionHandler:);

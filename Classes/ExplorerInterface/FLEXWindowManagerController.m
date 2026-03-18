@@ -16,7 +16,7 @@
 @property (nonatomic, copy) NSString *keyWindowSubtitle;
 @property (nonatomic, copy) NSArray<UIWindow *> *windows;
 @property (nonatomic, copy) NSArray<NSString *> *windowSubtitles;
-@property (nonatomic, copy) NSArray<UIScene *> *scenes API_AVAILABLE(ios(13));
+@property (nonatomic, copy) NSArray<UIScene *> *scenes;
 @property (nonatomic, copy) NSArray<NSString *> *sceneSubtitles;
 @property (nonatomic, copy) NSArray<NSArray *> *sections;
 @end
@@ -102,7 +102,7 @@
     } showFrom:[FLEXUtility topViewControllerInWindow:highestWindow]];
 }
 
-- (NSString *)sceneDescription:(UIScene *)scene API_AVAILABLE(ios(13)) {
+- (NSString *)sceneDescription:(UIScene *)scene {
     NSString *state = [self stringFromSceneState:scene.activationState];
     NSString *title = scene.title.length ? scene.title : nil;
     NSString *suffix = nil;
@@ -123,7 +123,7 @@
     return description.copy;
 }
 
-- (NSString *)stringFromSceneState:(UISceneActivationState)state API_AVAILABLE(ios(13)) {
+- (NSString *)stringFromSceneState:(UISceneActivationState)state {
     switch (state) {
         case UISceneActivationStateUnattached:
             return @"Unattached";
