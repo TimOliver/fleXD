@@ -268,12 +268,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         } else {
             // Try to decode an archived object, regardless of file extension
             NSKeyedUnarchiver *unarchiver = ({
-                NSKeyedUnarchiver *obj = nil;
-                if (@available(iOS 12.0, *)) {
-                    obj = [[NSKeyedUnarchiver alloc] initForReadingFromData:fileData error:nil];
-                } else {
-                    obj = [[NSKeyedUnarchiver alloc] initForReadingWithData:fileData];
-                }
+                NSKeyedUnarchiver *obj = [[NSKeyedUnarchiver alloc] initForReadingFromData:fileData error:nil];
                 obj.requiresSecureCoding = NO;
                 obj;
             });
