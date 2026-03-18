@@ -183,25 +183,27 @@ NSArray<FLEXMethod *> * _Nullable FLEXGetAllInstanceAndClassMethods(_Nullable Cl
 - (nullable void *)flex_getObjcIvarAddress:(Ivar)ivar;
 
 /// Sets the value of the given ivar on the receiving object.
-/// @discussion Use only when the target ivar holds an object.
+/// Use only when the target ivar holds an object.
 - (void)flex_setIvar:(FLEXIvar *)ivar object:(id)value;
 
 /// Sets the value of the named ivar on the receiving object.
-/// @discussion Use only when the target ivar holds an object.
+/// Use only when the target ivar holds an object.
+///
 /// @return `YES` if successful, `NO` if the ivar was not found.
 - (BOOL)flex_setIvarByName:(NSString *)name object:(id)value;
 
 /// Sets the value of the given `Ivar` on the receiving object.
-/// @discussion Use only when the target ivar holds an object.
-/// Faster than `flex_setIvar:object:` when you already have the raw `Ivar`
+/// Use only when the target ivar holds an object.
+/// Faster than `flex_setIvar:object:` when you already have the raw `Ivar`.
 - (void)flex_setObjcIvar:(Ivar)ivar object:(id)value;
 
-/// Sets the value of the given ivar on the receiving object to the \e size bytes at \e value.
-/// @discussion Prefer one of the object-specific methods if possible.
+/// Sets the value of the given ivar to the \e size bytes at \e value.
+/// Prefer one of the object-specific methods above when working with objects.
 - (void)flex_setIvar:(FLEXIvar *)ivar value:(void *)value size:(size_t)size;
 
-/// Sets the value of the named ivar on the receiving object to the \e size bytes at \e value.
-/// @discussion Prefer one of the object-specific methods if possible.
+/// Sets the value of the named ivar to the \e size bytes at \e value.
+/// Prefer one of the object-specific methods above when working with objects.
+///
 /// @return `YES` if successful, `NO` if the ivar was not found.
 - (BOOL)flex_setIvarByName:(NSString *)name value:(void *)value size:(size_t)size;
 

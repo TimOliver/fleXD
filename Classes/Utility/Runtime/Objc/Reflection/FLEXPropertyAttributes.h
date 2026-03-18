@@ -101,8 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL isWeak;
 @property (nonatomic) BOOL isGarbageCollectable;
 
-/// A more convenient method of setting the `typeEncoding` property.
-/// @discussion This will not work for complex types like structs and primitive pointers.
+/// A more convenient way to set the `typeEncoding` property.
+/// Does not work for complex types like structs and primitive pointers.
 - (void)setTypeEncodingChar:(char)type;
 
 @end

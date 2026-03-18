@@ -18,26 +18,32 @@
 /// A view controller that manages the FLEX toolbar.
 @interface FLEXExplorerViewController : UIViewController
 
+/// The delegate that is notified when the explorer finishes.
 @property (nonatomic, weak) id <FLEXExplorerViewControllerDelegate> delegate;
+/// Whether the FLEX window should become the key window while the explorer is active.
 @property (nonatomic, readonly) BOOL wantsWindowToBecomeKey;
-
+/// The floating toolbar managed by this view controller.
 @property (nonatomic, readonly) FLEXExplorerToolbar *explorerToolbar;
 
+/// Returns whether the explorer should receive a touch at the given point in window coordinates.
 - (BOOL)shouldReceiveTouchAtWindowPoint:(CGPoint)pointInWindowCoordinates;
 
-/// @brief Used to present (or dismiss) a modal view controller ("tool"),
-/// typically triggered by pressing a button in the toolbar.
+/// Toggles a modal tool on or off.
 ///
-/// If a tool is already presented, this method simply dismisses it and calls the completion block.
-/// If no tool is presented, @code future() @endcode is presented and the completion block is called.
+/// If a tool is already presented, it is dismissed and the completion block is called.
+/// If no tool is presented, `future()` is invoked and the resulting controller is presented.
+///
+/// @param future A block returning the navigation controller to present.
+/// @param completion Called after dismissal or presentation completes.
 - (void)toggleToolWithViewControllerProvider:(UINavigationController *(^)(void))future
                                   completion:(void (^)(void))completion;
 
-/// @brief Used to present (or dismiss) a modal view controller ("tool"),
-/// typically triggered by pressing a button in the toolbar.
+/// Presents a modal tool, dismissing any currently presented tool first.
 ///
-/// If a tool is already presented, this method dismisses it and presents the given tool.
-/// The completion block is called once the tool has been presented.
+/// The completion block is called once the new tool has been fully presented.
+///
+/// @param future A block returning the navigation controller to present.
+/// @param completion Called after the tool has been presented.
 - (void)presentTool:(UINavigationController *(^)(void))future
          completion:(void (^)(void))completion;
 

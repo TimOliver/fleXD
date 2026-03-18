@@ -107,16 +107,24 @@ typedef void (^FLEXShortcutsFactoryTarget)(Class targetClass);
 /// on the UIView "lens" at the top the explorer view controller screen.
 + (NSArray *)shortcutsForObjectOrClass:(id)objectOrClass;
 
+/// Adds the specified shortcuts after any already registered for the target class.
 @property (nonatomic, readonly, class) FLEXShortcutsFactory *append;
+/// Adds the specified shortcuts before any already registered for the target class.
 @property (nonatomic, readonly, class) FLEXShortcutsFactory *prepend;
+/// Replaces all shortcuts registered for the target class with the specified ones.
 @property (nonatomic, readonly, class) FLEXShortcutsFactory *replace;
 
+/// Registers shortcuts for the given instance property names.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames properties;
-/// Do not try to set `classProperties` at the same time as `ivars` or other instance things.
+/// Registers shortcuts for the given class property names.
+/// Do not combine with `ivars` or other instance-scope registrations.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames classProperties;
+/// Registers shortcuts for the given instance variable names.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames ivars;
+/// Registers shortcuts for the given instance method names.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames methods;
-/// Do not try to set `classMethods` at the same time as `ivars` or other instance things.
+/// Registers shortcuts for the given class method names.
+/// Do not combine with `ivars` or other instance-scope registrations.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames classMethods;
 
 /// Accepts the target class. If you pass a regular class object,

@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// or its superclasses do not contain, a method with the specified selector.
 + (nullable instancetype)selector:(SEL)selector implementedInClass:(Class)cls;
 
+/// The underlying `Method` data structure.
 @property (nonatomic, readonly) Method            objc_method;
 /// The implementation of the method.
 ///
@@ -75,12 +76,13 @@ NS_ASSUME_NONNULL_BEGIN
 #define FLEXMagicNumber 0xdeadbeef
 #define FLEXArg(expr) FLEXMagicNumber,/// @encode(__typeof__(expr)), (__typeof__(expr) []){ expr }
 
-/// Sends a message to \e target, and returns its value, or `nil` if not applicable.
-/// @discussion You may send any message with this method. Primitive return values will be wrapped
-/// in instances of `NSNumber` and `NSValue` `void` and bitfield returning methods return `nil`
-/// `SEL` return types are converted to strings using `NSStringFromSelector`
-/// @return The object returned by this method, or an instance of `NSValue` or `NSNumber` containing
-/// the primitive return type, or a string for `SEL` return types.
+/// Sends a message to the given target and returns its value, or `nil` if not applicable.
+///
+/// Primitive return values are wrapped in `NSNumber` or `NSValue`. `void` and
+/// bitfield-returning methods return `nil`. `SEL` return types are converted to
+/// strings via `NSStringFromSelector`.
+///
+/// @return The return value boxed as an object, or `nil` for void/bitfield methods.
 - (id)sendMessage:(id)target, ...;
 /// Used internally by `sendMessage:`. Pass `NULL` to the first parameter for void methods.
 - (void)getReturnValue:(void *)retPtr forMessageSend:(id)target, ...;

@@ -52,31 +52,40 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 /// consider using the `NSObject` (FLEX_Reflection) categories instead.
 @interface FLEXMirror : NSObject <FLEXMirror>
 
-/// Reflects an instance of an object or `Class`
-/// @discussion `FLEXMirror` will immediately gather all useful information. Consider using the
-/// `NSObject` categories provided if your code will only use a few pieces of information,
-/// or if your code needs to run faster.
+/// Reflects an instance of an object or `Class`, eagerly gathering all metadata.
 ///
-/// Regardless of whether you reflect an instance or a class object, `methods` and `properties`
-/// will be populated with instance methods and properties, and `classMethods` and `classProperties`
-/// will be populated with class methods and properties.
+/// For cases where you only need a subset of the metadata, consider the `NSObject`
+/// (FLEX_Reflection) categories, which are faster for targeted lookups.
+///
+/// Regardless of whether you pass an instance or a class object, `methods` and `properties`
+/// will contain instance members and `classMethods`/`classProperties` will contain class members.
 ///
 /// @param objectOrClass An instance of an object or a `Class` object.
 /// @throws If a metaclass object is passed in.
-/// @return An instance of `FLEXMirror`
+/// @return An instance of `FLEXMirror`.
 + (instancetype)reflect:(id)objectOrClass;
 
+/// The object or class passed to `+reflect:`.
 @property (nonatomic, readonly) id   value;
+/// Whether `value` is a class object rather than an instance.
 @property (nonatomic, readonly) BOOL isClass;
+/// The name of the class of `value`.
 @property (nonatomic, readonly) NSString *className;
 
+/// The instance properties declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *properties;
+/// The class properties declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *classProperties;
+/// The instance variables declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXIvar *>     *ivars;
+/// The instance methods declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXMethod *>   *methods;
+/// The class methods declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXMethod *>   *classMethods;
+/// The protocols this class directly conforms to.
 @property (nonatomic, readonly) NSArray<FLEXProtocol *> *protocols;
 
+/// A mirror reflecting the superclass of `value`, or `nil` if `value` is a root class.
 @property (nonatomic, readonly, nullable) FLEXMirror *superMirror NS_SWIFT_NAME(superMirror);
 
 @end

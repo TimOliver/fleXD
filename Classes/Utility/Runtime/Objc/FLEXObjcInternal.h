@@ -62,11 +62,10 @@ NS_INLINE BOOL flex_isTaggedPointer(const void *ptr)  {
 /// Whether the given pointer is a valid, readable address.
 BOOL FLEXPointerIsReadable(const void * ptr);
 
-/// @brief Assumes memory is valid and readable.
-/// @discussion objc-internal.h, objc-private.h, and objc-config.h
-/// https://blog.timac.org/2016/1124-testing-if-an-arbitrary-pointer-is-a-valid-objective-c-object/
-/// https://llvm.org/svn/llvm-project/lldb/trunk/examples/summaries/cocoa/objc_runtime.py
-/// https://blog.timac.org/2016/1124-testing-if-an-arbitrary-pointer-is-a-valid-objective-c-object/
+/// Assumes memory is valid and readable. Tests whether the pointer
+/// looks like a valid Objective-C object by inspecting its isa pointer.
+///
+/// Based on: objc-internal.h, objc-private.h, and objc-config.h
 BOOL FLEXPointerIsValidObjcObject(const void * ptr);
 
 #ifdef __cplusplus

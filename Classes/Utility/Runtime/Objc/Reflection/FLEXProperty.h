@@ -117,11 +117,11 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Convenience Getters and Setters
 
 /// Returns a getter method for this property with the given implementation.
-/// @discussion Consider using the `FLEXPropertyGetter` macro instead.
+/// Consider using the `FLEXPropertyGetter` macro instead.
 - (FLEXMethodBase *)getterWithImplementation:(IMP)implementation;
 
 /// Returns a setter method for this property with the given implementation.
-/// @discussion Consider using the `FLEXPropertySetter` macro instead.
+/// Consider using the `FLEXPropertySetter` macro instead.
 - (FLEXMethodBase *)setterWithImplementation:(IMP)implementation;
 
 #pragma mark - FLEXProperty Getter/Setter Macros
