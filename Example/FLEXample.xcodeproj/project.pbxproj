@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2231457F2F694153003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 2231457E2F694153003FE94F /* FLEX */; };
 		223145852F6941C1003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145842F6941C1003FE94F /* FLEX */; };
+		223145882F6A513C003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145872F6A513C003FE94F /* FLEX */; };
 		C386D6D02419975A00699085 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6CF2419975A00699085 /* AppDelegate.swift */; };
 		C386D6D22419975A00699085 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6D12419975A00699085 /* SceneDelegate.swift */; };
 		C386D6D62419975B00699085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C386D6D52419975B00699085 /* Assets.xcassets */; };
@@ -65,6 +66,7 @@
 			files = (
 				2231457F2F694153003FE94F /* FLEX in Frameworks */,
 				223145852F6941C1003FE94F /* FLEX in Frameworks */,
+				223145882F6A513C003FE94F /* FLEX in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +189,7 @@
 			packageProductDependencies = (
 				2231457E2F694153003FE94F /* FLEX */,
 				223145842F6941C1003FE94F /* FLEX */,
+				223145872F6A513C003FE94F /* FLEX */,
 			);
 			productName = FLEXample;
 			productReference = C386D6CC2419975A00699085 /* FLEXample.app */;
@@ -219,7 +222,7 @@
 			);
 			mainGroup = C386D6C32419975A00699085;
 			packageReferences = (
-				223145832F6941C1003FE94F /* XCLocalSwiftPackageReference "../../FLEX-D" */,
+				223145862F6A513C003FE94F /* XCLocalSwiftPackageReference "../../FLEXD" */,
 			);
 			productRefGroup = C386D6CD2419975A00699085 /* Products */;
 			projectDirPath = "";
@@ -470,9 +473,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		223145832F6941C1003FE94F /* XCLocalSwiftPackageReference "../../FLEX-D" */ = {
+		223145862F6A513C003FE94F /* XCLocalSwiftPackageReference "../../FLEXD" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../FLEX-D";
+			relativePath = ../../FLEXD;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -482,6 +485,10 @@
 			productName = FLEX;
 		};
 		223145842F6941C1003FE94F /* FLEX */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FLEX;
+		};
+		223145872F6A513C003FE94F /* FLEX */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FLEX;
 		};

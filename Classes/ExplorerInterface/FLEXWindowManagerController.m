@@ -45,26 +45,29 @@
 #pragma mark - Private
 
 - (void)reloadData {
-    self.keyWindow = UIApplication.sharedApplication.keyWindow;
-    self.windows = UIApplication.sharedApplication.windows;
+    self.keyWindow = FLEXUtility.appKeyWindow;
+
+    NSMutableArray<UIWindow *> *windows = [NSMutableArray array];
+    self.scenes = UIApplication.sharedApplication.connectedScenes.allObjects;
+    for (UIScene *scene in self.scenes) {
+        if ([scene isKindOfClass:[UIWindowScene class]]) {
+            [windows addObjectsFromArray:((UIWindowScene *)scene).windows];
+        }
+    }
+    self.windows = windows;
+
     self.keyWindowSubtitle = self.windowSubtitles[[self.windows indexOfObject:self.keyWindow]];
     self.windowSubtitles = [self.windows flex_mapped:^id(UIWindow *window, NSUInteger idx) {
         return [NSString stringWithFormat:@"Level: %@ — Root: %@",
             @(window.windowLevel), window.rootViewController
         ];
     }];
-    
-    if (@available(iOS 13, *)) {
-        self.scenes = UIApplication.sharedApplication.connectedScenes.allObjects;
-        self.sceneSubtitles = [self.scenes flex_mapped:^id(UIScene *scene, NSUInteger idx) {
-            return [self sceneDescription:scene];
-        }];
-        
-        self.sections = @[@[self.keyWindow], self.windows, self.scenes];
-    } else {
-        self.sections = @[@[self.keyWindow], self.windows];
-    }
-    
+    self.sceneSubtitles = [self.scenes flex_mapped:^id(UIScene *scene, NSUInteger idx) {
+        return [self sceneDescription:scene];
+    }];
+
+    self.sections = @[@[self.keyWindow], self.windows, self.scenes];
+
     [self.tableView reloadData];
 }
 
@@ -77,9 +80,9 @@
     [self reloadData];
     [self.tableView reloadData];
     
-    UIWindow *highestWindow = UIApplication.sharedApplication.keyWindow;
+    UIWindow *highestWindow = FLEXUtility.appKeyWindow;
     UIWindowLevel maxLevel = 0;
-    for (UIWindow *window in UIApplication.sharedApplication.windows) {
+    for (UIWindow *window in self.windows) {
         if (window.windowLevel > maxLevel) {
             maxLevel = window.windowLevel;
             highestWindow = window;
@@ -278,7 +281,7 @@
             [self showRevertOrDismissAlert:^{ targetWindow.windowLevel = oldLevel; }];
         });
         make.button(@"Make Key And Visible").handler(^(NSArray<NSString *> *strings) {
-            oldKeyWindow = UIApplication.sharedApplication.keyWindow;
+            oldKeyWindow = FLEXUtility.appKeyWindow;
             wasVisible = window.hidden;
             [window makeKeyAndVisible];
             

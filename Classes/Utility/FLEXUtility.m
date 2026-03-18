@@ -35,31 +35,17 @@ BOOL FLEXConstructorsShouldRun(void) {
 @implementation FLEXUtility
 
 + (UIWindow *)appKeyWindow {
-    // First, check UIApplication.keyWindow
-    FLEXWindow *window = (id)UIApplication.sharedApplication.keyWindow;
-    if (window) {
-        if ([window isKindOfClass:[FLEXWindow class]]) {
-            return window.previousKeyWindow;
-        }
-        
-        return window;
-    }
-    
-    // As of iOS 13, UIApplication.keyWindow does not return nil,
-    // so this is more of a safeguard against it returning nil in the future.
-    //
-    // Also, these are obviously not all FLEXWindows; FLEXWindow is used
-    // so we can call window.previousKeyWindow without an ugly cast
-    for (FLEXWindow *window in UIApplication.sharedApplication.windows) {
-        if (window.isKeyWindow) {
-            if ([window isKindOfClass:[FLEXWindow class]]) {
-                return window.previousKeyWindow;
+    for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+        if ([scene isKindOfClass:[UIWindowScene class]]) {
+            FLEXWindow *window = (id)((UIWindowScene *)scene).keyWindow;
+            if (window) {
+                if ([window isKindOfClass:[FLEXWindow class]]) {
+                    return window.previousKeyWindow;
+                }
+                return window;
             }
-            
-            return window;
         }
     }
-    
     return nil;
 }
 
