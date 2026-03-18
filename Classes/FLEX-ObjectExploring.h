@@ -6,6 +6,8 @@
 //  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
+/// Imports all public FLEX object explorer types: view controllers, sections, and shortcuts.
+
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXObjectExplorerViewController.h"
 

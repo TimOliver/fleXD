@@ -76,7 +76,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 ///
 /// self is used as the default search results updater and delegate.
 /// The search bar will not dim the background or hide the navigation bar by default.
-/// On iOS 11 and up, the search bar will appear in the navigation bar below the title.
+/// The search bar appears in the navigation bar, below the title.
 @property (nonatomic) UISearchController *searchController;
 /// Used to initialize the search controller. Defaults to nil.
 @property (nonatomic) UIViewController *searchResultsController;
@@ -143,7 +143,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 /// push off the leftmost toolbar item and shift the others leftward.
 @property (nonatomic) BOOL showsShareToolbarItem;
 /// Called when the share button is pressed.
-/// Default implementation does nothign. Subclasses may override.
+/// Default implementation does nothing. Subclasses may override.
 - (void)shareButtonPressed:(UIBarButtonItem *)sender;
 
 /// Subclasses may call this to opt-out of all toolbar related behavior.

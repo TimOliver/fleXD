@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Represents a row in a shortcut section.
 ///
-/// The purpsoe of this protocol is to allow delegating a small
+/// The purpose of this protocol is to allow delegating a small
 /// subset of the responsibilities of a \c FLEXShortcutsSection
 /// to another object, for a single arbitrary row.
 ///
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// Provides a quick and dirty implementation of the \c FLEXShortcut protocol,
-/// allowing you to specify a static title and dynamic atttributes for everything else.
+/// allowing you to specify a static title and dynamic attributes for everything else.
 /// The object passed into each block is the object passed to each \c FLEXShortcut method.
 ///
 /// Does not support the \c -editorWith: method.

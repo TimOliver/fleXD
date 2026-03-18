@@ -1,6 +1,6 @@
 //
 //  FLEXManager.h
-//  Flipboard
+//  FLEX
 //
 //  Created by Ryan Olson on 4/4/14.
 //  Copyright (c) 2020 FLEX Team. All rights reserved.
@@ -10,48 +10,65 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A block that creates and returns a view controller for displaying
+/// custom content of the given type, or \c nil if the content cannot be displayed.
+typedef UIViewController * _Nullable (^FLEXCustomContentViewerFuture)(NSData *data);
+
+/// The primary interface for configuring and controlling FLEX.
 @interface FLEXManager : NSObject
 
+/// The shared FLEX manager instance.
 @property (nonatomic, readonly, class) FLEXManager *sharedManager;
 
+/// Whether the FLEX explorer toolbar is currently hidden.
 @property (nonatomic, readonly) BOOL isHidden;
+
+/// The FLEX explorer toolbar. Visible whenever FLEX is shown.
 @property (nonatomic, readonly) FLEXExplorerToolbar *toolbar;
 
+#pragma mark - Showing and Hiding
+
+/// Shows the FLEX explorer toolbar.
 - (void)showExplorer;
+/// Hides the FLEX explorer toolbar and dismisses any presented tools.
 - (void)hideExplorer;
+/// Toggles the visibility of the FLEX explorer toolbar.
 - (void)toggleExplorer;
 
-/// Programmatically dismiss anything presented by FLEX, leaving only the toolbar visible.
+/// Presents the FLEX explorer in the specified scene.
+///
+/// Use this when the scene FLEX would select by default is not the one
+/// you want it to appear in.
+- (void)showExplorerFromScene:(UIWindowScene *)scene;
+
+#pragma mark - Presenting Tools
+
+/// Programmatically dismisses anything currently presented by FLEX,
+/// leaving only the explorer toolbar visible.
 - (void)dismissAnyPresentedTools:(void (^_Nullable)(void))completion;
 
-/// Programmatically present something on top of the FLEX toolbar.
-/// This method will automatically dismiss any currently presented tool,
-/// so you do not need to call \c dismissAnyPresentedTools: yourself.
+/// Presents a custom navigation controller on top of the FLEX toolbar.
+///
+/// Any currently presented tool is automatically dismissed first,
+/// so you do not need to call \c dismissAnyPresentedTools: beforehand.
 - (void)presentTool:(UINavigationController *(^)(void))viewControllerFuture
          completion:(void (^_Nullable)(void))completion;
 
-/// Programmatically presents a new navigation controller with the given view controller.
-/// The completion block is passed this new navigation controller.
+/// Wraps the given view controller in a navigation controller and presents it
+/// on top of the FLEX toolbar. The completion block receives the new navigation controller.
 - (void)presentEmbeddedTool:(UIViewController *)viewController
                  completion:(void (^_Nullable)(UINavigationController *))completion;
 
-/// Programmatically presents a new navigation controller exploring the given object.
-/// The completion block is passed this new navigation controller.
-- (void)presentObjectExplorer:(id)object completion:(void (^_Nullable)(UINavigationController *))completion;
+/// Presents an object explorer for the given object on top of the FLEX toolbar.
+/// The completion block receives the new navigation controller.
+- (void)presentObjectExplorer:(id)object
+                   completion:(void (^_Nullable)(UINavigationController *))completion;
 
-/// Use this to present the explorer in a specific scene when the one
-/// it chooses by default is not the one you wish to display it in.
-- (void)showExplorerFromScene:(UIWindowScene *)scene;
+#pragma mark - Miscellaneous
 
-#pragma mark - Misc
-
-/// Default database password is @c nil by default.
-/// Set this to the password you want the databases to open with.
+/// The password used when opening SQLite databases. Defaults to \c nil.
 @property (copy, nonatomic) NSString *defaultSqliteDatabasePassword;
 
 @end
-
-
-typedef UIViewController * _Nullable(^FLEXCustomContentViewerFuture)(NSData *data);
 
 NS_ASSUME_NONNULL_END

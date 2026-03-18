@@ -8,7 +8,12 @@
 
 #import "FLEXTableViewCell.h"
 
-/// A cell initialized with \c UITableViewCellStyleSubtitle
+NS_ASSUME_NONNULL_BEGIN
+
+/// A \c FLEXTableViewCell initialized with \c UITableViewCellStyleSubtitle,
+/// which places the subtitle label below and in smaller text than the title label.
 @interface FLEXSubtitleTableViewCell : FLEXTableViewCell
 
 @end
+
+NS_ASSUME_NONNULL_END

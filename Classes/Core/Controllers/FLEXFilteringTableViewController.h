@@ -8,6 +8,8 @@
 
 #import "FLEXTableViewController.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma mark - FLEXTableViewFiltering
 @protocol FLEXTableViewFiltering <FLEXSearchResultsUpdating>
 
@@ -35,7 +37,7 @@
 
 #pragma mark - FLEXFilteringTableViewController
 /// A table view which implements \c UITableView* methods using arrays of
-/// \c FLEXTableViewSection objects provied by a special delegate.
+/// \c FLEXTableViewSection objects provided by a special delegate.
 @interface FLEXFilteringTableViewController : FLEXTableViewController <FLEXTableViewFiltering>
 
 /// Stores the current search query.
@@ -87,3 +89,5 @@
 - (NSArray<FLEXTableViewSection *> *)makeSections;
 
 @end
+
+NS_ASSUME_NONNULL_END

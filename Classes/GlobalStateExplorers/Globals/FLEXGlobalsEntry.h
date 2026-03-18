@@ -68,8 +68,8 @@ typedef void (^FLEXGlobalsEntryRowAction)(__kindof UITableViewController * _Nonn
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row;
 
-// Must respond to at least one of the below.
-// globalsEntryRowAction: takes precedence if both are implemented.
+/// Must respond to at least one of the following.
+/// If both are implemented, \c globalsEntryRowAction: takes precedence.
 @optional
 
 + (nullable UIViewController *)globalsEntryViewController:(FLEXGlobalsRow)row;
@@ -79,7 +79,7 @@ typedef void (^FLEXGlobalsEntryRowAction)(__kindof UITableViewController * _Nonn
 
 @interface FLEXGlobalsEntry : NSObject
 
-@property (nonatomic, readonly, nonnull)  FLEXGlobalsEntryNameFuture entryNameFuture;
+@property (nonatomic, readonly, nonnull) FLEXGlobalsEntryNameFuture entryNameFuture;
 @property (nonatomic, readonly, nullable) FLEXGlobalsEntryViewControllerFuture viewControllerFuture;
 @property (nonatomic, readonly, nullable) FLEXGlobalsEntryRowAction rowAction;
 

@@ -11,6 +11,8 @@
 @class FLEXCollectionContentSection, FLEXTableViewCell;
 @protocol FLEXCollection, FLEXMutableCollection;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// Any foundation collection implicitly conforms to FLEXCollection.
 /// This future should return one. We don't explicitly put FLEXCollection
 /// here because making generic collections conform to FLEXCollection breaks
@@ -72,7 +74,7 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionCont
 @property (nonatomic, copy) NSString *customTitle;
 /// Defaults to \c NO
 ///
-/// Settings this to \c NO will not display the element index for ordered collections.
+/// Setting this to \c NO will not display the element index for ordered collections.
 /// This property only applies to \c NSArray or \c NSOrderedSet and their subclasses.
 @property (nonatomic) BOOL hideOrderIndexes;
 
@@ -91,3 +93,5 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionCont
 - (UITableViewCellAccessoryType)accessoryTypeForRow:(NSInteger)row;
 
 @end
+
+NS_ASSUME_NONNULL_END

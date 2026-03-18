@@ -8,9 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/// Provides access to all image and color assets used throughout FLEX.
 @interface FLEXResources : NSObject
 
-#pragma mark - FLEX Toolbar Icons
+#pragma mark - Explorer Toolbar Icons
 
 @property (readonly, class) UIImage *closeIcon;
 @property (readonly, class) UIImage *dragHandle;
@@ -20,7 +23,7 @@
 @property (readonly, class) UIImage *moveIcon;
 @property (readonly, class) UIImage *selectIcon;
 
-#pragma mark - Toolbar Icons
+#pragma mark - Navigation Bar Icons
 
 @property (readonly, class) UIImage *bookmarksIcon;
 @property (readonly, class) UIImage *openTabsIcon;
@@ -28,7 +31,7 @@
 @property (readonly, class) UIImage *gearIcon;
 @property (readonly, class) UIImage *scrollToBottomIcon;
 
-#pragma mark - Content Type Icons
+#pragma mark - Network Content Type Icons
 
 @property (readonly, class) UIImage *jsonIcon;
 @property (readonly, class) UIImage *textPlainIcon;
@@ -41,7 +44,7 @@
 @property (readonly, class) UIImage *xmlIcon;
 @property (readonly, class) UIImage *binaryIcon;
 
-#pragma mark - 3D Explorer Icons
+#pragma mark - 3D View Explorer Icons
 
 @property (readonly, class) UIImage *toggle2DIcon;
 @property (readonly, class) UIImage *toggle3DIcon;
@@ -50,10 +53,12 @@
 @property (readonly, class) UIImage *rangeSliderTrack;
 @property (readonly, class) UIImage *rangeSliderFill;
 
-#pragma mark - Misc Icons
+#pragma mark - Miscellaneous
 
 @property (readonly, class) UIImage *checkerPattern;
 @property (readonly, class) UIColor *checkerPatternColor;
 @property (readonly, class) UIImage *hierarchyIndentPattern;
 
 @end
+
+NS_ASSUME_NONNULL_END

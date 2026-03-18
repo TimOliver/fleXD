@@ -22,8 +22,11 @@ extern NSString * const FLEXAuxiliarynfoKeyFieldLabels;
 
 @end
 
+/// Provides \c FLEXMetadataAuxiliaryInfo conformance to \c FLEXMethodBase and its subclasses.
 @interface FLEXMethodBase (Auxiliary) <FLEXMetadataAuxiliaryInfo> @end
+/// Provides \c FLEXMetadataAuxiliaryInfo conformance to \c FLEXProperty.
 @interface FLEXProperty (Auxiliary) <FLEXMetadataAuxiliaryInfo> @end
+/// Provides \c FLEXMetadataAuxiliaryInfo conformance to \c FLEXIvar.
 @interface FLEXIvar (Auxiliary) <FLEXMetadataAuxiliaryInfo> @end
 
 

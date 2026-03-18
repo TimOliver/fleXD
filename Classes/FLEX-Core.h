@@ -6,6 +6,8 @@
 //  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
+/// Imports the core FLEX table view infrastructure: view controllers, sections, and cells.
+
 #import "FLEXFilteringTableViewController.h"
 #import "FLEXNavigationController.h"
 #import "FLEXTableViewController.h"

@@ -8,9 +8,16 @@
 
 #import "FLEXTableViewCell.h"
 
-/// A cell with both labels set to be multi-line capable.
+NS_ASSUME_NONNULL_BEGIN
+
+/// A table view cell with both labels configured for multi-line text display.
 @interface FLEXMultilineTableViewCell : FLEXTableViewCell
 
+/// Computes the preferred cell height for the given attributed text and layout constraints.
+/// @param attributedText The text that the cell's title label will display.
+/// @param contentViewWidth The available width of the cell's content view.
+/// @param style The style of the enclosing table view, used to account for insets.
+/// @param showsAccessory Whether the cell will display an accessory view.
 + (CGFloat)preferredHeightWithAttributedText:(NSAttributedString *)attributedText
                                     maxWidth:(CGFloat)contentViewWidth
                                        style:(UITableViewStyle)style
@@ -18,7 +25,9 @@
 
 @end
 
-/// A \c FLEXMultilineTableViewCell initialized with \c UITableViewCellStyleSubtitle
+/// A \c FLEXMultilineTableViewCell initialized with \c UITableViewCellStyleSubtitle.
 @interface FLEXMultilineDetailTableViewCell : FLEXMultilineTableViewCell
 
 @end
+
+NS_ASSUME_NONNULL_END

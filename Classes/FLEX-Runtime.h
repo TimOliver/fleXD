@@ -6,6 +6,8 @@
 //  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
+/// Imports all public FLEX Objective-C runtime utilities, reflection types, and builder classes.
+
 #import "FLEXObjcInternal.h"
 #import "FLEXSwiftInternal.h"
 #import "FLEXRuntimeSafety.h"

@@ -6,6 +6,8 @@
 //  Copyright © 2020 FLEX Team. All rights reserved.
 //
 
+/// Imports all public FLEX category extensions on UIKit and Foundation types.
+
 #import "UIBarButtonItem+FLEX.h"
 #import "CALayer+FLEX.h"
 #import "UIFont+FLEX.h"

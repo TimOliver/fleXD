@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern "C" {
 #endif
 
+/// @return \c YES if the given object or class is a Swift object or class, \c NO otherwise.
 BOOL FLEXIsSwiftObjectOrClass(id objOrClass);
 
 #ifdef __cplusplus

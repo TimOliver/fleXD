@@ -8,34 +8,43 @@
 //
 
 #import <Foundation/Foundation.h>
-@class FLEXProperty, FLEXProtocol, Protocol;
+@class FLEXProperty, FLEXProtocol;
 
+NS_ASSUME_NONNULL_BEGIN
+
+/// Constructs and registers a new Objective-C protocol at runtime.
+///
+/// You must call \c registerProtocol before the protocol can be used.
+/// Once registered, no further modifications can be made.
 @interface FLEXProtocolBuilder : NSObject
 
-/// Begins to construct a new protocol with the given name.
-/// @discussion You must register the protocol with the
-/// \c registerProtocol method before you can use it.
+/// Begins constructing a new protocol with the given name.
 + (instancetype)allocateProtocol:(NSString *)name;
 
-/// Adds a property to a protocol.
+/// Adds a property to the protocol under construction.
 /// @param property The property to add.
-/// @param isRequired Whether the property is required to implement the protocol.
+/// @param isRequired Whether conforming classes must implement this property.
 - (void)addProperty:(FLEXProperty *)property isRequired:(BOOL)isRequired;
-/// Adds a property to a protocol.
+
+/// Adds a method to the protocol under construction.
 /// @param selector The selector of the method to add.
-/// @param typeEncoding The type encoding of the method to add.
-/// @param isRequired Whether the method is required to implement the protocol.
-/// @param isInstanceMethod \c YES if the method is an instance method, \c NO if it is a class method.
+/// @param typeEncoding The type encoding of the method.
+/// @param isRequired Whether the method is required for conformance.
+/// @param isInstanceMethod \c YES for an instance method, \c NO for a class method.
 - (void)addMethod:(SEL)selector
      typeEncoding:(NSString *)typeEncoding
        isRequired:(BOOL)isRequired
  isInstanceMethod:(BOOL)isInstanceMethod;
-/// Makes the recieving protocol conform to the given protocol.
+
+/// Makes the protocol under construction conform to the given protocol.
 - (void)addProtocol:(Protocol *)protocol;
 
-/// Registers and returns the recieving protocol, which was previously under construction.
+/// Registers and returns the completed protocol, making it available to the runtime.
 - (FLEXProtocol *)registerProtocol;
-/// Whether the protocol is still under construction or already registered.
+
+/// Whether the protocol has been registered with the runtime.
 @property (nonatomic, readonly) BOOL isRegistered;
 
 @end
+
+NS_ASSUME_NONNULL_END

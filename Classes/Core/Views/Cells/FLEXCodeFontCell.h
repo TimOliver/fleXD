@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A multiline detail table view cell that uses monospaced fonts for both title and detail labels.
 @interface FLEXCodeFontCell : FLEXMultilineDetailTableViewCell
 
 @end

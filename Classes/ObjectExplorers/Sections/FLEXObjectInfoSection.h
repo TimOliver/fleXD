@@ -8,12 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
-/// \c FLEXTableViewSection itself doesn't know about the object being explored.
-/// Subclasses might need this info to provide useful information about the object. Instead
-/// of adding an abstract class to the class hierarchy, subclasses can conform to this protocol
-/// to indicate that the only info they need to be initialized is the object being explored.
+NS_ASSUME_NONNULL_BEGIN
+
+/// A protocol for \c FLEXTableViewSection subclasses that only need the object
+/// being explored in order to be initialized.
+///
+/// Since \c FLEXTableViewSection itself has no knowledge of the object being explored,
+/// conforming to this protocol is the preferred way to indicate that a section can be
+/// initialized from the object alone, without introducing an abstract class to the hierarchy.
 @protocol FLEXObjectInfoSection <NSObject>
 
 + (instancetype)forObject:(id)object;
 
 @end
+
+NS_ASSUME_NONNULL_END

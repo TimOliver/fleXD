@@ -9,35 +9,40 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
-/// A base class for methods which encompasses those that may not
-/// have been added to a class yet. Useful on it's own for adding
-/// methods to a class, or building a new class from the ground up.
+/// A base class representing a method that may or may not yet be registered with a class.
+///
+/// Useful on its own for adding methods to a class or building a new class from scratch.
+/// \c FLEXMethod is the concrete subclass for methods already registered in the runtime.
 @interface FLEXMethodBase : NSObject {
 @protected
     SEL      _selector;
     NSString *_name;
     NSString *_typeEncoding;
     IMP      _implementation;
-    
     NSString *_flex_description;
 }
 
-/// Constructs and returns a \c FLEXSimpleMethod instance with the given name, type encoding, and implementation.
-+ (instancetype)buildMethodNamed:(NSString *)name withTypes:(NSString *)typeEncoding implementation:(IMP)implementation;
+/// Creates a method descriptor with the given name, type encoding, and implementation.
++ (instancetype)buildMethodNamed:(NSString *)name
+                       withTypes:(NSString *)typeEncoding
+                  implementation:(IMP)implementation;
 
 /// The selector of the method.
 @property (nonatomic, readonly) SEL      selector;
-/// The selector string of the method.
+/// The string form of the method's selector. Same as \c name.
 @property (nonatomic, readonly) NSString *selectorString;
-/// Same as selectorString.
+/// The string form of the method's selector. Same as \c selectorString.
 @property (nonatomic, readonly) NSString *name;
 /// The type encoding of the method.
 @property (nonatomic, readonly) NSString *typeEncoding;
 /// The implementation of the method.
 @property (nonatomic, readonly) IMP      implementation;
 
-/// For internal use
+/// For internal use.
 @property (nonatomic) id tag;
 
 @end
+
+NS_ASSUME_NONNULL_END

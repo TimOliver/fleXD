@@ -12,6 +12,8 @@
 #import "FLEXMethodBase.h"
 #import "FLEXProtocol.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface FLEXProperty (Compare)
 - (NSComparisonResult)compare:(FLEXProperty *)other;
 @end
@@ -27,3 +29,5 @@
 @interface FLEXProtocol (Compare)
 - (NSComparisonResult)compare:(FLEXProtocol *)other;
 @end
+
+NS_ASSUME_NONNULL_END

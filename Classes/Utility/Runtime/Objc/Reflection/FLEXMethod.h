@@ -44,8 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) Method            objc_method;
 /// The implementation of the method.
-/// @discussion Setting \c implementation will change the implementation of this method
-/// for the entire class which implements said method. It will also not modify the selector of said method.
+///
+/// Setting \c implementation will change the implementation of this method for the entire
+/// class that implements it. It will not modify the selector of the method.
 @property (nonatomic          ) IMP               implementation;
 /// Whether the method is an instance method or not.
 @property (nonatomic, readonly) BOOL              isInstanceMethod;
@@ -60,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// The return size of the method.
 @property (nonatomic, readonly) NSUInteger        returnSize;
 /// The full path of the image that contains this method definition,
-/// or \c nil if this ivar was probably defined at runtime.
+/// or \c nil if this method was probably defined at runtime.
 @property (nonatomic, readonly) NSString          *imagePath;
 
 /// Like @code - (void)foo:(int)bar @endcode
@@ -68,13 +69,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// Like @code -[Class foo:] @endcode
 - (NSString *)debugNameGivenClassName:(NSString *)name;
 
-/// Swizzles the recieving method with the given method.
+/// Swizzles the receiving method with the given method.
 - (void)swapImplementations:(FLEXMethod *)method;
 
 #define FLEXMagicNumber 0xdeadbeef
 #define FLEXArg(expr) FLEXMagicNumber,/// @encode(__typeof__(expr)), (__typeof__(expr) []){ expr }
 
-/// Sends a message to \e target, and returns it's value, or \c nil if not applicable.
+/// Sends a message to \e target, and returns its value, or \c nil if not applicable.
 /// @discussion You may send any message with this method. Primitive return values will be wrapped
 /// in instances of \c NSNumber and \c NSValue. \c void and bitfield returning methods return \c nil.
 /// \c SEL return types are converted to strings using \c NSStringFromSelector.

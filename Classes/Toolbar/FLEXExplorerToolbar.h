@@ -12,6 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// The floating toolbar displayed by the FLEX explorer.
+///
 /// Users of the toolbar can configure the enabled state
 /// and event target/actions for each item.
 @interface FLEXExplorerToolbar : UIView
@@ -43,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Users of the toolbar can attach a pan gesture recognizer to decide how to reposition the toolbar.
 @property (nonatomic, readonly) UIView *dragHandle;
 
-/// A color matching the overlay on color on the selected view.
+/// A color matching the overlay color on the selected view.
 @property (nonatomic) UIColor *selectedViewOverlayColor;
 
 /// Description text for the selected view displayed below the toolbar items.

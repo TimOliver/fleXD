@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark Reuse identifiers
+#pragma mark - Reuse identifiers
 
 typedef NSString * FLEXTableViewCellReuseIdentifier;
 
@@ -28,11 +28,16 @@ extern FLEXTableViewCellReuseIdentifier const kFLEXKeyValueCell;
 extern FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell;
 
 #pragma mark - FLEXTableView
+/// A \c UITableView subclass that pre-registers FLEX's default cell reuse identifiers.
 @interface FLEXTableView : UITableView
 
+/// Creates an inset-grouped table view.
 + (instancetype)flexDefaultTableView;
+/// Creates a grouped table view.
 + (instancetype)groupedTableView;
+/// Creates a plain table view.
 + (instancetype)plainTableView;
+/// Creates a table view with the given style.
 + (instancetype)style:(UITableViewStyle)style;
 
 /// You do not need to register classes for any of the default reuse identifiers above

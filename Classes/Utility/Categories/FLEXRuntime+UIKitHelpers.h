@@ -13,69 +13,79 @@
 #import "FLEXProtocol.h"
 #import "FLEXTableViewSection.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class FLEXObjectExplorerDefaults;
 
-/// Model objects of an object explorer screen adopt this
-/// protocol in order respond to user defaults changes 
+/// A protocol adopted by model objects in an object explorer screen.
+/// Conforming objects can respond to user defaults changes.
 @protocol FLEXObjectExplorerItem <NSObject>
-/// Current explorer settings. Set when settings change.
+
+/// The current explorer display settings. Updated when settings change.
 @property (nonatomic) FLEXObjectExplorerDefaults *defaults;
 
-/// YES for properties and ivars which surely support editing, NO for all methods.
+/// \c YES for properties and ivars that support editing, \c NO for all methods.
 @property (nonatomic, readonly) BOOL isEditable;
-/// NO for ivars, YES for supported methods and properties
+/// \c NO for ivars, \c YES for supported methods and properties.
 @property (nonatomic, readonly) BOOL isCallable;
+
 @end
 
+
+/// A protocol for Objective-C runtime metadata objects displayed in the object explorer.
 @protocol FLEXRuntimeMetadata <FLEXObjectExplorerItem>
-/// Used as the main title of the row
+
+/// The primary display string for this metadata row.
 - (NSString *)description;
-/// Used to compare metadata objects for uniqueness
+/// The name of this metadata item, used for uniqueness comparisons.
 @property (nonatomic, readonly) NSString *name;
 
-/// For internal use
+/// For internal use.
 @property (nonatomic) id tag;
 
-/// Should return \c nil if not applicable
-- (id)currentValueWithTarget:(id)object;
-/// Used as the subtitle or description of a property, ivar, or method
+/// Returns the current runtime value of this metadata on the given object, or \c nil.
+- (nullable id)currentValueWithTarget:(id)object;
+/// Returns a short display string for the current value, used as the row subtitle.
 - (NSString *)previewWithTarget:(id)object;
-/// For methods, a method calling screen. For all else, an object explorer.
-- (UIViewController *)viewerWithTarget:(id)object;
-/// For methods and protocols, nil. For all else, an a field editor screen.
-/// The given section is reloaded on commit of any changes.
-- (UIViewController *)editorWithTarget:(id)object section:(FLEXTableViewSection *)section;
-/// Used to determine present which interactions are possible to the user
+/// Returns a viewer for this metadata: a method call screen for methods,
+/// or an object explorer for properties and ivars.
+- (nullable UIViewController *)viewerWithTarget:(id)object;
+/// Returns an editor for this metadata, or \c nil for methods and protocols.
+/// The given section is reloaded when the user commits a change.
+- (nullable UIViewController *)editorWithTarget:(id)object section:(FLEXTableViewSection *)section;
+/// Returns the accessory type that best represents the available interactions for this item.
 - (UITableViewCellAccessoryType)suggestedAccessoryTypeWithTarget:(id)object;
-/// Return nil to use the default reuse identifier
-- (NSString *)reuseIdentifierWithTarget:(id)object;
+/// Returns a custom reuse identifier, or \c nil to use the default.
+- (nullable NSString *)reuseIdentifierWithTarget:(id)object;
 
-/// An array of actions to place in the first section of the context menu.
+/// Returns additional actions for the first section of the context menu.
 - (NSArray<UIAction *> *)additionalActionsWithTarget:(id)object sender:(UIViewController *)sender;
-/// An array where every 2 elements are a key-value pair. The key is a description
-/// of what to copy like "Name" and the values are what will be copied.
+/// Returns an array of key-value pairs for copy actions.
+/// Every two elements form a pair: a description (e.g. "Name") and the string to copy.
 - (NSArray<NSString *> *)copiableMetadataWithTarget:(id)object;
-/// Properties and ivars return the address of an object, if they hold one.
-- (NSString *)contextualSubtitleWithTarget:(id)object;
+/// Returns the memory address of the object held by a property or ivar, if applicable.
+- (nullable NSString *)contextualSubtitleWithTarget:(id)object;
 
 @end
 
-// Even if a property is readonly, it still may be editable
-// via a setter. Checking isEditable will not reflect that
-// unless the property was initialized with a class.
+
+// Note: a readonly property may still be editable via a custom setter.
+// Checking isEditable will not reflect that unless the property was initialized with a class.
 @interface FLEXProperty (UIKitHelpers) <FLEXRuntimeMetadata> @end
 @interface FLEXIvar (UIKitHelpers) <FLEXRuntimeMetadata> @end
 @interface FLEXMethodBase (UIKitHelpers) <FLEXRuntimeMetadata> @end
 @interface FLEXMethod (UIKitHelpers) <FLEXRuntimeMetadata> @end
 @interface FLEXProtocol (UIKitHelpers) <FLEXRuntimeMetadata> @end
 
+
+/// The display style of a \c FLEXStaticMetadata row.
 typedef NS_ENUM(NSUInteger, FLEXStaticMetadataRowStyle) {
     FLEXStaticMetadataRowStyleSubtitle,
     FLEXStaticMetadataRowStyleKeyValue,
     FLEXStaticMetadataRowStyleDefault = FLEXStaticMetadataRowStyleSubtitle,
 };
 
-/// Displays a small row as a static key-value pair of information.
+/// A read-only metadata row that displays a static key-value pair of information.
 @interface FLEXStaticMetadata : NSObject <FLEXRuntimeMetadata>
 
 + (instancetype)style:(FLEXStaticMetadataRowStyle)style title:(NSString *)title string:(NSString *)string;
@@ -85,6 +95,4 @@ typedef NS_ENUM(NSUInteger, FLEXStaticMetadataRowStyle) {
 
 @end
 
-
-/// This is assigned to the \c tag property of each metadata.
-
+NS_ASSUME_NONNULL_END

@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark FLEXMirror Protocol
+#pragma mark - FLEXMirror Protocol
 NS_SWIFT_NAME(FLEXMirrorProtocol)
 @protocol FLEXMirror <NSObject>
 
@@ -44,7 +44,12 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 
 @end
 
-#pragma mark FLEXMirror Class
+#pragma mark - FLEXMirror Class
+/// A concrete implementation of the \c FLEXMirror protocol.
+///
+/// \c FLEXMirror eagerly gathers all metadata at initialization time.
+/// For cases where you only need a small subset of that metadata,
+/// consider using the \c NSObject (FLEX_Reflection) categories instead.
 @interface FLEXMirror : NSObject <FLEXMirror>
 
 /// Reflects an instance of an object or \c Class.
@@ -56,7 +61,7 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 /// will be populated with instance methods and properties, and \c classMethods and \c classProperties
 /// will be populated with class methods and properties.
 ///
-/// @param objectOrClass An instance of an objct or a \c Class object.
+/// @param objectOrClass An instance of an object or a \c Class object.
 /// @throws If a metaclass object is passed in.
 /// @return An instance of \c FLEXMirror.
 + (instancetype)reflect:(id)objectOrClass;

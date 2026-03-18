@@ -9,6 +9,9 @@
 #import "FLEXTableViewSection.h"
 #import "FLEXObjectExplorer.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+/// The kind of Objective-C runtime metadata displayed by a \c FLEXMetadataSection.
 typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     FLEXMetadataKindProperties = 1,
     FLEXMetadataKindClassProperties,
@@ -17,21 +20,24 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     FLEXMetadataKindClassMethods,
     FLEXMetadataKindClassHierarchy,
     FLEXMetadataKindProtocols,
-    FLEXMetadataKindOther
+    FLEXMetadataKindOther,
 };
 
-/// This section is used for displaying ObjC runtime metadata
-/// about a class or object, such as listing methods, properties, etc.
+/// A table view section that lists Objective-C runtime metadata for an object or class,
+/// such as its properties, instance variables, methods, or protocols.
 @interface FLEXMetadataSection : FLEXTableViewSection
 
 + (instancetype)explorer:(FLEXObjectExplorer *)explorer kind:(FLEXMetadataKind)metadataKind;
 
+/// The type of metadata this section displays.
 @property (nonatomic, readonly) FLEXMetadataKind metadataKind;
 
-/// The names of metadata to exclude. Useful if you wish to group specific
-/// properties or methods together in their own section outside of this one.
+/// A set of metadata names to exclude from this section.
 ///
-/// Setting this property calls \c reloadData on this section.
+/// Use this to group specific properties or methods into a separate, dedicated section.
+/// Setting this property calls \c reloadData on the section.
 @property (nonatomic) NSSet<NSString *> *excludedMetadata;
 
 @end
+
+NS_ASSUME_NONNULL_END

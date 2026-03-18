@@ -38,7 +38,7 @@ BOOL FLEXGetSizeAndAlignment(const char *type, NSUInteger * _Nullable sizep, NSU
 /// Do not pass in the result of \c method_getTypeEncoding
 + (ssize_t)sizeForTypeEncoding:(NSString *)type alignment:(nullable ssize_t *)alignOut unaligned:(BOOL)unaligned;
 
-/// Defaults to \C unaligned:NO
+/// Defaults to \c unaligned:NO
 + (ssize_t)sizeForTypeEncoding:(NSString *)type alignment:(nullable ssize_t *)alignOut;
 
 @end

@@ -72,7 +72,7 @@ NS_INLINE CGRect FLEXRectSetX(CGRect r, CGFloat x) {
 
 /// Adjusts the origin.y of an existing rect
 NS_INLINE CGRect FLEXRectSetY(CGRect r, CGFloat y) {
-    r.origin.y = y ; return r;
+    r.origin.y = y; return r;
 }
 
 /// Adjusts the size.width of an existing rect

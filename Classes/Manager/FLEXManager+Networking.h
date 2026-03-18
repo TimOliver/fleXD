@@ -31,7 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param viewControllerFutureBlock Viewer (view controller) creation block
 /// @note This method must be called from the main thread.
 /// The viewControllerFutureBlock will be invoked from the main thread and may not return nil.
-/// @note The passed block will be copied and retain for the duration of the application, you may want to use __weak references.
+/// @note The passed block will be copied and retained for the duration of the application.
+/// You may want to use __weak references.
 - (void)setCustomViewerForContentType:(NSString *)contentType
             viewControllerFutureBlock:(FLEXCustomContentViewerFuture)viewControllerFutureBlock;
 

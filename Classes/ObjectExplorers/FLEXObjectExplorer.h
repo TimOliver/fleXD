@@ -8,36 +8,42 @@
 
 #import "FLEXRuntime+UIKitHelpers.h"
 
-/// Carries state about the current user defaults settings
+NS_ASSUME_NONNULL_BEGIN
+
+/// Carries the current user defaults display settings for an object explorer.
 @interface FLEXObjectExplorerDefaults : NSObject
+
 + (instancetype)canEdit:(BOOL)editable wantsPreviews:(BOOL)showPreviews;
 
-/// Only \c YES for properties and ivars
+/// \c YES for properties and ivars that support editing, \c NO otherwise.
 @property (nonatomic, readonly) BOOL isEditable;
-/// Only affects properties and ivars
+/// \c YES to show live value previews for properties and ivars, \c NO otherwise.
 @property (nonatomic, readonly) BOOL wantsDynamicPreviews;
+
 @end
 
+
+/// Provides the runtime metadata for a given object or class,
+/// used to populate the sections of an \c FLEXObjectExplorerViewController.
 @interface FLEXObjectExplorer : NSObject
 
 + (instancetype)forObject:(id)objectOrClass;
 
 + (void)configureDefaultsForItems:(NSArray<id<FLEXObjectExplorerItem>> *)items;
 
+/// The object or class being explored.
 @property (nonatomic, readonly) id object;
-/// Subclasses can override to provide a more useful description
+/// A human-readable description of the object. Subclasses can override for more detail.
 @property (nonatomic, readonly) NSString *objectDescription;
 
-/// @return \c YES if \c object is an instance of a class,
-/// or \c NO if \c object is a class itself.
+/// \c YES if \c object is a class instance, \c NO if it is a class itself.
 @property (nonatomic, readonly) BOOL objectIsInstance;
 
-/// An index into the `classHierarchy` array.
+/// The index of the selected class scope within \c classHierarchy.
 ///
-/// This property determines which set of data comes out of the metadata arrays below
-/// For example, \c properties contains the properties of the selected class scope,
-/// while \c allProperties is an array of arrays where each array is a set of
-/// properties for a class in the class hierarchy of the current object.
+/// This determines which set of data is returned by the metadata properties.
+/// For example, \c properties returns the properties of the selected class scope,
+/// while \c allProperties contains one array per class in the hierarchy.
 @property (nonatomic) NSInteger classScope;
 
 @property (nonatomic, readonly) NSArray<NSArray<FLEXProperty *> *> *allProperties;
@@ -75,8 +81,10 @@
 
 @interface FLEXObjectExplorer (Reflex)
 
-/// Do not enable this property manually; Reflex will flip the switch when it is loaded.
-/// If you wish, you may \e disable it manually.
+/// Do not enable this property manually; Reflex will set it when it is loaded.
+/// You may disable it manually if needed.
 @property (nonatomic, class) BOOL reflexAvailable;
 
 @end
+
+NS_ASSUME_NONNULL_END

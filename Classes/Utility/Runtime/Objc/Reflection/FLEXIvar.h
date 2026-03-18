@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Wraps an Objective-C \c Ivar data structure, providing a convenient interface
+/// for reading and writing instance variable values on an arbitrary object.
 @interface FLEXIvar : NSObject
 
 + (instancetype)ivar:(Ivar)ivar;
@@ -41,9 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id)getValue:(id)target;
 - (void)setValue:(nullable id)value onObject:(id)target;
 
-/// Calls into -getValue: and passes that value into
-/// -[FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:type:]
-/// and returns the result
+/// Like \c getValue:, but passes the result through
+/// \c -[FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:type:],
+/// which unwraps boxed pointer types where possible.
 - (nullable id)getPotentiallyUnboxedValue:(id)target;
 
 @end

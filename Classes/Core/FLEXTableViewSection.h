@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// An abstract base class for table view sections.
 ///
 /// Many properties or methods here return nil or some logical equivalent by default.
-/// Even so, most of the methods with defaults are intended to be overriden by subclasses.
+/// Even so, most of the methods with defaults are intended to be overridden by subclasses.
 /// Some methods are not implemented at all and MUST be implemented by a subclass.
 @interface FLEXTableViewSection : NSObject {
     @protected
@@ -111,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// provide a detailed description of the target of the context menu.
 - (NSString *)menuSubtitleForRow:(NSInteger)row;
 /// The context menu items, if any. Subclasses may override.
-/// By default, only inludes items for \c copyMenuItemsForRow:.
+/// By default, only includes items for \c copyMenuItemsForRow:.
 - (nullable NSArray<UIMenuElement *> *)menuItemsForRow:(NSInteger)row sender:(UIViewController *)sender;
 /// Subclasses may override to return a list of copiable items.
 ///

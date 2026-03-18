@@ -12,7 +12,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark FLEXProtocol
+#pragma mark - FLEXProtocol
+/// Wraps an Objective-C \c Protocol object, providing a convenient interface
+/// for inspecting its methods, properties, and conformances.
 @interface FLEXProtocol : NSObject
 
 /// Every protocol registered with the runtime.
@@ -49,7 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-#pragma mark Method descriptions
+#pragma mark - Method descriptions
+/// A description of a method declared in a protocol, including its selector,
+/// type encoding, and whether it is an instance or class method.
 @interface FLEXMethodDescription : NSObject
 
 + (instancetype)description:(struct objc_method_description)description;

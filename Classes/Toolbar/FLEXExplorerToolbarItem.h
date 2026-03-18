@@ -10,8 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A \c UIButton subclass used as a toolbar item in the FLEX explorer toolbar.
+///
+/// Toolbar items support a "sibling" item concept: when a toolbar item becomes
+/// disabled, it can automatically swap itself out for a sibling item in the toolbar.
 @interface FLEXExplorerToolbarItem : UIButton
 
+/// Creates a toolbar item with the given title and image.
 + (instancetype)itemWithTitle:(NSString *)title image:(UIImage *)image;
 
 /// @param backupItem a toolbar item to use in place of this item when it becomes disabled.

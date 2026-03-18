@@ -10,59 +10,83 @@
 #import <Foundation/Foundation.h>
 @class FLEXIvarBuilder, FLEXMethodBase, FLEXProperty, FLEXProtocol;
 
+NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark FLEXClassBuilder
+#pragma mark - FLEXClassBuilder
+
+/// Constructs or modifies an Objective-C class at runtime.
+///
+/// New classes must be registered using \c registerClass before they can be used.
+/// Instance variables cannot be added to existing or already-registered classes.
 @interface FLEXClassBuilder : NSObject
 
+/// The class being constructed or modified.
 @property (nonatomic, readonly) Class workingClass;
 
-/// Begins constructing a class with the given name.
-///
-/// This new class will implicitly inherits from \c NSObject with \c 0 extra bytes.
-/// Classes created this way must be registered with \c -registerClass before being used.
+/// Begins constructing a new class named \e name, inheriting from \c NSObject.
 + (instancetype)allocateClass:(NSString *)name;
-/// Begins constructing a class with the given name and superclass.
-/// @discussion Calls \c -allocateClass:superclass:extraBytes: with \c 0 extra bytes.
-/// Classes created this way must be registered with \c -registerClass before being used.
+
+/// Begins constructing a new class named \e name, inheriting from \e superclass.
 + (instancetype)allocateClass:(NSString *)name superclass:(Class)superclass;
-/// Begins constructing a new class object with the given name and superclass.
-/// @discussion Pass \c nil to \e superclass to create a new root class.
-/// Classes created this way must be registered with \c -registerClass before being used.
-+ (instancetype)allocateClass:(NSString *)name superclass:(Class)superclass extraBytes:(size_t)bytes;
-/// Begins constructing a new root class object with the given name and \c 0 extra bytes.
-/// @discussion Classes created this way must be registered with \c -registerClass before being used.
+
+/// Begins constructing a new class named \e name, inheriting from \e superclass,
+/// with \e bytes of extra storage allocated per instance.
+/// Pass \c nil for \e superclass to create a new root class.
++ (instancetype)allocateClass:(NSString *)name
+                   superclass:(nullable Class)superclass
+                   extraBytes:(size_t)bytes;
+
+/// Begins constructing a new root class with no superclass.
 + (instancetype)allocateRootClass:(NSString *)name;
-/// Use this to modify existing classes. @warning You cannot add instance variables to existing classes.
+
+/// Returns a builder for modifying an existing class.
+/// @warning Instance variables cannot be added to existing classes.
 + (instancetype)builderForClass:(Class)cls;
 
-/// @return Any methods that failed to be added.
+/// Adds methods to the working class.
+/// @return Any methods that could not be added.
 - (NSArray<FLEXMethodBase *> *)addMethods:(NSArray<FLEXMethodBase *> *)methods;
-/// @return Any properties that failed to be added.
+
+/// Adds properties to the working class.
+/// @return Any properties that could not be added.
 - (NSArray<FLEXProperty *> *)addProperties:(NSArray<FLEXProperty *> *)properties;
-/// @return Any protocols that failed to be added.
+
+/// Adds protocol conformances to the working class.
+/// @return Any protocols that could not be added.
 - (NSArray<FLEXProtocol *> *)addProtocols:(NSArray<FLEXProtocol *> *)protocols;
-/// @warning Adding Ivars to existing classes is not supported and will always fail.
+
+/// Adds instance variables to the working class.
+/// @warning Adding instance variables to existing classes is not supported and will always fail.
+/// @return Any ivars that could not be added.
 - (NSArray<FLEXIvarBuilder *> *)addIvars:(NSArray<FLEXIvarBuilder *> *)ivars;
 
-/// Finalizes construction of a new class.
-/// @discussion Once a class is registered, instance variables cannot be added.
-/// @note Raises an exception if called on a previously registered class.
+/// Finalizes and registers the new class, making it available to the runtime.
+/// Once registered, instance variables cannot be added.
+/// @note Raises an exception if called on an already-registered class.
 - (Class)registerClass;
-/// Uses \c objc_lookupClass to determine if the working class is registered.
+
+/// Whether the working class has been registered with the runtime.
 @property (nonatomic, readonly) BOOL isRegistered;
 
 @end
 
 
-#pragma mark FLEXIvarBuilder
+#pragma mark - FLEXIvarBuilder
+
+/// Describes an instance variable to be added to a class under construction.
+///
+/// Use the \c FLEXIvarBuilderWithNameAndType() convenience macro where possible.
 @interface FLEXIvarBuilder : NSObject
 
-/// Consider using the \c FLEXIvarBuilderWithNameAndType() macro below. 
-/// @param name The name of the Ivar, such as \c \@"_value".
-/// @param size The size of the Ivar. Usually \c sizeof(type). For objects, this is \c sizeof(id).
-/// @param alignment The alignment of the Ivar. Usually \c log2(sizeof(type)).
-/// @param encoding The type encoding of the Ivar. For objects, this is \c \@(\@encode(id)), and for others it is \c \@(\@encode(type)).
-+ (instancetype)name:(NSString *)name size:(size_t)size alignment:(uint8_t)alignment typeEncoding:(NSString *)encoding;
+/// Creates an ivar descriptor with the given name, size, alignment, and type encoding.
+/// @param name The name of the ivar, e.g. \c @"_value".
+/// @param size The size of the ivar in bytes, e.g. \c sizeof(type).
+/// @param alignment The required alignment, e.g. \c log2(sizeof(type)).
+/// @param encoding The type encoding, e.g. \c @(@encode(type)).
++ (instancetype)name:(NSString *)name
+                size:(size_t)size
+           alignment:(uint8_t)alignment
+        typeEncoding:(NSString *)encoding;
 
 @property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) NSString *encoding;
@@ -72,9 +96,12 @@
 @end
 
 
+/// Convenience macro that creates a \c FLEXIvarBuilder from a name string and a C type.
 #define FLEXIvarBuilderWithNameAndType(nameString, type) [FLEXIvarBuilder \
     name:nameString \
     size:sizeof(type) \
     alignment:log2(sizeof(type)) \
     typeEncoding:@(@encode(type)) \
 ]
+
+NS_ASSUME_NONNULL_END

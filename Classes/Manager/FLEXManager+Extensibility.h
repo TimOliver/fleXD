@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// information about an object whose actual pointer may change at runtime (e.g. +currentUser)
 /// @note This method must be called from the main thread.
 /// The objectFutureBlock will be invoked from the main thread and may return nil.
-/// @note The passed block will be copied and retain for the duration of the application,
-/// you may want to use __weak references.
+/// @note The passed block will be copied and retained for the duration of the application.
+/// You may want to use __weak references.
 - (void)registerGlobalEntryWithName:(NSString *)entryName objectFutureBlock:(id (^)(void))objectFutureBlock;
 
 /// Adds an entry at the top of the list of Global State items.
@@ -34,8 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// by this block will be pushed on the navigation controller stack.
 /// @note This method must be called from the main thread.
 /// The viewControllerFutureBlock will be invoked from the main thread and may not return nil.
-/// @note The passed block will be copied and retain for the duration of the application,
-/// you may want to use __weak references as needed.
+/// @note The passed block will be copied and retained for the duration of the application.
+/// You may want to use __weak references as needed.
 - (void)registerGlobalEntryWithName:(NSString *)entryName
           viewControllerFutureBlock:(UIViewController * (^)(void))viewControllerFutureBlock;
 
@@ -45,8 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// with the host table view view controller. Use it to deselect the row or present an alert.
 /// @note This method must be called from the main thread.
 /// The rowSelectedAction will be invoked from the main thread.
-/// @note The passed block will be copied and retain for the duration of the application,
-/// you may want to use __weak references as needed.
+/// @note The passed block will be copied and retained for the duration of the application.
+/// You may want to use __weak references as needed.
 - (void)registerGlobalEntryWithName:(NSString *)entryName action:(FLEXGlobalsEntryRowAction)rowSelectedAction;
 
 /// Removes all registered global entries.
@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param key A single character string matching a key on the keyboard
 /// @param modifiers Modifier keys such as shift, command, or alt/option
 /// @param action The block to run on the main thread when the key & modifier combination is recognized.
-/// @param description Shown the the keyboard shortcut help menu, which is accessed via the '?' key.
+/// @param description Shown in the keyboard shortcut help menu, which is accessed via the '?' key.
 /// @note The action block will be retained for the duration of the application. You may want to use weak references.
 /// @note FLEX registers several default keyboard shortcuts. Use the '?' key to see a list of shortcuts.
 - (void)registerSimulatorShortcutWithKey:(NSString *)key

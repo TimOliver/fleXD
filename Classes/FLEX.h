@@ -7,6 +7,12 @@
 //  Copyright (c) 2020 FLEX Team. All rights reserved.
 //
 
+/// The primary FLEX umbrella header.
+///
+/// Importing this header gives you access to all public FLEX APIs,
+/// including the manager, explorer toolbar, globals entries,
+/// runtime utilities, categories, and object explorer components.
+
 #import "FLEXManager.h"
 #import "FLEXManager+Extensibility.h"
 #import "FLEXManager+Networking.h"

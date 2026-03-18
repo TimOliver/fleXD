@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-#pragma mark FLEXPropertyAttributes
+#pragma mark FLEXMutablePropertyAttributes
 @interface FLEXMutablePropertyAttributes : FLEXPropertyAttributes
 
 /// Creates and returns an empty property attributes object.

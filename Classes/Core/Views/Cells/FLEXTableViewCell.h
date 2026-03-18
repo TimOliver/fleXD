@@ -8,16 +8,23 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+/// The base table view cell class used throughout FLEX.
+///
+/// Provides \c titleLabel and \c subtitleLabel as non-deprecated replacements
+/// for \c UITableViewCell's \c textLabel and \c detailTextLabel.
 @interface FLEXTableViewCell : UITableViewCell
 
-/// Use this instead of .textLabel
+/// The primary label of the cell. Use instead of \c textLabel.
 @property (nonatomic, readonly) UILabel *titleLabel;
-/// Use this instead of .detailTextLabel
+/// The secondary label of the cell. Use instead of \c detailTextLabel.
 @property (nonatomic, readonly) UILabel *subtitleLabel;
 
-/// Subclasses can override this instead of initializers to
-/// perform additional initialization without lots of boilerplate.
-/// Remember to call super!
+/// Called after initialization to allow subclasses to perform additional setup
+/// without overriding designated initializers. Always call \c super.
 - (void)postInit;
 
 @end
+
+NS_ASSUME_NONNULL_END

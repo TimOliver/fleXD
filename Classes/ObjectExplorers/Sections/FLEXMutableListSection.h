@@ -8,50 +8,48 @@
 
 #import "FLEXCollectionContentSection.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef void (^FLEXMutableListCellForElement)(__kindof UITableViewCell *cell, id element, NSInteger row);
 
-/// A section aimed at meeting the needs of table views with one section
-/// (or, a section that shouldn't warrant the code duplication that comes
-/// with creating a new section just for some specific table view)
+/// A flexible, general-purpose table view section for displaying a list of objects.
 ///
-/// Use this section if you want to display a growing list of rows,
-/// or even if you want to display a static list of rows.
+/// Use this when you need to display a growing or static list of rows within a single
+/// section, without the overhead of creating a dedicated section subclass.
 ///
-/// To support editing or inserting, implement the appropriate
-/// table view delegate methods in your table view delegate class
-/// and call \c mutate: (or \c setList: ) before updating the table view.
+/// To support editing or inserting rows, implement the appropriate table view delegate
+/// methods in your view controller and call \c mutate: or \c setList: before updating
+/// the table view.
 ///
-/// By default, no section title is shown. Assign one to \c customTitle
+/// By default, no section title is shown. Assign one using the \c customTitle property.
 ///
-/// By default, \c kFLEXDetailCell is the reuse identifier used. If you need
-/// to support multiple reuse identifiers in a single section, implement the
-/// \c cellForRowAtIndexPath: method, dequeue the cell yourself and call
-/// \c -configureCell: on the appropriate section object, passing in the cell
+/// By default, \c kFLEXDetailCell is used as the reuse identifier. To use multiple reuse
+/// identifiers within a single section, dequeue and configure cells yourself in
+/// \c -tableView:cellForRowAtIndexPath: and call \c -configureCell:forRow: on this section.
 @interface FLEXMutableListSection<__covariant ObjectType> : FLEXCollectionContentSection
 
-/// Initializes a section with an empty list.
+/// Creates a section with the given list, cell configuration block, and filter matcher.
 + (instancetype)list:(NSArray<ObjectType> *)list
    cellConfiguration:(FLEXMutableListCellForElement)configurationBlock
        filterMatcher:(BOOL(^)(NSString *filterText, id element))filterBlock;
 
-/// By default, rows are not selectable. If you want rows
-/// to be selectable, provide a selection handler here.
+/// An optional handler invoked when a row is selected. Rows are not selectable by default.
 @property (nonatomic, copy) void (^selectionHandler)(__kindof UIViewController *host, ObjectType element);
 
-/// The objects representing all possible rows in the section.
+/// The full, unfiltered list of objects in this section.
 @property (nonatomic) NSArray<ObjectType> *list;
-/// The objects representing the currently unfiltered rows in the section.
+/// The subset of \c list that passes the current filter, if any.
 @property (nonatomic, readonly) NSArray<ObjectType> *filteredList;
 
-/// A readwrite version of the same property in \c FLEXTableViewSection.h
+/// The cell registration mapping for this section.
 ///
-/// This property expects one entry. An exception is thrown if more than one
-/// entry is supplied. If you need more than one reuse identifier within a single
-/// section, your view probably has more complexity than this class can handle.
+/// Expects exactly one entry. Raises an exception if more than one entry is supplied.
+/// If your section requires multiple reuse identifiers, consider a custom section subclass.
 @property (nonatomic, readwrite) NSDictionary<NSString *, Class> *cellRegistrationMapping;
 
-/// Call this method to mutate the full, unfiltered list.
-/// This ensures that \c filteredList is updated after any mutations.
+/// Mutates the full list and updates \c filteredList accordingly.
 - (void)mutate:(void(^)(NSMutableArray *list))block;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -10,125 +10,154 @@
 #import "FLEXRuntimeConstants.h"
 @class FLEXPropertyAttributes, FLEXMethodBase;
 
+NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark FLEXProperty
+#pragma mark - FLEXProperty
+
 @interface FLEXProperty : NSObject
 
-/// You may use this initializer instead of \c property:onClass: if you don't need
-/// to know anything about the uniqueness of this property or where it comes from.
+/// Creates a property from an \c objc_property_t without class context.
+///
+/// Use \c property:onClass: instead if you need information about uniqueness
+/// or the binary image that defines the property.
 + (instancetype)property:(objc_property_t)property;
-/// This initializer can be used to access additional information
-/// in an efficient manner. That information being whether this property
-/// is certainly not unique and the name of the binary image which declares it.
-/// @param cls the class, or metaclass if this is a class property.
+
+/// Creates a property from an \c objc_property_t with class context.
+///
+/// This initializer enables additional information such as whether the property
+/// is unique and the name of the binary image that declares it.
+/// @param cls The class that owns this property, or its metaclass for class properties.
 + (instancetype)property:(objc_property_t)property onClass:(Class)cls;
-/// @param cls the class, or metaclass if this is a class property
-+ (instancetype)named:(NSString *)name onClass:(Class)cls;
-/// Constructs a new property with the given name and attributes.
+
+/// Creates a property by looking up the given name on the given class.
+/// @param cls The class that owns this property, or its metaclass for class properties.
++ (nullable instancetype)named:(NSString *)name onClass:(Class)cls;
+
+/// Creates a new property with the given name and attributes.
 + (instancetype)propertyWithName:(NSString *)name attributes:(FLEXPropertyAttributes *)attributes;
 
-/// \c 0 if the instance was created via \c +propertyWithName:attributes,
-/// otherwise this is the first property in \c objc_properties
+/// The first underlying \c objc_property_t for this property.
+/// \c 0 if created via \c +propertyWithName:attributes:.
 @property (nonatomic, readonly) objc_property_t  objc_property;
+/// All underlying \c objc_property_t values, e.g. when a property is defined in multiple images.
 @property (nonatomic, readonly) objc_property_t  *objc_properties;
+/// The number of underlying \c objc_property_t values.
 @property (nonatomic, readonly) NSInteger        objc_propertyCount;
+/// Whether this is a class property (as opposed to an instance property).
 @property (nonatomic, readonly) BOOL             isClassProperty;
 
 /// The name of the property.
 @property (nonatomic, readonly) NSString         *name;
-/// The type of the property. Get the full type from the attributes.
+/// The broad type of the property. For the full type encoding, use \c attributes.typeEncoding.
 @property (nonatomic, readonly) FLEXTypeEncoding type;
 /// The property's attributes.
 @property (nonatomic          ) FLEXPropertyAttributes *attributes;
-/// The (likely) setter, regardless of whether the property is readonly.
-/// For example, this might be the custom setter.
+
+/// The most likely setter selector for this property, including any custom setter.
 @property (nonatomic, readonly) SEL likelySetter;
+/// The string form of \c likelySetter.
 @property (nonatomic, readonly) NSString *likelySetterString;
-/// Not valid unless initialized with the owning class.
+/// Whether a method matching \c likelySetter exists on the owning class.
+/// Not valid unless this property was initialized with a class.
 @property (nonatomic, readonly) BOOL likelySetterExists;
-/// The (likely) getter. For example, this might be the custom getter.
+
+/// The most likely getter selector for this property, including any custom getter.
 @property (nonatomic, readonly) SEL likelyGetter;
+/// The string form of \c likelyGetter.
 @property (nonatomic, readonly) NSString *likelyGetterString;
-/// Not valid unless initialized with the owning class.
+/// Whether a method matching \c likelyGetter exists on the owning class.
+/// Not valid unless this property was initialized with a class.
 @property (nonatomic, readonly) BOOL likelyGetterExists;
-/// Always \c nil for class properties.
-@property (nonatomic, readonly) NSString *likelyIvarName;
-/// Not valid unless initialized with the owning class.
+
+/// The name of the ivar most likely backing this property. Always \c nil for class properties.
+@property (nonatomic, readonly, nullable) NSString *likelyIvarName;
+/// Whether an ivar matching \c likelyIvarName exists on the owning class.
+/// Not valid unless this property was initialized with a class.
 @property (nonatomic, readonly) BOOL likelyIvarExists;
 
-/// Whether there are certainly multiple definitions of this property,
-/// such as in categories in other binary images or something.
-/// @return Whether \c objc_property matches the return value of \c class_getProperty,
-/// or \c NO if this property was not created with \c property:onClass
+/// Whether there are multiple definitions of this property, e.g. in categories
+/// from different binary images.
+/// @return Whether \c objc_property differs from the value returned by \c class_getProperty,
+/// or \c NO if this property was not created with \c property:onClass:.
 @property (nonatomic, readonly) BOOL multiple;
-/// @return The bundle of the image that contains this property definition,
-/// or \c nil if this property was not created with \c property:onClass or
-/// if this property was probably defined at runtime.
-@property (nonatomic, readonly) NSString *imageName;
-/// The full path of the image that contains this property definition,
-/// or \c nil if this property was not created with \c property:onClass or
-/// if this property was probably defined at runtime.
-@property (nonatomic, readonly) NSString *imagePath;
 
-/// For internal use
+/// The name of the binary image that contains this property definition,
+/// or \c nil if not initialized with a class or if defined at runtime.
+@property (nonatomic, readonly, nullable) NSString *imageName;
+
+/// The full path of the binary image that contains this property definition,
+/// or \c nil if not initialized with a class or if defined at runtime.
+@property (nonatomic, readonly, nullable) NSString *imagePath;
+
+/// For internal use.
 @property (nonatomic) id tag;
 
-/// @return The value of this property on \c target as given by \c -valueForKey:
-/// A source-like description of the property, with all of its attributes.
+/// A source-like description of the property, including all of its attributes.
 @property (nonatomic, readonly) NSString *fullDescription;
 
-/// If this is a class property, you must class the class object.
-- (id)getValue:(id)target;
-/// Calls into -getValue: and passes that value into
-/// -[FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:type:]
-/// and returns the result.
-///
-/// If this is a class property, you must class the class object.
-- (id)getPotentiallyUnboxedValue:(id)target;
+/// Returns the current value of this property on \e target.
+/// For class properties, pass the class object as \e target.
+- (nullable id)getValue:(id)target;
 
-/// Safe to use regardless of how the \c FLEXProperty instance was initialized.
-///
-/// This uses \c self.objc_property if it exists, otherwise it uses \c self.attributes
+/// Returns the current value of this property on \e target, unwrapping boxed pointers.
+/// Calls \c -getValue: and passes the result through
+/// \c -[FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:type:].
+/// For class properties, pass the class object as \e target.
+- (nullable id)getPotentiallyUnboxedValue:(id)target;
+
+/// Copies the attribute list for this property to a caller-owned buffer.
+/// The caller is responsible for calling \c free() on the returned buffer.
+/// Use \c attributes.list if you do not need to manage the buffer lifetime yourself.
+/// @param attributesCount The number of attributes is written to this parameter.
 - (objc_property_attribute_t *)copyAttributesList:(unsigned int *)attributesCount;
 
-/// Replace the attributes of the current property in the given class,
-/// using the attributes in \c self.attributes
-///
-/// What happens when the property does not exist is undocumented.
+/// Replaces this property's definition on the given class using \c self.attributes.
 - (void)replacePropertyOnClass:(Class)cls;
 
-#pragma mark Convenience getters and setters
-/// @return A getter for the property with the given implementation.
-/// @discussion Consider using the \c FLEXPropertyGetter macros.
+#pragma mark - Convenience Getters and Setters
+
+/// Returns a getter method for this property with the given implementation.
+/// @discussion Consider using the \c FLEXPropertyGetter macro instead.
 - (FLEXMethodBase *)getterWithImplementation:(IMP)implementation;
-/// @return A setter for the property with the given implementation.
-/// @discussion Consider using the \c FLEXPropertySetter macros.
+
+/// Returns a setter method for this property with the given implementation.
+/// @discussion Consider using the \c FLEXPropertySetter macro instead.
 - (FLEXMethodBase *)setterWithImplementation:(IMP)implementation;
 
-#pragma mark FLEXMethod property getter / setter macros
-// Easier than using the above methods yourself in most cases
+#pragma mark - FLEXProperty Getter/Setter Macros
 
-/// Takes a \c FLEXProperty and a type (ie \c NSUInteger or \c id) and
-/// uses the \c FLEXProperty's \c attribute's \c backingIvarName to get the Ivar.
+/// Creates a getter method for a \c FLEXProperty using its backing ivar.
+/// @param FLEXProperty The \c FLEXProperty instance.
+/// @param type The C type of the property value, e.g. \c NSUInteger or \c id.
 #define FLEXPropertyGetter(FLEXProperty, type) [FLEXProperty \
     getterWithImplementation:imp_implementationWithBlock(^(id self) { \
         return *(type *)[self getIvarAddressByName:FLEXProperty.attributes.backingIvar]; \
     }) \
 ];
-/// Takes a \c FLEXProperty and a type (ie \c NSUInteger or \c id) and
-/// uses the \c FLEXProperty's \c attribute's \c backingIvarName to set the Ivar.
+
+/// Creates a setter method for a \c FLEXProperty using its backing ivar.
+/// @param FLEXProperty The \c FLEXProperty instance.
+/// @param type The C type of the property value, e.g. \c NSUInteger or \c id.
 #define FLEXPropertySetter(FLEXProperty, type) [FLEXProperty \
     setterWithImplementation:imp_implementationWithBlock(^(id self, type value) { \
         [self setIvarByName:FLEXProperty.attributes.backingIvar value:&value size:sizeof(type)]; \
     }) \
 ];
-/// Takes a \c FLEXProperty and a type (ie \c NSUInteger or \c id) and an Ivar name string to get the Ivar.
+
+/// Creates a getter method for a \c FLEXProperty using a named ivar.
+/// @param FLEXProperty The \c FLEXProperty instance.
+/// @param ivarName A string naming the backing ivar.
+/// @param type The C type of the property value.
 #define FLEXPropertyGetterWithIvar(FLEXProperty, ivarName, type) [FLEXProperty \
     getterWithImplementation:imp_implementationWithBlock(^(id self) { \
         return *(type *)[self getIvarAddressByName:ivarName]; \
     }) \
 ];
-/// Takes a \c FLEXProperty and a type (ie \c NSUInteger or \c id) and an Ivar name string to set the Ivar.
+
+/// Creates a setter method for a \c FLEXProperty using a named ivar.
+/// @param FLEXProperty The \c FLEXProperty instance.
+/// @param ivarName A string naming the backing ivar.
+/// @param type The C type of the property value.
 #define FLEXPropertySetterWithIvar(FLEXProperty, ivarName, type) [FLEXProperty \
     setterWithImplementation:imp_implementationWithBlock(^(id self, type value) { \
         [self setIvarByName:ivarName value:&value size:sizeof(type)]; \
@@ -136,3 +165,5 @@
 ];
 
 @end
+
+NS_ASSUME_NONNULL_END
