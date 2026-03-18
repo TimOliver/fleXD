@@ -70,8 +70,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 /// All views that we're KVOing. Used to help us clean up properly.
 @property (nonatomic) NSMutableSet<UIView *> *observedViews;
 
-/// Used to preserve the target app's UIMenuController items.
-@property (nonatomic) NSArray<UIMenuItem *> *appMenuItems;
 
 @end
 
@@ -588,9 +586,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 - (void)handleToolbarShowTabsGesture:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        // Back up the UIMenuController items since dismissViewController: will attempt to replace them
-        self.appMenuItems = UIMenuController.sharedMenuController.menuItems;
-        
         // Don't use FLEXNavigationController because the tab viewer itself is not a tab
         [super presentViewController:[[UINavigationController alloc]
             initWithRootViewController:[FLEXTabsViewController new]
@@ -600,9 +595,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 - (void)handleToolbarWindowManagerGesture:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        // Back up the UIMenuController items since dismissViewController: will attempt to replace them
-        self.appMenuItems = UIMenuController.sharedMenuController.menuItems;
-        
         [super presentViewController:[FLEXNavigationController
             withRootViewController:[FLEXWindowManagerController new]
         ] animated:YES completion:nil];
@@ -611,9 +603,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 - (void)handleToolbarShowViewControllersGesture:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan && self.viewsAtTapPoint.count) {
-        // Back up the UIMenuController items since dismissViewController: will attempt to replace them
-        self.appMenuItems = UIMenuController.sharedMenuController.menuItems;
-        
         UIViewController *list = [FLEXViewControllersViewController
             controllersForViews:self.viewsAtTapPoint
         ];
@@ -920,11 +909,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
         [self statusWindow].windowLevel = self.view.window.windowLevel + 1.0;
     }
     
-    // Back up and replace the UIMenuController items
-    // Edit: no longer replacing the items, but still backing them
-    // up in case we start replacing them again in the future
-    self.appMenuItems = UIMenuController.sharedMenuController.menuItems;
-    
     [self updateButtonStates];
     
     // Show the view controller
@@ -939,12 +923,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     UIWindow *appWindow = self.window.previousKeyWindow;
     [appWindow makeKeyWindow];
     [appWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
-    
-    // Restore previous UIMenuController items
-    // Back up and replace the UIMenuController items
-    UIMenuController.sharedMenuController.menuItems = self.appMenuItems;
-    [UIMenuController.sharedMenuController update];
-    self.appMenuItems = nil;
     
     // Restore the status bar window's normal window level.
     // We want it above FLEX while a modal is presented for

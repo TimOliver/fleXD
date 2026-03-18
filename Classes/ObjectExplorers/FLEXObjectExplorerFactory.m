@@ -142,8 +142,6 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
             return @"⏳  NSURLCache.sharedURLCache";
         case FLEXGlobalsRowNotificationCenter:
             return @"🔔  NSNotificationCenter.defaultCenter";
-        case FLEXGlobalsRowMenuController:
-            return @"📎  UIMenuController.sharedMenuController";
         case FLEXGlobalsRowFileManager:
             return @"🗄  NSFileManager.defaultManager";
         case FLEXGlobalsRowTimeZone:
@@ -188,8 +186,6 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
             return [self explorerViewControllerForObject:NSURLCache.sharedURLCache];
         case FLEXGlobalsRowNotificationCenter:
             return [self explorerViewControllerForObject:NSNotificationCenter.defaultCenter];
-        case FLEXGlobalsRowMenuController:
-            return [self explorerViewControllerForObject:UIMenuController.sharedMenuController];
         case FLEXGlobalsRowFileManager:
             return [self explorerViewControllerForObject:NSFileManager.defaultManager];
         case FLEXGlobalsRowTimeZone:

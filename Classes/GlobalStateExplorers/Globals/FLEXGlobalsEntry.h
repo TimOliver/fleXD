@@ -34,7 +34,6 @@ typedef NS_ENUM(NSUInteger, FLEXGlobalsRow) {
     FLEXGlobalsRowURLSession,
     FLEXGlobalsRowURLCache,
     FLEXGlobalsRowNotificationCenter,
-    FLEXGlobalsRowMenuController,
     FLEXGlobalsRowFileManager,
     FLEXGlobalsRowTimeZone,
     FLEXGlobalsRowLocale,

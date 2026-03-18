@@ -88,7 +88,6 @@
         case FLEXGlobalsRowURLSession:
         case FLEXGlobalsRowURLCache:
         case FLEXGlobalsRowNotificationCenter:
-        case FLEXGlobalsRowMenuController:
         case FLEXGlobalsRowFileManager:
         case FLEXGlobalsRowTimeZone:
         case FLEXGlobalsRowLocale:
@@ -140,7 +139,6 @@
                 [self globalsEntryForRow:FLEXGlobalsRowURLSession],
                 [self globalsEntryForRow:FLEXGlobalsRowURLCache],
                 [self globalsEntryForRow:FLEXGlobalsRowNotificationCenter],
-                [self globalsEntryForRow:FLEXGlobalsRowMenuController],
                 [self globalsEntryForRow:FLEXGlobalsRowFileManager],
                 [self globalsEntryForRow:FLEXGlobalsRowTimeZone],
                 [self globalsEntryForRow:FLEXGlobalsRowLocale],
