@@ -188,7 +188,7 @@
     [self.filterDelegate.sections[indexPath.section] didPressInfoButtonAction:indexPath.row](self);
 }
 
-- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point __IOS_AVAILABLE(13.0) {
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
     FLEXTableViewSection *section = self.filterDelegate.sections[indexPath.section];
     NSString *title = [section menuTitleForRow:indexPath.row];
     NSArray<UIMenuElement *> *menuItems = [section menuItemsForRow:indexPath.row sender:self];

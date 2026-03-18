@@ -339,33 +339,9 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
     }
 }
 
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UIMenuItem *rename = [[UIMenuItem alloc] initWithTitle:@"Rename" action:@selector(fileBrowserRename:)];
-    UIMenuItem *delete = [[UIMenuItem alloc] initWithTitle:@"Delete" action:@selector(fileBrowserDelete:)];
-    UIMenuItem *copyPath = [[UIMenuItem alloc] initWithTitle:@"Copy Path" action:@selector(fileBrowserCopyPath:)];
-    UIMenuItem *share = [[UIMenuItem alloc] initWithTitle:@"Share" action:@selector(fileBrowserShare:)];
-
-    UIMenuController.sharedMenuController.menuItems = @[rename, delete, copyPath, share];
-
-    return YES;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    return action == @selector(fileBrowserDelete:)
-        || action == @selector(fileBrowserRename:)
-        || action == @selector(fileBrowserCopyPath:)
-        || action == @selector(fileBrowserShare:);
-}
-
-- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    // Empty, but has to exist for the menu to show
-    // The table view only calls this method for actions in the UIResponderStandardEditActions informal protocol.
-    // Since our actions are outside of that protocol, we need to manually handle the action forwarding from the cells.
-}
-
 - (UIContextMenuConfiguration *)tableView:(UITableView *)tableView
 contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
-                                    point:(CGPoint)point __IOS_AVAILABLE(13.0) {
+                                    point:(CGPoint)point {
     weakify(self)
     return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil
         actionProvider:^UIMenu *(NSArray<UIMenuElement *> *suggestedActions) {
@@ -539,26 +515,5 @@ contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
 
 
 @implementation FLEXFileBrowserTableViewCell
-
-- (void)forwardAction:(SEL)action withSender:(id)sender {
-    id target = [self.nextResponder targetForAction:action withSender:sender];
-    [UIApplication.sharedApplication sendAction:action to:target from:self forEvent:nil];
-}
-
-- (void)fileBrowserRename:(UIMenuController *)sender {
-    [self forwardAction:_cmd withSender:sender];
-}
-
-- (void)fileBrowserDelete:(UIMenuController *)sender {
-    [self forwardAction:_cmd withSender:sender];
-}
-
-- (void)fileBrowserCopyPath:(UIMenuController *)sender {
-    [self forwardAction:_cmd withSender:sender];
-}
-
-- (void)fileBrowserShare:(UIMenuController *)sender {
-    [self forwardAction:_cmd withSender:sender];
-}
 
 @end

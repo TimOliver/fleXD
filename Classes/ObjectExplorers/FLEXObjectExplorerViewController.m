@@ -371,23 +371,22 @@
     return UITableViewAutomaticDimension;
 }
 
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return self.filterDelegate.sections[indexPath.section] == self.descriptionSection;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    // Only the description section has "actions"
-    if (self.filterDelegate.sections[indexPath.section] == self.descriptionSection) {
-        return action == @selector(copy:);
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView
+contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
+                                    point:(CGPoint)point {
+    if (self.filterDelegate.sections[indexPath.section] != self.descriptionSection) {
+        return nil;
     }
-
-    return NO;
-}
-
-- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    if (action == @selector(copy:)) {
-        UIPasteboard.generalPasteboard.string = self.explorer.objectDescription;
-    }
+    
+    id actionProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions) {
+        id copyAction = ^(UIAction *action) {
+            UIPasteboard.generalPasteboard.string = self.explorer.objectDescription;
+        };
+        UIAction *copy = [UIAction actionWithTitle:@"Copy" image:[UIImage systemImageNamed:@"doc.on.doc"] identifier:nil handler:copyAction];
+        return [UIMenu menuWithTitle:@"" children:@[copy]];
+    };
+    
+    return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:actionProvider];
 }
 
 @end

@@ -202,42 +202,16 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
 
 #pragma mark - Cell Copying
 
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    return action == @selector(copy:);
-}
-
-- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-    if (action == @selector(copy:)) {
-        FLEXNetworkDetailRow *row = [self rowModelAtIndexPath:indexPath];
-        UIPasteboard.generalPasteboard.string = row.detailText;
-    }
-}
-
-- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point __IOS_AVAILABLE(13.0) {
-    return [UIContextMenuConfiguration
-        configurationWithIdentifier:nil
-        previewProvider:nil
-        actionProvider:^UIMenu *(NSArray<UIMenuElement *> *suggestedActions) {
-            UIAction *copy = [UIAction
-                actionWithTitle:@"Copy"
-                image:nil
-                identifier:nil
-                handler:^(__kindof UIAction *action) {
-                    FLEXNetworkDetailRow *row = [self rowModelAtIndexPath:indexPath];
-                    UIPasteboard.generalPasteboard.string = row.detailText;
-                }
-            ];
-            return [UIMenu
-                menuWithTitle:@"" image:nil identifier:nil
-                options:UIMenuOptionsDisplayInline
-                children:@[copy]
-            ];
-        }
-    ];
+- (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
+    id actionProvider = ^UIMenu *(NSArray<UIMenuElement *> *suggestedActions) {
+        id handler = ^(__kindof UIAction *action) {
+            FLEXNetworkDetailRow *row = [self rowModelAtIndexPath:indexPath];
+            UIPasteboard.generalPasteboard.string = row.detailText;
+        };
+        UIAction *copy = [UIAction actionWithTitle:@"Copy" image:nil identifier:nil handler:handler];
+        return [UIMenu menuWithTitle:@"" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[copy]];
+    };
+    return [UIContextMenuConfiguration configurationWithIdentifier:nil previewProvider:nil actionProvider:actionProvider];
 }
 
 #pragma mark - View Configuration
