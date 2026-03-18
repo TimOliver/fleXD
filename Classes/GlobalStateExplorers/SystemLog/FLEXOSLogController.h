@@ -8,9 +8,7 @@
 
 #import "FLEXLogController.h"
 
-#define FLEXOSLogAvailable() (NSProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 10)
-
-/// The log controller used for iOS 10 and up.
+/// The system log controller backed by OSLogStore.
 @interface FLEXOSLogController : NSObject <FLEXLogController>
 
 + (instancetype)withUpdateHandler:(void(^)(NSArray<FLEXSystemLogMessage *> *newMessages))newMessagesHandler;

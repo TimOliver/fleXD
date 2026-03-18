@@ -111,10 +111,13 @@ static BOOL my_os_log_shim_enabled(void *addr) {
 
     // Toolbar buttons //
 
+    UIImage *scrollToTopIcon = [UIImage imageWithCGImage:FLEXResources.scrollToBottomIcon.CGImage
+                                                   scale:FLEXResources.scrollToBottomIcon.scale
+                                             orientation:UIImageOrientationDown];
     UIBarButtonItem *scrollDown = [UIBarButtonItem
-        flex_itemWithImage:FLEXResources.scrollToBottomIcon
+        flex_itemWithImage:scrollToTopIcon
         target:self
-        action:@selector(scrollToLastRow)
+        action:@selector(scrollToFirstRow)
     ];
     UIBarButtonItem *settings = [UIBarButtonItem
         flex_itemWithImage:FLEXResources.gearIcon
@@ -168,28 +171,23 @@ static BOOL my_os_log_shim_enabled(void *addr) {
     self.title = [self.class globalsEntryTitle:FLEXGlobalsRowSystemLog];
 
     [self.logMessages mutate:^(NSMutableArray *list) {
-        [list addObjectsFromArray:newMessages];
+        NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, newMessages.count)];
+        [list insertObjects:newMessages atIndexes:indexes];
     }];
-    
+
     // Re-filter messages to filter against new messages
     if (self.filterText.length) {
         [self updateSearchResults:self.filterText];
     }
 
-    // "Follow" the log as new messages stream in if we were previously near the bottom.
-    UITableView *tv = self.tableView;
-    BOOL wasNearBottom = tv.contentOffset.y >= tv.contentSize.height - tv.frame.size.height - 100.0;
     [self reloadData];
-    if (wasNearBottom) {
-        [self scrollToLastRow];
-    }
 }
 
-- (void)scrollToLastRow {
-    NSInteger numberOfRows = [self.tableView numberOfRowsInSection:0];
-    if (numberOfRows > 0) {
-        NSIndexPath *last = [NSIndexPath indexPathForRow:numberOfRows - 1 inSection:0];
-        [self.tableView scrollToRowAtIndexPath:last atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+- (void)scrollToFirstRow {
+    if ([self.tableView numberOfRowsInSection:0] > 0) {
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]
+                              atScrollPosition:UITableViewScrollPositionTop
+                                      animated:YES];
     }
 }
 

@@ -580,7 +580,7 @@
 		C34D4EB723A2B17900C1F903 /* FLEXBundleShortcuts.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEXBundleShortcuts.m; sourceTree = "<group>"; };
 		C34EE30621CB23CC00BD3A7C /* FLEXOSLogController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEXOSLogController.h; sourceTree = "<group>"; };
 		C34EE30721CB23CC00BD3A7C /* FLEXOSLogController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEXOSLogController.m; sourceTree = "<group>"; };
-		C34EE30A21CB249E00BD3A7C /* ActivityStreamAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityStreamAPI.h; sourceTree = "<group>"; };
+
 		C3511B8F22D7C99E0057BAB7 /* FLEXGlobalsSection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEXGlobalsSection.h; sourceTree = "<group>"; };
 		C3511B9022D7C99E0057BAB7 /* FLEXGlobalsSection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEXGlobalsSection.m; sourceTree = "<group>"; };
 		C3531B9B23E69BB200A184AD /* FLEXManager+Networking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FLEXManager+Networking.h"; sourceTree = "<group>"; };
@@ -997,7 +997,7 @@
 	
 				C34EE30621CB23CC00BD3A7C /* FLEXOSLogController.h */,
 				C34EE30721CB23CC00BD3A7C /* FLEXOSLogController.m */,
-				C34EE30A21CB249E00BD3A7C /* ActivityStreamAPI.h */,
+	
 			);
 			path = SystemLog;
 			sourceTree = "<group>";
