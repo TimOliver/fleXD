@@ -15,7 +15,7 @@
 }
 
 - (void)setFlex_continuousCorners:(BOOL)enabled {
-    self.cornerCurve = enabled ? kCACornerCurveContinuous : kCACornerCurveDefault;
+    self.cornerCurve = enabled ? kCACornerCurveContinuous : kCACornerCurveCircular;
 }
 
 @end
