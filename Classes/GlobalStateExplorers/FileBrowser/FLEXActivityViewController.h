@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Wraps UIActivityViewController so that it can't dismiss other view controllers
 @interface FLEXActivityViewController : UIActivityViewController
 
-/// @param source A \c UIVIew, \c UIBarButtonItem, or \c NSValue representing a source rect.
+/// @param source A `UIVIew` `UIBarButtonItem` or `NSValue` representing a source rect.
 + (id)sharing:(NSArray *)items source:(nullable id)source;
 
 @end

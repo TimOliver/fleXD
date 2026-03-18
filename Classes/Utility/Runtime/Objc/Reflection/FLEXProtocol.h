@@ -13,7 +13,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - FLEXProtocol
-/// Wraps an Objective-C \c Protocol object, providing a convenient interface
+/// Wraps an Objective-C `Protocol` object, providing a convenient interface
 /// for inspecting its methods, properties, and conformances.
 @interface FLEXProtocol : NSObject
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// All protocols that this protocol conforms to, if any.
 @property (nonatomic, readonly) NSArray<FLEXProtocol *> *protocols;
 /// The full path of the image that contains this protocol definition,
-/// or \c nil if this protocol was probably defined at runtime.
+/// or `nil` if this protocol was probably defined at runtime.
 @property (nonatomic, readonly, nullable) NSString *imagePath;
 
 /// The required properties in the protocol, if any.
@@ -44,8 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// For internal use
 @property (nonatomic) id tag;
 
-/// Not to be confused with \c -conformsToProtocol:, which refers to the current
-/// \c FLEXProtocol instance and not the underlying \c Protocol object.
+/// Not to be confused with `-conformsToProtocol:` which refers to the current
+/// `FLEXProtocol` instance and not the underlying `Protocol` object.
 - (BOOL)conformsTo:(Protocol *)protocol;
 
 @end
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *typeEncoding;
 /// The method's return type.
 @property (nonatomic, readonly) FLEXTypeEncoding returnType;
-/// \c YES if this is an instance method, \c NO if it is a class method, or \c nil if unspecified
+/// `YES` if this is an instance method, `NO` if it is a class method, or `nil` if unspecified
 @property (nonatomic, readonly) NSNumber *instance;
 @end
 

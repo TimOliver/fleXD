@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param rowIDs an array of stringy row IDs. Required for deleting rows.
 /// @param tableName an optional name of the table being viewed, if any. Enables adding rows.
 /// @param databaseManager an optional manager to allow modifying the table.
-///        Required for deleting rows. Required for adding rows if \c tableName is supplied.
+///        Required for deleting rows. Required for adding rows if `tableName` is supplied.
 + (instancetype)columns:(NSArray<NSString *> *)columnNames
                    rows:(NSArray<NSArray<NSString *> *> *)rowData
                  rowIDs:(NSArray<NSString *> *)rowIDs

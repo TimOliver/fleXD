@@ -58,18 +58,18 @@ typedef void (^FLEXGlobalsEntryRowAction)(__kindof UITableViewController * _Nonn
 /// With this protocol, the conforming class itself can act as a future, since the methods
 /// will not be invoked until the title and view controller / row action are needed.
 ///
-/// Entries can implement \c globalsEntryViewController: to unconditionally provide a
-/// view controller, or \c globalsEntryRowAction: to conditionally provide one and
+/// Entries can implement `globalsEntryViewController:` to unconditionally provide a
+/// view controller, or `globalsEntryRowAction:` to conditionally provide one and
 /// perform some action (such as present an alert) if no view controller is available,
 /// or both if there is a mix of rows where some are guaranteed to work and some are not.
-/// Where both are implemented, \c globalsEntryRowAction: takes precedence; if it returns
-/// an action for the requested row, that will be used instead of \c globalsEntryViewController:
+/// Where both are implemented, `globalsEntryRowAction:` takes precedence; if it returns
+/// an action for the requested row, that will be used instead of `globalsEntryViewController:`
 @protocol FLEXGlobalsEntry <NSObject>
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row;
 
 /// Must respond to at least one of the following.
-/// If both are implemented, \c globalsEntryRowAction: takes precedence.
+/// If both are implemented, `globalsEntryRowAction:` takes precedence.
 @optional
 
 + (nullable UIViewController *)globalsEntryViewController:(FLEXGlobalsRow)row;

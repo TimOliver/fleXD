@@ -18,14 +18,14 @@ typedef void (^FLEXMutableListCellForElement)(__kindof UITableViewCell *cell, id
 /// section, without the overhead of creating a dedicated section subclass.
 ///
 /// To support editing or inserting rows, implement the appropriate table view delegate
-/// methods in your view controller and call \c mutate: or \c setList: before updating
+/// methods in your view controller and call `mutate:` or `setList:` before updating
 /// the table view.
 ///
-/// By default, no section title is shown. Assign one using the \c customTitle property.
+/// By default, no section title is shown. Assign one using the `customTitle` property.
 ///
-/// By default, \c kFLEXDetailCell is used as the reuse identifier. To use multiple reuse
+/// By default, `kFLEXDetailCell` is used as the reuse identifier. To use multiple reuse
 /// identifiers within a single section, dequeue and configure cells yourself in
-/// \c -tableView:cellForRowAtIndexPath: and call \c -configureCell:forRow: on this section.
+/// `-tableView:cellForRowAtIndexPath:` and call `-configureCell:forRow:` on this section.
 @interface FLEXMutableListSection<__covariant ObjectType> : FLEXCollectionContentSection
 
 /// Creates a section with the given list, cell configuration block, and filter matcher.
@@ -38,7 +38,7 @@ typedef void (^FLEXMutableListCellForElement)(__kindof UITableViewCell *cell, id
 
 /// The full, unfiltered list of objects in this section.
 @property (nonatomic) NSArray<ObjectType> *list;
-/// The subset of \c list that passes the current filter, if any.
+/// The subset of `list` that passes the current filter, if any.
 @property (nonatomic, readonly) NSArray<ObjectType> *filteredList;
 
 /// The cell registration mapping for this section.
@@ -47,7 +47,7 @@ typedef void (^FLEXMutableListCellForElement)(__kindof UITableViewCell *cell, id
 /// If your section requires multiple reuse identifiers, consider a custom section subclass.
 @property (nonatomic, readwrite) NSDictionary<NSString *, Class> *cellRegistrationMapping;
 
-/// Mutates the full list and updates \c filteredList accordingly.
+/// Mutates the full list and updates `filteredList` accordingly.
 - (void)mutate:(void(^)(NSMutableArray *list))block;
 
 @end

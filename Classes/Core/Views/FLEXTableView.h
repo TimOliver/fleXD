@@ -14,21 +14,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NSString * FLEXTableViewCellReuseIdentifier;
 
-/// A regular \c FLEXTableViewCell initialized with \c UITableViewCellStyleDefault
+/// A regular `FLEXTableViewCell` initialized with `UITableViewCellStyleDefault`
 extern FLEXTableViewCellReuseIdentifier const kFLEXDefaultCell;
-/// A \c FLEXSubtitleTableViewCell initialized with \c UITableViewCellStyleSubtitle
+/// A `FLEXSubtitleTableViewCell` initialized with `UITableViewCellStyleSubtitle`
 extern FLEXTableViewCellReuseIdentifier const kFLEXDetailCell;
-/// A \c FLEXMultilineTableViewCell initialized with \c UITableViewCellStyleDefault
+/// A `FLEXMultilineTableViewCell` initialized with `UITableViewCellStyleDefault`
 extern FLEXTableViewCellReuseIdentifier const kFLEXMultilineCell;
-/// A \c FLEXMultilineTableViewCell initialized with \c UITableViewCellStyleSubtitle
+/// A `FLEXMultilineTableViewCell` initialized with `UITableViewCellStyleSubtitle`
 extern FLEXTableViewCellReuseIdentifier const kFLEXMultilineDetailCell;
-/// A \c FLEXTableViewCell initialized with \c UITableViewCellStyleValue1
+/// A `FLEXTableViewCell` initialized with `UITableViewCellStyleValue1`
 extern FLEXTableViewCellReuseIdentifier const kFLEXKeyValueCell;
-/// A \c FLEXSubtitleTableViewCell which uses monospaced fonts for both labels
+/// A `FLEXSubtitleTableViewCell` which uses monospaced fonts for both labels
 extern FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell;
 
 #pragma mark - FLEXTableView
-/// A \c UITableView subclass that pre-registers FLEX's default cell reuse identifiers.
+/// A `UITableView` subclass that pre-registers FLEX's default cell reuse identifiers.
 @interface FLEXTableView : UITableView
 
 /// Creates an inset-grouped table view.
@@ -41,11 +41,11 @@ extern FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell;
 + (instancetype)style:(UITableViewStyle)style;
 
 /// You do not need to register classes for any of the default reuse identifiers above
-/// (annotated as \c FLEXTableViewCellReuseIdentifier types) unless you wish to provide
-/// a custom cell for any of those reuse identifiers. By default, \c FLEXTableViewCell,
-/// \c FLEXSubtitleTableViewCell, and \c FLEXMultilineTableViewCell are used, respectively.
+/// (annotated as `FLEXTableViewCellReuseIdentifier` types) unless you wish to provide
+/// a custom cell for any of those reuse identifiers. By default, `FLEXTableViewCell`
+/// `FLEXSubtitleTableViewCell` and `FLEXMultilineTableViewCell` are used, respectively.
 ///
-/// @param registrationMapping A map of reuse identifiers to \c UITableViewCell (sub)class objects.
+/// @param registrationMapping A map of reuse identifiers to `UITableViewCell` (sub)class objects.
 - (void)registerCells:(NSDictionary<NSString *, Class> *)registrationMapping;
 
 @end

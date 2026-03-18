@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// A \c FLEXMultilineTableViewCell initialized with \c UITableViewCellStyleSubtitle.
+/// A `FLEXMultilineTableViewCell` initialized with `UITableViewCellStyleSubtitle`
 @interface FLEXMultilineDetailTableViewCell : FLEXMultilineTableViewCell
 
 @end

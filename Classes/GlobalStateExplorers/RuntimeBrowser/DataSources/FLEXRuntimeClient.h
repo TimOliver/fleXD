@@ -14,18 +14,18 @@
 
 @property (nonatomic, readonly, class) FLEXRuntimeClient *runtime;
 
-/// Called automatically when \c FLEXRuntime is first used.
+/// Called automatically when `FLEXRuntime` is first used.
 /// You may call it again when you think a library has
 /// been loaded since this method was first called.
 - (void)reloadLibrariesList;
 
 /// You must call this method on the main thread
-/// before you attempt to call \c copySafeClassList.
+/// before you attempt to call `copySafeClassList`
 + (void)initializeWebKitLegacy;
 
 /// Do not call unless you absolutely need all classes. This will cause
 /// every class in the runtime to initialize itself, which is not common.
-/// Before you call this method, call \c initializeWebKitLegacy on the main thread.
+/// Before you call this method, call `initializeWebKitLegacy` on the main thread.
 - (NSArray<Class> *)copySafeClassList;
 
 - (NSArray<Protocol *> *)copyProtocolList;
@@ -45,7 +45,7 @@
 /// @return Class names
 - (NSMutableArray<NSString *> *)classesForToken:(FLEXSearchToken *)token
                                       inBundles:(NSMutableArray<NSString *> *)bundlePaths;
-/// @return A list of lists of \c FLEXMethods where
+/// @return A list of lists of `FLEXMethods` where
 /// each list corresponds to one of the given classes
 - (NSArray<NSMutableArray<FLEXMethod *> *> *)methodsForToken:(FLEXSearchToken *)token
                                                     instance:(NSNumber *)onlyInstanceMethods

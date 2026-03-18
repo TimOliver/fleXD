@@ -23,7 +23,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 @protocol FLEXSearchResultsUpdating <NSObject>
 /// A method to handle search query update events.
 ///
-/// \c searchBarDebounceInterval is used to reduce the frequency at which this
+/// `searchBarDebounceInterval` is used to reduce the frequency at which this
 /// method is called. This method is also called when the search bar becomes
 /// the first responder, and when the selected search bar scope index changes.
 - (void)updateSearchResults:(NSString *)newText;
@@ -35,18 +35,18 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 
 /// A grouped table view. Inset on iOS 13.
 ///
-/// Simply calls into \c initWithStyle:
+/// Simply calls into `initWithStyle:`
 - (id)init;
 
-/// Subclasses may override to configure the controller before \c viewDidLoad:
+/// Subclasses may override to configure the controller before `viewDidLoad:`
 - (id)initWithStyle:(UITableViewStyle)style;
 
 @property (nonatomic) FLEXTableView *tableView;
 
-/// If your subclass conforms to \c FLEXSearchResultsUpdating
-/// then this property is assigned to \c self automatically.
+/// If your subclass conforms to `FLEXSearchResultsUpdating`
+/// then this property is assigned to `self` automatically.
 ///
-/// Setting \c filterDelegate will also set this property to that object.
+/// Setting `filterDelegate` will also set this property to that object.
 @property (nonatomic, weak) id<FLEXSearchResultsUpdating> searchDelegate;
 
 /// Defaults to NO.
@@ -112,7 +112,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 /// If a delegate is set, updateSearchResults: is not called on this view controller.
 @property (nonatomic, weak) id<FLEXSearchResultsUpdating> searchResultsUpdater;
 
-/// self.view.window as a \c FLEXWindow
+/// self.view.window as a `FLEXWindow`
 @property (nonatomic, readonly) FLEXWindow *window;
 
 /// Convenient for doing some async processor-intensive searching
@@ -126,8 +126,8 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 ///
 /// If you wish to have more control over how the buttons are arranged or which
 /// buttons are displayed, you can access the properties for the pre-existing
-/// toolbar items directly and manually set \c self.toolbarItems by overriding
-/// the \c setupToolbarItems method below.
+/// toolbar items directly and manually set `self.toolbarItems` by overriding
+/// the `setupToolbarItems` method below.
 - (void)addToolbarItems:(NSArray<UIBarButtonItem *> *)items;
 
 /// Subclasses may override. You should not need to call this method directly.

@@ -18,14 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A class that displays information about an object or class.
 ///
-/// The explorer view controller uses \c FLEXObjectExplorer to provide a description
+/// The explorer view controller uses `FLEXObjectExplorer` to provide a description
 /// of the object and list its properties, ivars, methods, and superclasses.
 /// Below the description and before properties, some shortcuts will be displayed
 /// for certain classes like UIViews. At very bottom, there is an option to view
 /// a list of other objects found to be referencing the object being explored.
 @interface FLEXObjectExplorerViewController : FLEXFilteringTableViewController
 
-/// Uses the default \c FLEXShortcutsSection for this object as a custom section.
+/// Uses the default `FLEXShortcutsSection` for this object as a custom section.
 + (instancetype)exploringObject:(id)objectOrClass;
 /// No custom section unless you provide one.
 + (instancetype)exploringObject:(id)objectOrClass customSection:(nullable FLEXTableViewSection *)customSection;

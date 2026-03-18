@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A single-row section that displays a color swatch preview for a \c UIColor.
+/// A single-row section that displays a color swatch preview for a `UIColor`
 @interface FLEXColorPreviewSection : FLEXSingleRowSection <FLEXObjectInfoSection>
 
 + (instancetype)forObject:(UIColor *)color;

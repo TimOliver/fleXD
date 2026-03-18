@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// A block that creates and returns a view controller for displaying
-/// custom content of the given type, or \c nil if the content cannot be displayed.
+/// custom content of the given type, or `nil` if the content cannot be displayed.
 typedef UIViewController * _Nullable (^FLEXCustomContentViewerFuture)(NSData *data);
 
 /// The primary interface for configuring and controlling FLEX.
@@ -50,7 +50,7 @@ typedef UIViewController * _Nullable (^FLEXCustomContentViewerFuture)(NSData *da
 /// Presents a custom navigation controller on top of the FLEX toolbar.
 ///
 /// Any currently presented tool is automatically dismissed first,
-/// so you do not need to call \c dismissAnyPresentedTools: beforehand.
+/// so you do not need to call `dismissAnyPresentedTools:` beforehand.
 - (void)presentTool:(UINavigationController *(^)(void))viewControllerFuture
          completion:(void (^_Nullable)(void))completion;
 
@@ -66,7 +66,7 @@ typedef UIViewController * _Nullable (^FLEXCustomContentViewerFuture)(NSData *da
 
 #pragma mark - Miscellaneous
 
-/// The password used when opening SQLite databases. Defaults to \c nil.
+/// The password used when opening SQLite databases. Defaults to `nil`
 @property (copy, nonatomic) NSString *defaultSqliteDatabasePassword;
 
 @end

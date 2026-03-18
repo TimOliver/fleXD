@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) FLEXArgumentInputView *firstInputView;
 
 @property (nonatomic, readonly) FLEXFieldEditorView *fieldEditorView;
-/// Subclasses can change the button title via the button's \c title property
+/// Subclasses can change the button title via the button's `title` property
 @property (nonatomic, readonly) UIBarButtonItem *actionButton;
 
 /// Subclasses should override to provide "set" functionality.

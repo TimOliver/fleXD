@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A \c UIButton subclass used as a toolbar item in the FLEX explorer toolbar.
+/// A `UIButton` subclass used as a toolbar item in the FLEX explorer toolbar.
 ///
 /// Toolbar items support a "sibling" item concept: when a toolbar item becomes
 /// disabled, it can automatically swap itself out for a sibling item in the toolbar.
@@ -29,18 +29,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// When a toolbar item has a sibling and it becomes disabled, the sibling is the view
 /// that should be added to or removed from a new or existing toolbar. This property
-/// alleviates the programmer from determining whether to use \c item or \c item.sibling
-/// or \c item.sibling.sibling and so on. Yes, sibling items can also have siblings so
+/// alleviates the programmer from determining whether to use `item` or `item.sibling`
+/// or `item.sibling.sibling` and so on. Yes, sibling items can also have siblings so
 /// that each item which becomes disabled may present another item in its place, creating
 /// a "stack" of toolbar items. This behavior is useful for making buttons which occupy
 /// the same space under different states.
 ///
 /// With this in mind, you should never access a stored toolbar item's view properties
-/// such as \c frame or \c superview directly; you should access them on \c currentItem.
+/// such as `frame` or `superview` directly; you should access them on `currentItem`
 /// If you are trying to modify the frame of an item, and the item itself is not currently
 /// displayed but instead its sibling is being displayed, then your changes could be ignored.
 ///
-/// @return the result of the item's sibling's \c currentItem,
+/// @return the result of the item's sibling's `currentItem`
 /// if this item has a sibling and this item is disabled, otherwise this item.
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *currentItem;
 

@@ -22,12 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
                 reuse:(nullable NSString *)reuseIdentifier
                  cell:(void(^)(__kindof UITableViewCell *cell))cellConfiguration;
 
-/// A view controller to push when the row is selected. Takes precedence over \c selectionAction.
+/// A view controller to push when the row is selected. Takes precedence over `selectionAction`
 @property (nullable, nonatomic) UIViewController *pushOnSelection;
-/// An action block to invoke when the row is selected, if \c pushOnSelection is nil.
+/// An action block to invoke when the row is selected, if `pushOnSelection` is nil.
 @property (nullable, nonatomic) void (^selectionAction)(UIViewController *host);
 /// Called with the current filter text to determine whether the single row should be visible.
-/// If \c nil, the row is always visible.
+/// If `nil` the row is always visible.
 @property (nonatomic, nullable) BOOL (^filterMatcher)(NSString *filterText);
 
 @end

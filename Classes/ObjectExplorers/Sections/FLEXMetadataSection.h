@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// The kind of Objective-C runtime metadata displayed by a \c FLEXMetadataSection.
+/// The kind of Objective-C runtime metadata displayed by a `FLEXMetadataSection`
 typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
     FLEXMetadataKindProperties = 1,
     FLEXMetadataKindClassProperties,
@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger, FLEXMetadataKind) {
 /// A set of metadata names to exclude from this section.
 ///
 /// Use this to group specific properties or methods into a separate, dedicated section.
-/// Setting this property calls \c reloadData on the section.
+/// Setting this property calls `reloadData` on the section.
 @property (nonatomic) NSSet<NSString *> *excludedMetadata;
 
 @end

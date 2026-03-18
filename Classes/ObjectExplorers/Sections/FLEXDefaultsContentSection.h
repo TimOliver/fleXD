@@ -11,21 +11,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A collection section for browsing the contents of an \c NSUserDefaults suite.
+/// A collection section for browsing the contents of an `NSUserDefaults` suite.
 @interface FLEXDefaultsContentSection : FLEXCollectionContentSection <FLEXObjectInfoSection>
 
-/// Creates a section backed by \c NSUserDefaults.standardUserDefaults.
+/// Creates a section backed by `NSUserDefaults.standardUserDefaults`
 + (instancetype)standard;
 
-/// Creates a section backed by the given \c NSUserDefaults suite.
+/// Creates a section backed by the given `NSUserDefaults` suite.
 + (instancetype)forDefaults:(NSUserDefaults *)userDefaults;
 
 /// Whether to filter out keys not present in the app's own defaults file.
 ///
 /// When enabled, system-injected keys that appear in every app's user defaults
 /// but are never written by the app itself are hidden.
-/// Only applies to instances using \c NSUserDefaults.standardUserDefaults.
-/// Enabled by default for \c standard instances; opt out explicitly if needed.
+/// Only applies to instances using `NSUserDefaults.standardUserDefaults`
+/// Enabled by default for `standard` instances; opt out explicitly if needed.
 @property (nonatomic) BOOL onlyShowKeysForAppPrefs;
 
 @end

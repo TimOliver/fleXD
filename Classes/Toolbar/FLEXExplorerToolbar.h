@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *hierarchyItem;
 
 /// Toolbar item for moving views.
-/// Its \c sibling is the \c lastTabItem
+/// Its `sibling` is the `lastTabItem`
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *moveItem;
 
 /// Toolbar item for presenting the currently active tab.

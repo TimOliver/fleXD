@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, FLEXRuntimeUtilityErrorCode) {
 
 #pragma mark - General Helpers
 
-/// Calls into \c FLEXPointerIsValidObjcObject()
+/// Calls into `FLEXPointerIsValidObjcObject()`
 + (BOOL)pointerIsValidObjcObject:(const void *)pointer;
 /// Unwraps raw pointers to objects stored in NSValue, and re-boxes C strings into NSStrings.
 + (id)potentiallyUnwrapBoxedPointer:(id)returnedObjectOrNil type:(const FLEXTypeEncoding *)returnType;

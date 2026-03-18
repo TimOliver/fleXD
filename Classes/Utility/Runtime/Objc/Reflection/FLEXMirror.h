@@ -21,11 +21,11 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 /// @throws If a metaclass object is passed in.
 - (instancetype)initWithSubject:(id)objectOrClass NS_SWIFT_NAME(init(reflecting:));
 
-/// The underlying object or \c Class used to create this \c FLEXMirror.
+/// The underlying object or `Class` used to create this `FLEXMirror`
 @property (nonatomic, readonly) id   value;
-/// Whether \c value was a class or a class instance.
+/// Whether `value` was a class or a class instance.
 @property (nonatomic, readonly) BOOL isClass;
-/// The name of the \c Class of the \c value property.
+/// The name of the `Class` of the `value` property.
 @property (nonatomic, readonly) NSString *className;
 
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *properties;
@@ -45,25 +45,25 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 @end
 
 #pragma mark - FLEXMirror Class
-/// A concrete implementation of the \c FLEXMirror protocol.
+/// A concrete implementation of the `FLEXMirror` protocol.
 ///
-/// \c FLEXMirror eagerly gathers all metadata at initialization time.
+/// `FLEXMirror` eagerly gathers all metadata at initialization time.
 /// For cases where you only need a small subset of that metadata,
-/// consider using the \c NSObject (FLEX_Reflection) categories instead.
+/// consider using the `NSObject` (FLEX_Reflection) categories instead.
 @interface FLEXMirror : NSObject <FLEXMirror>
 
-/// Reflects an instance of an object or \c Class.
-/// @discussion \c FLEXMirror will immediately gather all useful information. Consider using the
-/// \c NSObject categories provided if your code will only use a few pieces of information,
+/// Reflects an instance of an object or `Class`
+/// @discussion `FLEXMirror` will immediately gather all useful information. Consider using the
+/// `NSObject` categories provided if your code will only use a few pieces of information,
 /// or if your code needs to run faster.
 ///
-/// Regardless of whether you reflect an instance or a class object, \c methods and \c properties
-/// will be populated with instance methods and properties, and \c classMethods and \c classProperties
+/// Regardless of whether you reflect an instance or a class object, `methods` and `properties`
+/// will be populated with instance methods and properties, and `classMethods` and `classProperties`
 /// will be populated with class methods and properties.
 ///
-/// @param objectOrClass An instance of an object or a \c Class object.
+/// @param objectOrClass An instance of an object or a `Class` object.
 /// @throws If a metaclass object is passed in.
-/// @return An instance of \c FLEXMirror.
+/// @return An instance of `FLEXMirror`
 + (instancetype)reflect:(id)objectOrClass;
 
 @property (nonatomic, readonly) id   value;
@@ -84,17 +84,17 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 
 @interface FLEXMirror (ExtendedMirror)
 
-/// @return The instance method with the given name, or \c nil if one does not exist.
+/// @return The instance method with the given name, or `nil` if one does not exist.
 - (nullable FLEXMethod *)methodNamed:(nullable NSString *)name;
-/// @return The class method with the given name, or \c nil if one does not exist.
+/// @return The class method with the given name, or `nil` if one does not exist.
 - (nullable FLEXMethod *)classMethodNamed:(nullable NSString *)name;
-/// @return The instance property with the given name, or \c nil if one does not exist.
+/// @return The instance property with the given name, or `nil` if one does not exist.
 - (nullable FLEXProperty *)propertyNamed:(nullable NSString *)name;
-/// @return The class property with the given name, or \c nil if one does not exist.
+/// @return The class property with the given name, or `nil` if one does not exist.
 - (nullable FLEXProperty *)classPropertyNamed:(nullable NSString *)name;
-/// @return The instance variable with the given name, or \c nil if one does not exist.
+/// @return The instance variable with the given name, or `nil` if one does not exist.
 - (nullable FLEXIvar *)ivarNamed:(nullable NSString *)name;
-/// @return The protocol with the given name, or \c nil if one does not exist.
+/// @return The protocol with the given name, or `nil` if one does not exist.
 - (nullable FLEXProtocol *)protocolNamed:(nullable NSString *)name;
 
 @end

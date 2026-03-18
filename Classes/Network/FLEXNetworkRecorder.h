@@ -37,7 +37,7 @@ typedef NS_ENUM(NSUInteger, FLEXNetworkTransactionKind) {
 
 @property (nonatomic) NSMutableArray<NSString *> *hostDenylist;
 
-/// Call this after adding to or setting the \c hostDenylist to remove excluded transactions
+/// Call this after adding to or setting the `hostDenylist` to remove excluded transactions
 - (void)clearExcludedTransactions;
 
 /// Call this to save the denylist to the disk to be loaded next time

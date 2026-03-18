@@ -15,16 +15,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)canEdit:(BOOL)editable wantsPreviews:(BOOL)showPreviews;
 
-/// \c YES for properties and ivars that support editing, \c NO otherwise.
+/// `YES` for properties and ivars that support editing, `NO` otherwise.
 @property (nonatomic, readonly) BOOL isEditable;
-/// \c YES to show live value previews for properties and ivars, \c NO otherwise.
+/// `YES` to show live value previews for properties and ivars, `NO` otherwise.
 @property (nonatomic, readonly) BOOL wantsDynamicPreviews;
 
 @end
 
 
 /// Provides the runtime metadata for a given object or class,
-/// used to populate the sections of an \c FLEXObjectExplorerViewController.
+/// used to populate the sections of an `FLEXObjectExplorerViewController`
 @interface FLEXObjectExplorer : NSObject
 
 + (instancetype)forObject:(id)objectOrClass;
@@ -36,14 +36,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// A human-readable description of the object. Subclasses can override for more detail.
 @property (nonatomic, readonly) NSString *objectDescription;
 
-/// \c YES if \c object is a class instance, \c NO if it is a class itself.
+/// `YES` if `object` is a class instance, `NO` if it is a class itself.
 @property (nonatomic, readonly) BOOL objectIsInstance;
 
-/// The index of the selected class scope within \c classHierarchy.
+/// The index of the selected class scope within `classHierarchy`
 ///
 /// This determines which set of data is returned by the metadata properties.
-/// For example, \c properties returns the properties of the selected class scope,
-/// while \c allProperties contains one array per class in the hierarchy.
+/// For example, `properties` returns the properties of the selected class scope,
+/// while `allProperties` contains one array per class in the hierarchy.
 @property (nonatomic) NSInteger classScope;
 
 @property (nonatomic, readonly) NSArray<NSArray<FLEXProperty *> *> *allProperties;

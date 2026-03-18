@@ -25,7 +25,7 @@ extern NSString * const kFLEXDefaultsAPNSCaptureEnabledKey;
 extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
 /// Typed accessors for FLEX's user defaults preferences.
-/// All \c BOOL preferences default to \c NO.
+/// All `BOOL` preferences default to `NO`
 @interface NSUserDefaults (FLEX)
 
 /// Toggles the boolean value stored for the given key.
@@ -47,9 +47,9 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 /// The index of the last selected screen in the network observer.
 @property (nonatomic) NSInteger flex_lastNetworkObserverMode;
 
-/// Whether to disable \c os_log and re-enable ASL. May affect Console.app output.
+/// Whether to disable `os_log` and re-enable ASL. May affect Console.app output.
 @property (nonatomic) BOOL flex_disableOSLog;
-/// Whether to cache \c os_log messages for display in the system log viewer.
+/// Whether to cache `os_log` messages for display in the system log viewer.
 @property (nonatomic) BOOL flex_cacheOSLogMessages;
 
 /// Whether APNS push notification capture is enabled.

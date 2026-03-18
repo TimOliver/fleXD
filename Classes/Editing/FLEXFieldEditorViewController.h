@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @return nil if the ivar type is unsupported
 + (nullable instancetype)target:(id)target ivar:(FLEXIvar *)ivar commitHandler:(void(^_Nullable)(void))onCommit;
 
-/// Subclasses can change the button title via the \c title property
+/// Subclasses can change the button title via the `title` property
 @property (nonatomic, readonly) UIBarButtonItem *getterButton;
 
 - (void)getterButtonPressed:(id)sender;

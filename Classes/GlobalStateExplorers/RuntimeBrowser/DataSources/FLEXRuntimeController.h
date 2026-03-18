@@ -16,14 +16,14 @@
 + (NSArray *)dataForKeyPath:(FLEXRuntimeKeyPath *)keyPath;
 
 /// Useful when you need to specify which classes to search in.
-/// \c dataForKeyPath: will only search classes matching the class key.
+/// `dataForKeyPath:` will only search classes matching the class key.
 /// We use this elsewhere when we need to search a class hierarchy.
 + (NSArray<NSArray<FLEXMethod *> *> *)methodsForToken:(FLEXSearchToken *)token
                                              instance:(NSNumber *)onlyInstanceMethods
                                             inClasses:(NSArray<NSString*> *)classes;
 
 /// Useful when you need the classes that are associated with the
-/// double list of methods returned from \c dataForKeyPath
+/// double list of methods returned from `dataForKeyPath`
 + (NSMutableArray<NSString *> *)classesForKeyPath:(FLEXRuntimeKeyPath *)keyPath;
 
 + (NSString *)shortBundleNameForClass:(NSString *)name;

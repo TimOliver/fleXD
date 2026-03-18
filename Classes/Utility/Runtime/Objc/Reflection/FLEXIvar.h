@@ -11,14 +11,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Wraps an Objective-C \c Ivar data structure, providing a convenient interface
+/// Wraps an Objective-C `Ivar` data structure, providing a convenient interface
 /// for reading and writing instance variable values on an arbitrary object.
 @interface FLEXIvar : NSObject
 
 + (instancetype)ivar:(Ivar)ivar;
 + (instancetype)named:(NSString *)name onClass:(Class)cls;
 
-/// The underlying \c Ivar data structure.
+/// The underlying `Ivar` data structure.
 @property (nonatomic, readonly) Ivar             objc_ivar;
 
 /// The name of the instance variable.
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Describes the type encoding, size, offset, and objc_ivar
 @property (nonatomic, readonly) NSString        *details;
 /// The full path of the image that contains this ivar definition,
-/// or \c nil if this ivar was probably defined at runtime.
+/// or `nil` if this ivar was probably defined at runtime.
 @property (nonatomic, readonly, nullable) NSString *imagePath;
 
 /// For internal use
@@ -43,8 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable id)getValue:(id)target;
 - (void)setValue:(nullable id)value onObject:(id)target;
 
-/// Like \c getValue:, but passes the result through
-/// \c -[FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:type:],
+/// Like `getValue:` but passes the result through
+/// `-[FLEXRuntimeUtility potentiallyUnwrapBoxedPointer:type:]`,
 /// which unwraps boxed pointer types where possible.
 - (nullable id)getPotentiallyUnboxedValue:(id)target;
 

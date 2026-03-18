@@ -18,7 +18,7 @@
 @property (nonatomic, readonly) FLEXTypeEncoding flex_pointeeType;
 /// @return whether this type is an objc object of any kind, even if it's const
 @property (nonatomic, readonly) BOOL flex_typeIsObjectOrClass;
-/// @return the class named in this type encoding if it is of the form \c @"MYClass"
+/// @return the class named in this type encoding if it is of the form `@"MYClass"`
 @property (nonatomic, readonly) Class flex_typeClass;
 /// Includes C strings and selectors as well as regular pointers
 @property (nonatomic, readonly) BOOL flex_typeIsNonObjcPointer;

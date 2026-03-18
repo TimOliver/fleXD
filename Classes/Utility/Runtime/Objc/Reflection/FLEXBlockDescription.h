@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param block Any Objective-C block object.
 + (instancetype)describing:(id)block;
 
-/// The method signature of the block, if it has one, derived from \c FLEXBlockOptionHasSignature.
+/// The method signature of the block, if it has one, derived from `FLEXBlockOptionHasSignature`
 @property (nonatomic, readonly, nullable) NSMethodSignature *signature;
 /// A human-readable string representation of the block's signature, if available.
 @property (nonatomic, readonly, nullable) NSString *signatureString;
@@ -55,10 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSUInteger size;
 /// A human-readable summary of the block's attributes.
 @property (nonatomic, readonly) NSString *summary;
-/// The original block object passed to \c +describing:
+/// The original block object passed to `+describing:`
 @property (nonatomic, readonly) id block;
 
-/// @return \c YES if the block's signature is compatible with the given method signature
+/// @return `YES` if the block's signature is compatible with the given method signature
 /// for the purpose of block-based method swizzling.
 - (BOOL)isCompatibleForBlockSwizzlingWithMethodSignature:(NSMethodSignature *)methodSignature;
 

@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A \c UINavigationController subclass used by FLEX for presenting tools.
+/// A `UINavigationController` subclass used by FLEX for presenting tools.
 @interface FLEXNavigationController : UINavigationController
 
 /// Creates and returns a new navigation controller with the given root view controller.

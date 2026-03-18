@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A table view cell initialized with \c UITableViewCellStyleValue1, which displays
+/// A table view cell initialized with `UITableViewCellStyleValue1` which displays
 /// the title on the left edge and the subtitle in smaller text on the right edge.
 @interface FLEXKeyValueTableViewCell : FLEXTableViewCell
 

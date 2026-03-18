@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSArray<UINavigationController *> *openTabs;
 /// Snapshots of each tab when they were last active.
 @property (nonatomic, readonly) NSArray<UIImage *> *openTabSnapshots;
-/// \c NSNotFound if no tabs are present.
+/// `NSNotFound` if no tabs are present.
 /// Setting this property changes the active tab to one of the already open tabs.
 @property (nonatomic) NSInteger activeTabIndex;
 

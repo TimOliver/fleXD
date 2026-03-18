@@ -29,24 +29,24 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (instancetype)attributesForProperty:(objc_property_t)property;
-/// @warning Raises an exception if \e attributes is invalid, \c nil, or contains unsupported keys.
+/// @warning Raises an exception if \e attributes is invalid, `nil` or contains unsupported keys.
 + (instancetype)attributesFromDictionary:(NSDictionary *)attributes;
 
-/// Copies the attributes list to a buffer you must \c free() yourself.
-/// Use \c list instead if you do not need more control over the lifetime of the list.
+/// Copies the attributes list to a buffer you must `free()` yourself.
+/// Use `list` instead if you do not need more control over the lifetime of the list.
 /// @param attributesCountOut the number of attributes is returned in this parameter.
 - (objc_property_attribute_t *)copyAttributesList:(nullable unsigned int *)attributesCountOut;
 
 /// The number of property attributes.
 @property (nonatomic, readonly) NSUInteger count;
-/// For use with \c class_replaceProperty and the like.
+/// For use with `class_replaceProperty` and the like.
 @property (nonatomic, readonly) objc_property_attribute_t *list;
 /// The string value of the property attributes.
 @property (nonatomic, readonly) NSString *string;
 /// A human-readable version of the property attributes.
 @property (nonatomic, readonly) NSString *fullDeclaration;
 /// A dictionary of the property attributes.
-/// Values are either a string or \c YES. Boolean attributes
+/// Values are either a string or `YES` Boolean attributes
 /// which are false will not be present in the dictionary.
 @property (nonatomic, readonly) NSDictionary *dictionary;
 
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL isWeak;
 @property (nonatomic) BOOL isGarbageCollectable;
 
-/// A more convenient method of setting the \c typeEncoding property.
+/// A more convenient method of setting the `typeEncoding` property.
 /// @discussion This will not work for complex types like structs and primitive pointers.
 - (void)setTypeEncodingChar:(char)type;
 

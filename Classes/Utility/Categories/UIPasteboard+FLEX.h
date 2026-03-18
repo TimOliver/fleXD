@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIPasteboard (FLEX)
 
 /// Copies the given object to the pasteboard.
-/// Handles \c NSString, \c NSData, and \c NSNumber values appropriately.
+/// Handles `NSString` `NSData` and `NSNumber` values appropriately.
 - (void)flex_copy:(id)unknownType;
 
 @end

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Represents a row in a shortcut section.
 ///
 /// The purpose of this protocol is to allow delegating a small
-/// subset of the responsibilities of a \c FLEXShortcutsSection
+/// subset of the responsibilities of a `FLEXShortcutsSection`
 /// to another object, for a single arbitrary row.
 ///
 /// It is useful to make your own shortcuts to append/prepend
@@ -38,22 +38,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// Provides default behavior for FLEX metadata objects. Also works in a limited way with strings.
-/// Used internally. If you wish to use this object, only pass in \c FLEX* metadata objects.
+/// Used internally. If you wish to use this object, only pass in `FLEX*` metadata objects.
 @interface FLEXShortcut : NSObject <FLEXShortcut>
 
-/// @param item An \c NSString or \c FLEX* metadata object.
-/// @note You may also pass a \c FLEXShortcut conforming object,
+/// @param item An `NSString` or `FLEX*` metadata object.
+/// @note You may also pass a `FLEXShortcut` conforming object,
 /// and that object will be returned instead.
 + (id<FLEXShortcut>)shortcutFor:(id)item;
 
 @end
 
 
-/// Provides a quick and dirty implementation of the \c FLEXShortcut protocol,
+/// Provides a quick and dirty implementation of the `FLEXShortcut` protocol,
 /// allowing you to specify a static title and dynamic attributes for everything else.
-/// The object passed into each block is the object passed to each \c FLEXShortcut method.
+/// The object passed into each block is the object passed to each `FLEXShortcut` method.
 ///
-/// Does not support the \c -editorWith: method.
+/// Does not support the `-editorWith:` method.
 @interface FLEXActionShortcut : NSObject <FLEXShortcut>
 
 + (instancetype)title:(NSString *)title

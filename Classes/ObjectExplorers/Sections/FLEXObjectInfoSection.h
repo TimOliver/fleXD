@@ -10,10 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A protocol for \c FLEXTableViewSection subclasses that only need the object
+/// A protocol for `FLEXTableViewSection` subclasses that only need the object
 /// being explored in order to be initialized.
 ///
-/// Since \c FLEXTableViewSection itself has no knowledge of the object being explored,
+/// Since `FLEXTableViewSection` itself has no knowledge of the object being explored,
 /// conforming to this protocol is the preferred way to indicate that a section can be
 /// initialized from the object alone, without introducing an abstract class to the hierarchy.
 @protocol FLEXObjectInfoSection <NSObject>

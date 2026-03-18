@@ -12,16 +12,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray<T> (Functional)
 
-/// Maps the array to a new array, omitting any elements for which the block returns \c nil.
+/// Maps the array to a new array, omitting any elements for which the block returns `nil`
 ///
 /// Unlike a true flatmap, this will not flatten arrays of arrays into a single array.
 - (__kindof NSArray *)flex_mapped:(id _Nullable (^)(T obj, NSUInteger idx))mapFunc;
 
-/// Like \c flex_mapped:, but expects each block invocation to return an array,
+/// Like `flex_mapped:` but expects each block invocation to return an array,
 /// and flattens all returned arrays into a single result array.
 - (__kindof NSArray *)flex_flatmapped:(NSArray * _Nullable (^)(id obj, NSUInteger idx))block;
 
-/// Returns a new array containing only the elements for which the block returns \c YES.
+/// Returns a new array containing only the elements for which the block returns `YES`
 - (instancetype)flex_filtered:(BOOL(^)(T obj, NSUInteger idx))filterFunc;
 
 /// Enumerates the array, invoking the block for each element.
@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Returns a subarray of up to \e maxLength elements from the beginning of the array.
 ///
-/// Unlike \c -subarrayWithRange:, this will not throw an exception if \e maxLength
+/// Unlike `-subarrayWithRange:` this will not throw an exception if \e maxLength
 /// exceeds the array's count; it simply returns all available elements.
 - (instancetype)flex_subArrayUpto:(NSUInteger)maxLength;
 
@@ -37,14 +37,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)flex_forEachUpTo:(NSUInteger)bound map:(T(^)(NSUInteger i))block;
 
 /// Creates an array by mapping each element of \e collection through the given block,
-/// omitting elements for which the block returns \c nil.
+/// omitting elements for which the block returns `nil`
 + (instancetype)flex_mapped:(id<NSFastEnumeration>)collection
                       block:(id _Nullable (^)(T obj, NSUInteger idx))mapFunc;
 
 /// Returns a copy of the array sorted using the given selector.
 - (instancetype)flex_sortedUsingSelector:(SEL)selector;
 
-/// Returns the first element for which the block returns \c YES, or \c nil if none.
+/// Returns the first element for which the block returns `YES` or `nil` if none.
 - (nullable T)flex_firstWhere:(BOOL(^)(T obj))meetingCriteria;
 
 @end
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSMutableArray<T> (Functional)
 
-/// Removes all elements for which the block returns \c NO.
+/// Removes all elements for which the block returns `NO`
 - (void)flex_filter:(BOOL(^)(T obj, NSUInteger idx))filterFunc;
 
 @end

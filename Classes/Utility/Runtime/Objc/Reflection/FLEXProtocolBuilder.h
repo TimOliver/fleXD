@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Constructs and registers a new Objective-C protocol at runtime.
 ///
-/// You must call \c registerProtocol before the protocol can be used.
+/// You must call `registerProtocol` before the protocol can be used.
 /// Once registered, no further modifications can be made.
 @interface FLEXProtocolBuilder : NSObject
 
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param selector The selector of the method to add.
 /// @param typeEncoding The type encoding of the method.
 /// @param isRequired Whether the method is required for conformance.
-/// @param isInstanceMethod \c YES for an instance method, \c NO for a class method.
+/// @param isInstanceMethod `YES` for an instance method, `NO` for a class method.
 - (void)addMethod:(SEL)selector
      typeEncoding:(NSString *)typeEncoding
        isRequired:(BOOL)isRequired

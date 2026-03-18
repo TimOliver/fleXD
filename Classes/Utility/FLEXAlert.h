@@ -23,7 +23,7 @@ typedef FLEXAlertAction * _Nonnull (^FLEXAlertActionProperty)(void);
 typedef FLEXAlertAction * _Nonnull (^FLEXAlertActionBOOLProperty)(BOOL);
 typedef FLEXAlertAction * _Nonnull (^FLEXAlertActionHandler)(void(^handler)(NSArray<NSString *> *strings));
 
-/// A builder-pattern wrapper around \c UIAlertController.
+/// A builder-pattern wrapper around `UIAlertController`
 ///
 /// Use the block-based factory methods to construct and present alerts,
 /// chaining property accesses to set the title, message, buttons, and text fields.

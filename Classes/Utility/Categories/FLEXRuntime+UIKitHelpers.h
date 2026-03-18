@@ -24,9 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// The current explorer display settings. Updated when settings change.
 @property (nonatomic) FLEXObjectExplorerDefaults *defaults;
 
-/// \c YES for properties and ivars that support editing, \c NO for all methods.
+/// `YES` for properties and ivars that support editing, `NO` for all methods.
 @property (nonatomic, readonly) BOOL isEditable;
-/// \c NO for ivars, \c YES for supported methods and properties.
+/// `NO` for ivars, `YES` for supported methods and properties.
 @property (nonatomic, readonly) BOOL isCallable;
 
 @end
@@ -43,19 +43,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// For internal use.
 @property (nonatomic) id tag;
 
-/// Returns the current runtime value of this metadata on the given object, or \c nil.
+/// Returns the current runtime value of this metadata on the given object, or `nil`
 - (nullable id)currentValueWithTarget:(id)object;
 /// Returns a short display string for the current value, used as the row subtitle.
 - (NSString *)previewWithTarget:(id)object;
 /// Returns a viewer for this metadata: a method call screen for methods,
 /// or an object explorer for properties and ivars.
 - (nullable UIViewController *)viewerWithTarget:(id)object;
-/// Returns an editor for this metadata, or \c nil for methods and protocols.
+/// Returns an editor for this metadata, or `nil` for methods and protocols.
 /// The given section is reloaded when the user commits a change.
 - (nullable UIViewController *)editorWithTarget:(id)object section:(FLEXTableViewSection *)section;
 /// Returns the accessory type that best represents the available interactions for this item.
 - (UITableViewCellAccessoryType)suggestedAccessoryTypeWithTarget:(id)object;
-/// Returns a custom reuse identifier, or \c nil to use the default.
+/// Returns a custom reuse identifier, or `nil` to use the default.
 - (nullable NSString *)reuseIdentifierWithTarget:(id)object;
 
 /// Returns additional actions for the first section of the context menu.
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLEXProtocol (UIKitHelpers) <FLEXRuntimeMetadata> @end
 
 
-/// The display style of a \c FLEXStaticMetadata row.
+/// The display style of a `FLEXStaticMetadata` row.
 typedef NS_ENUM(NSUInteger, FLEXStaticMetadataRowStyle) {
     FLEXStaticMetadataRowStyleSubtitle,
     FLEXStaticMetadataRowStyleKeyValue,

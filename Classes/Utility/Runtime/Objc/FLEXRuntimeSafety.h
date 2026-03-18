@@ -10,13 +10,13 @@
 
 #pragma mark - Classes
 
-/// The number of entries in \c FLEXKnownUnsafeClassList.
+/// The number of entries in `FLEXKnownUnsafeClassList`
 extern NSUInteger const kFLEXKnownUnsafeClassCount;
 /// A C array of class pointers known to be unsafe for runtime introspection.
 extern const Class * FLEXKnownUnsafeClassList(void);
-/// An \c NSSet of class name strings corresponding to \c FLEXKnownUnsafeClassList.
+/// An `NSSet` of class name strings corresponding to `FLEXKnownUnsafeClassList`
 extern NSSet * FLEXKnownUnsafeClassNames(void);
-/// A \c CFSetRef containing the known-unsafe classes, for fast membership testing.
+/// A `CFSetRef` containing the known-unsafe classes, for fast membership testing.
 extern CFSetRef FLEXKnownUnsafeClasses;
 
 static Class cNSObject = nil, cNSProxy = nil;
@@ -27,7 +27,7 @@ static void FLEXInitKnownRootClasses(void) {
     cNSProxy = [NSProxy class];
 }
 
-/// @return \c YES if the class is safe to use for runtime introspection, \c NO otherwise.
+/// @return `YES` if the class is safe to use for runtime introspection, `NO` otherwise.
 static inline BOOL FLEXClassIsSafe(Class cls) {
     // Is it nil or known to be unsafe?
     if (!cls || CFSetContainsValue(FLEXKnownUnsafeClasses, (__bridge void *)cls)) {
@@ -43,7 +43,7 @@ static inline BOOL FLEXClassIsSafe(Class cls) {
     return YES;
 }
 
-/// @return \c YES if the class name is not in the known-unsafe class list, \c NO otherwise.
+/// @return `YES` if the class name is not in the known-unsafe class list, `NO` otherwise.
 static inline BOOL FLEXClassNameIsSafe(NSString *cls) {
     if (!cls) return NO;
     
@@ -53,10 +53,10 @@ static inline BOOL FLEXClassNameIsSafe(NSString *cls) {
 
 #pragma mark - Ivars
 
-/// A \c CFSetRef containing ivars known to be unsafe for runtime introspection.
+/// A `CFSetRef` containing ivars known to be unsafe for runtime introspection.
 extern CFSetRef FLEXKnownUnsafeIvars;
 
-/// @return \c YES if the ivar is safe to use for runtime introspection, \c NO otherwise.
+/// @return `YES` if the ivar is safe to use for runtime introspection, `NO` otherwise.
 static inline BOOL FLEXIvarIsSafe(Ivar ivar) {
     if (!ivar) return NO;
 

@@ -19,7 +19,7 @@
 
 /// Contains the result of the last operation, which may be an error
 @property (nonatomic, readonly) FLEXSQLResult *lastResult;
-/// Calls into \c sqlite3_last_insert_rowid()
+/// Calls into `sqlite3_last_insert_rowid()`
 @property (nonatomic, readonly) NSInteger lastRowID;
 
 /// Given a statement like 'SELECT * from @table where @col = @val' and arguments

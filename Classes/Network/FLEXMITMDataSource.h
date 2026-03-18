@@ -13,14 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)dataSourceWithProvider:(NSArray<TransactionType> *(^)(void))future;
 
-/// Whether or not the data in \c transactions and \c bytesReceived are actually filtered yet or not
+/// Whether or not the data in `transactions` and `bytesReceived` are actually filtered yet or not
 @property (nonatomic, readonly) BOOL isFiltered;
 
-/// The content of this array is filtered to match the input of \c filter:completion:
+/// The content of this array is filtered to match the input of `filter:completion:`
 @property (nonatomic, readonly) NSArray<TransactionType> *transactions;
 @property (nonatomic, readonly) NSArray<TransactionType> *allTransactions;
 
-/// The content of this array is filtered to match the input of \c filter:completion:
+/// The content of this array is filtered to match the input of `filter:completion:`
 @property (nonatomic) NSInteger bytesReceived;
 @property (nonatomic) NSInteger totalBytesReceived;
 

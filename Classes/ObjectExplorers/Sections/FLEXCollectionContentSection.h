@@ -16,12 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Any foundation collection implicitly conforms to FLEXCollection.
 /// This future should return one. We don't explicitly put FLEXCollection
 /// here because making generic collections conform to FLEXCollection breaks
-/// compile-time features of generic arrays, such as \c someArray[0].property
+/// compile-time features of generic arrays, such as `someArray[0].property`
 typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionContentFuture)(__kindof FLEXCollectionContentSection *section);
 
 #pragma mark Collection
-/// A protocol that enables \c FLEXCollectionContentSection to operate on any arbitrary collection.
-/// \c NSArray, \c NSDictionary, \c NSSet, and \c NSOrderedSet all conform to this protocol.
+/// A protocol that enables `FLEXCollectionContentSection` to operate on any arbitrary collection.
+/// `NSArray` `NSDictionary` `NSSet` and `NSOrderedSet` all conform to this protocol.
 @protocol FLEXCollection <NSObject, NSFastEnumeration>
 
 @property (nonatomic, readonly) NSUInteger count;
@@ -33,12 +33,12 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionCont
 
 /// Unordered, unkeyed collections must implement this
 @property (nonatomic, readonly) NSArray *allObjects;
-/// Keyed collections must implement this and \c objectForKeyedSubscript:
+/// Keyed collections must implement this and `objectForKeyedSubscript:`
 @property (nonatomic, readonly) NSArray *allKeys;
 
 /// Ordered, indexed collections must implement this.
 - (id)objectAtIndexedSubscript:(NSUInteger)idx;
-/// Keyed, unordered collections must implement this and \c allKeys
+/// Keyed, unordered collections must implement this and `allKeys`
 - (id)objectForKeyedSubscript:(id)idx;
 
 @end
@@ -58,7 +58,7 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionCont
     id<FLEXCollection> _collection;
     /// Unused if initialized with a collection
     FLEXCollectionContentFuture _collectionFuture;
-    /// The filtered collection from \c _collection or \c _collectionFuture
+    /// The filtered collection from `_collection` or `_collectionFuture`
     id<FLEXCollection> _cachedCollection;
 }
 
@@ -68,20 +68,20 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionCont
 /// different results each time if the data is changing by nature.
 + (instancetype)forReusableFuture:(FLEXCollectionContentFuture)collectionFuture;
 
-/// Defaults to \c NO
+/// Defaults to `NO`
 @property (nonatomic) BOOL hideSectionTitle;
-/// Defaults to \c nil
+/// Defaults to `nil`
 @property (nonatomic, copy) NSString *customTitle;
-/// Defaults to \c NO
+/// Defaults to `NO`
 ///
-/// Setting this to \c NO will not display the element index for ordered collections.
-/// This property only applies to \c NSArray or \c NSOrderedSet and their subclasses.
+/// Setting this to `NO` will not display the element index for ordered collections.
+/// This property only applies to `NSArray` or `NSOrderedSet` and their subclasses.
 @property (nonatomic) BOOL hideOrderIndexes;
 
 /// Set this property to provide a custom filter matcher.
 ///
 /// By default, the collection will filter on the title and subtitle of the row.
-/// So if you don't ever call \c configureCell: for example, you will need to set
+/// So if you don't ever call `configureCell:` for example, you will need to set
 /// this property so that your filter logic will match how you're setting up the cell. 
 @property (nonatomic) BOOL (^customFilter)(NSString *filterText, ObjectType element);
 

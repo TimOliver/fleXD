@@ -135,9 +135,9 @@ typedef NS_ENUM(NSUInteger, FLEXFIRRequestType) {
 @interface FLEXFirebaseSetDataInfo : NSObject
 /// The data that was set
 @property (nonatomic, readonly) NSDictionary *documentData;
-/// \c nil if \c mergeFields is populated
+/// `nil` if `mergeFields` is populated
 @property (nonatomic, readonly) NSNumber *merge;
-/// \c nil if \c merge is populated
+/// `nil` if `merge` is populated
 @property (nonatomic, readonly) NSArray *mergeFields;
 @end
 

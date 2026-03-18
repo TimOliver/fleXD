@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Whether the layer uses continuous (squircle-style) corner curves.
 ///
-/// Wraps \c cornerCurve using \c kCACornerCurveContinuous and \c kCACornerCurveCircular.
+/// Wraps `cornerCurve` using `kCACornerCurveContinuous` and `kCACornerCurveCircular`
 @property (nonatomic) BOOL flex_continuousCorners;
 
 @end

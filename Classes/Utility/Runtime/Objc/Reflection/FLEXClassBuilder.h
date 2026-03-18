@@ -16,14 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Constructs or modifies an Objective-C class at runtime.
 ///
-/// New classes must be registered using \c registerClass before they can be used.
+/// New classes must be registered using `registerClass` before they can be used.
 /// Instance variables cannot be added to existing or already-registered classes.
 @interface FLEXClassBuilder : NSObject
 
 /// The class being constructed or modified.
 @property (nonatomic, readonly) Class workingClass;
 
-/// Begins constructing a new class named \e name, inheriting from \c NSObject.
+/// Begins constructing a new class named \e name, inheriting from `NSObject`
 + (instancetype)allocateClass:(NSString *)name;
 
 /// Begins constructing a new class named \e name, inheriting from \e superclass.
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Begins constructing a new class named \e name, inheriting from \e superclass,
 /// with \e bytes of extra storage allocated per instance.
-/// Pass \c nil for \e superclass to create a new root class.
+/// Pass `nil` for \e superclass to create a new root class.
 + (instancetype)allocateClass:(NSString *)name
                    superclass:(nullable Class)superclass
                    extraBytes:(size_t)bytes;
@@ -75,14 +75,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Describes an instance variable to be added to a class under construction.
 ///
-/// Use the \c FLEXIvarBuilderWithNameAndType() convenience macro where possible.
+/// Use the `FLEXIvarBuilderWithNameAndType()` convenience macro where possible.
 @interface FLEXIvarBuilder : NSObject
 
 /// Creates an ivar descriptor with the given name, size, alignment, and type encoding.
-/// @param name The name of the ivar, e.g. \c @"_value".
-/// @param size The size of the ivar in bytes, e.g. \c sizeof(type).
-/// @param alignment The required alignment, e.g. \c log2(sizeof(type)).
-/// @param encoding The type encoding, e.g. \c @(@encode(type)).
+/// @param name The name of the ivar, e.g. `@"_value"`
+/// @param size The size of the ivar in bytes, e.g. `sizeof(type)`
+/// @param alignment The required alignment, e.g. `log2(sizeof(type))`
+/// @param encoding The type encoding, e.g. `@(@encode(type))`
 + (instancetype)name:(NSString *)name
                 size:(size_t)size
            alignment:(uint8_t)alignment
@@ -96,7 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-/// Convenience macro that creates a \c FLEXIvarBuilder from a name string and a C type.
+/// Convenience macro that creates a `FLEXIvarBuilder` from a name string and a C type.
 #define FLEXIvarBuilderWithNameAndType(nameString, type) [FLEXIvarBuilder \
     name:nameString \
     size:sizeof(type) \

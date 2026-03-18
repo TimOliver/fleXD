@@ -12,17 +12,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The base table view cell class used throughout FLEX.
 ///
-/// Provides \c titleLabel and \c subtitleLabel as non-deprecated replacements
-/// for \c UITableViewCell's \c textLabel and \c detailTextLabel.
+/// Provides `titleLabel` and `subtitleLabel` as non-deprecated replacements
+/// for `UITableViewCell's` `textLabel` and `detailTextLabel`
 @interface FLEXTableViewCell : UITableViewCell
 
-/// The primary label of the cell. Use instead of \c textLabel.
+/// The primary label of the cell. Use instead of `textLabel`
 @property (nonatomic, readonly) UILabel *titleLabel;
-/// The secondary label of the cell. Use instead of \c detailTextLabel.
+/// The secondary label of the cell. Use instead of `detailTextLabel`
 @property (nonatomic, readonly) UILabel *subtitleLabel;
 
 /// Called after initialization to allow subclasses to perform additional setup
-/// without overriding designated initializers. Always call \c super.
+/// without overriding designated initializers. Always call `super`
 - (void)postInit;
 
 @end

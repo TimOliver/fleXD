@@ -38,12 +38,12 @@ typedef void (^flex_object_enumeration_block_t)(__unsafe_unretained id object, _
 NS_SWIFT_UNAVAILABLE("Use one of the other methods instead.");
 
 /// Returned references are not validated beyond containing a valid isa.
-/// To validate them yourself, pass each reference's object to \c FLEXPointerIsValidObjcObject
+/// To validate them yourself, pass each reference's object to `FLEXPointerIsValidObjcObject`
 + (NSArray<FLEXObjectRef *> *)instancesOfClassWithName:(NSString *)className retained:(BOOL)retain;
 
-/// Returned references have been validated via \c FLEXPointerIsValidObjcObject
+/// Returned references have been validated via `FLEXPointerIsValidObjcObject`
 /// @param object the object to find references to
-/// @param retain whether to retain the objects referencing \c object
+/// @param retain whether to retain the objects referencing `object`
 + (NSArray<FLEXObjectRef *> *)objectsWithReferencesToObject:(id)object retained:(BOOL)retain;
 
 /// Capture all live objects on the heap and do with this information what you will.

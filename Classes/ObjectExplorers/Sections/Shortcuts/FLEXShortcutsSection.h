@@ -19,47 +19,47 @@ NS_ASSUME_NONNULL_BEGIN
 /// with plain titles and/or subtitles. This class will automatically
 /// configure each cell appropriately. Since this is intended as a
 /// static section, subclasses should only need to implement the
-/// \c viewControllerToPushForRow: and/or \c didSelectRowAction: methods.
+/// `viewControllerToPushForRow:` and/or `didSelectRowAction:` methods.
 ///
-/// If you create the section using \c forObject:rows:numberOfLines:
-/// then it will provide a view controller from \c viewControllerToPushForRow:
+/// If you create the section using `forObject:rows:numberOfLines:`
+/// then it will provide a view controller from `viewControllerToPushForRow:`
 /// automatically for rows that are a property/ivar/method.
 @interface FLEXShortcutsSection : FLEXTableViewSection <FLEXObjectInfoSection>
 
-/// Uses \c kFLEXDefaultCell
+/// Uses `kFLEXDefaultCell`
 + (instancetype)forObject:(id)objectOrClass rowTitles:(nullable NSArray<NSString *> *)titles;
-/// Uses \c kFLEXDetailCell for non-empty subtitles, otherwise uses \c kFLEXDefaultCell
+/// Uses `kFLEXDetailCell` for non-empty subtitles, otherwise uses `kFLEXDefaultCell`
 + (instancetype)forObject:(id)objectOrClass
                 rowTitles:(nullable NSArray<NSString *> *)titles
              rowSubtitles:(nullable NSArray<NSString *> *)subtitles;
 
-/// Uses \c kFLEXDefaultCell for rows that are given a title, otherwise
-/// this uses \c kFLEXDetailCell for any other allowed object.
+/// Uses `kFLEXDefaultCell` for rows that are given a title, otherwise
+/// this uses `kFLEXDetailCell` for any other allowed object.
 ///
-/// The section provide a view controller from \c viewControllerToPushForRow:
+/// The section provide a view controller from `viewControllerToPushForRow:`
 /// automatically for rows that are a property/ivar/method.
 ///
 /// @param rows A mixed array containing any of the following:
-/// - any \c FLEXShortcut conforming object
-/// - an \c NSString
-/// - a \c FLEXProperty
-/// - a \c FLEXIvar
-/// - a \c FLEXMethodBase (includes \c FLEXMethod of course)
+/// - any `FLEXShortcut` conforming object
+/// - an `NSString`
+/// - a `FLEXProperty`
+/// - a `FLEXIvar`
+/// - a `FLEXMethodBase` (includes `FLEXMethod` of course)
 /// Passing one of the latter 3 will provide a shortcut to that property/ivar/method.
 + (instancetype)forObject:(id)objectOrClass rows:(nullable NSArray *)rows;
 
-/// Same as \c forObject:rows: but the given rows are prepended
+/// Same as `forObject:rows:` but the given rows are prepended
 /// to the shortcuts already registered for the object's class.
-/// \c forObject:rows: does not use the registered shortcuts at all.
+/// `forObject:rows:` does not use the registered shortcuts at all.
 + (instancetype)forObject:(id)objectOrClass additionalRows:(nullable NSArray *)rows;
 
-/// Calls into \c forObject:rows: using the registered shortcuts for the object's class.
+/// Calls into `forObject:rows:` using the registered shortcuts for the object's class.
 /// @return An empty section if the object has no shortcuts registered at all.
 + (instancetype)forObject:(id)objectOrClass;
 
 /// Subclasses \e may override this to hide the disclosure indicator
 /// for some rows. It is shown for all rows by default, unless
-/// you initialize it with \c forObject:rowTitles:rowSubtitles:
+/// you initialize it with `forObject:rowTitles:rowSubtitles:`
 ///
 /// When you hide the disclosure indicator, the row is not selectable.
 - (UITableViewCellAccessoryType)accessoryTypeForRow:(NSInteger)row;
@@ -75,8 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Whether this shortcut section overrides the default section or not.
 /// Subclasses should not override this method. To provide a second
-/// section alongside the default shortcuts section, use \c forObject:rows:
-/// @return \c NO if initialized with \c forObject: or \c forObject:additionalRows:
+/// section alongside the default shortcuts section, use `forObject:rows:`
+/// @return `NO` if initialized with `forObject:` or `forObject:additionalRows:`
 @property (nonatomic, readonly) BOOL isNewSection;
 
 @end
@@ -86,10 +86,10 @@ typedef FLEXShortcutsFactory *_Nonnull(^FLEXShortcutsFactoryNames)(NSArray *name
 typedef void (^FLEXShortcutsFactoryTarget)(Class targetClass);
 
 /// The block properties below are to be used like SnapKit or Masonry.
-/// \c FLEXShortcutsSection.append.properties(@[@"frame",@"bounds"]).forClass(UIView.class);
+/// `FLEXShortcutsSection.append.properties(@[@"frame",@"bounds"]).forClass(UIView.class)`
 ///
 /// To safely register your own classes at launch, subclass this class,
-/// override \c +load, and call the appropriate methods on \c self
+/// override `+load` and call the appropriate methods on `self`
 @interface FLEXShortcutsFactory : NSObject
 
 /// Returns the list of all registered shortcuts for the given object in this order:
@@ -112,11 +112,11 @@ typedef void (^FLEXShortcutsFactoryTarget)(Class targetClass);
 @property (nonatomic, readonly, class) FLEXShortcutsFactory *replace;
 
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames properties;
-/// Do not try to set \c classProperties at the same time as \c ivars or other instance things.
+/// Do not try to set `classProperties` at the same time as `ivars` or other instance things.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames classProperties;
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames ivars;
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames methods;
-/// Do not try to set \c classMethods at the same time as \c ivars or other instance things.
+/// Do not try to set `classMethods` at the same time as `ivars` or other instance things.
 @property (nonatomic, readonly) FLEXShortcutsFactoryNames classMethods;
 
 /// Accepts the target class. If you pass a regular class object,

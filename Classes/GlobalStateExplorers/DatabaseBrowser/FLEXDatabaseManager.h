@@ -19,7 +19,7 @@
 
 @required
 
-/// @return \c nil if the database couldn't be opened
+/// @return `nil` if the database couldn't be opened
 + (instancetype)managerForDatabase:(NSString *)path;
 
 /// @return a list of all table names
