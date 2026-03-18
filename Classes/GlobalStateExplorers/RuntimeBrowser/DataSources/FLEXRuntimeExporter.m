@@ -519,32 +519,22 @@ NS_INLINE BOOL FREInsertProtocolMember(FLEXSQLiteDatabaseManager *db,
             }
         }
         
-        if (@available(iOS 10, *)) {
-            // Required properties
-            for (FLEXProperty *property in proto.requiredProperties) {
-                BOOL success = FREInsertProtocolMember(
-                   database, pid, @YES, @(property.isClassProperty), property.name, NSNull.null, image
-                );
-                
-                if (!success) return NO;
-            }
-            // Optional properties
-            for (FLEXProperty *property in proto.optionalProperties) {
-                BOOL success = FREInsertProtocolMember(
-                    database, pid, @NO, @(property.isClassProperty), property.name, NSNull.null, image
-                );
-                
-                if (!success) return NO;
-            }
-        } else {
-            // Just... properties.
-            for (FLEXProperty *property in proto.properties) {
-                BOOL success = FREInsertProtocolMember(
-                    database, pid, nil, @(property.isClassProperty), property.name, NSNull.null, image
-                );
-                
-                if (!success) return NO;
-            }
+        // Required properties
+        for (FLEXProperty *property in proto.requiredProperties) {
+            BOOL success = FREInsertProtocolMember(
+               database, pid, @YES, @(property.isClassProperty), property.name, NSNull.null, image
+            );
+            
+            if (!success) return NO;
+        }
+        
+        // Optional properties
+        for (FLEXProperty *property in proto.optionalProperties) {
+            BOOL success = FREInsertProtocolMember(
+                database, pid, @NO, @(property.isClassProperty), property.name, NSNull.null, image
+            );
+            
+            if (!success) return NO;
         }
     }
     
