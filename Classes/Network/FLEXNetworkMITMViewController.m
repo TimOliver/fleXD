@@ -24,7 +24,6 @@
 #import "NSUserDefaults+FLEX.h"
 
 #define kFirebaseAvailable NSClassFromString(@"FIRDocumentReference")
-#define kWebsocketsAvailable YES
 
 typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
     FLEXNetworkObserverModeFirebase = 0,
@@ -73,12 +72,10 @@ typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
         [scopeTitles insertObject:@"Firebase" atIndex:0]; // First space
     }
 
-    if (kWebsocketsAvailable) {
-        [scopeTitles addObject:@"Websockets"]; // Last space
-        _websocketDataSource = [FLEXMITMDataSource dataSourceWithProvider:^NSArray * {
-            return FLEXNetworkRecorder.defaultRecorder.websocketTransactions;
-        }];
-    }
+    [scopeTitles addObject:@"Websockets"]; // Last space
+    _websocketDataSource = [FLEXMITMDataSource dataSourceWithProvider:^NSArray * {
+        return FLEXNetworkRecorder.defaultRecorder.websocketTransactions;
+    }];
     
     // Scopes will only be shown if we have either firebase or websockets available
     self.searchController.searchBar.showsScopeBar = scopeTitles.count > 1;
@@ -245,10 +242,6 @@ typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
             }
             break;
         case FLEXNetworkObserverModeWebsockets:
-            // Default to REST if Websockets are unavailable
-            if (!kWebsocketsAvailable) {
-                mode--;
-            }
             // Firebase will become REST when Firebase is unavailable
             if (!kFirebaseAvailable) {
                 mode--;

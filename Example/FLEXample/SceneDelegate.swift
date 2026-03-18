@@ -9,7 +9,7 @@
 import UIKit
 import SwiftUI
 
-@objcMembers @available(iOS 13.0, *)
+@objcMembers
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -22,9 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window.makeKeyAndVisible()
         }
     }
-    
+
     func sceneDidBecomeActive(_ scene: UIScene) {
         FLEXManager.shared.showExplorer()
     }
 }
-
