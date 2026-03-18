@@ -24,7 +24,7 @@
 #import "NSUserDefaults+FLEX.h"
 
 #define kFirebaseAvailable NSClassFromString(@"FIRDocumentReference")
-#define kWebsocketsAvailable @available(iOS 13.0, *)
+#define kWebsocketsAvailable YES
 
 typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
     FLEXNetworkObserverModeFirebase = 0,
@@ -504,18 +504,16 @@ typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
         }
             
         case FLEXNetworkObserverModeWebsockets: {
-            if (@available(iOS 13.0, *)) { // This check will never fail
-                FLEXWebsocketTransaction *transaction = [self websocketTransactionAtIndexPath:indexPath];
-                
-                UIViewController *details = nil;
-                if (transaction.message.type == NSURLSessionWebSocketMessageTypeData) {
-                    details = [FLEXObjectExplorerFactory explorerViewControllerForObject:transaction.message.data];
-                } else {
-                    details = [[FLEXWebViewController alloc] initWithText:transaction.message.string];
-                }
-                
-                [self.navigationController pushViewController:details animated:YES];
+            FLEXWebsocketTransaction *transaction = [self websocketTransactionAtIndexPath:indexPath];
+
+            UIViewController *details = nil;
+            if (transaction.message.type == NSURLSessionWebSocketMessageTypeData) {
+                details = [FLEXObjectExplorerFactory explorerViewControllerForObject:transaction.message.data];
+            } else {
+                details = [[FLEXWebViewController alloc] initWithText:transaction.message.string];
             }
+
+            [self.navigationController pushViewController:details animated:YES];
             break;
         }
         

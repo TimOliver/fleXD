@@ -193,11 +193,7 @@
 #pragma mark - Private
 
 - (UIEdgeInsets)contentInsetsOfScrollView:(UIScrollView *)scrollView {
-    if (@available(iOS 11, *)) {
-        return scrollView.adjustedContentInset;
-    }
-
-    return scrollView.contentInset;
+    return scrollView.adjustedContentInset;
 }
 
 - (void)tryScrollDown {

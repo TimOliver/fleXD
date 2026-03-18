@@ -109,54 +109,40 @@
     
     // Properties is a hassle because they didn't fix the API until iOS 10 //
     
-    if (@available(iOS 10.0, *)) {
-        unsigned int prrcount, procount;
-        Class instance = [NSObject class], meta = objc_getMetaClass("NSObject");
-        
-        // Required class and instance properties //
-        
-        // Instance first
-        objc_property_t *rProps = protocol_copyPropertyList2(protocol, &prrcount, YES, YES);
-        NSArray *rProperties = [NSArray flex_forEachUpTo:prrcount map:^id(NSUInteger i) {
-            return [FLEXProperty property:rProps[i] onClass:instance];
-        }];
-        free(rProps);
-        
-        // Then class
-        rProps = protocol_copyPropertyList2(protocol, &prrcount, NO, YES);
-        _requiredProperties = [[NSArray flex_forEachUpTo:prrcount map:^id(NSUInteger i) {
-            return [FLEXProperty property:rProps[i] onClass:instance];
-        }] arrayByAddingObjectsFromArray:rProperties];
-        free(rProps);
-        
-        // Optional class and instance properties //
-        
-        // Instance first
-        objc_property_t *oProps = protocol_copyPropertyList2(protocol, &procount, YES, YES);
-        NSArray *oProperties = [NSArray flex_forEachUpTo:prrcount map:^id(NSUInteger i) {
-            return [FLEXProperty property:oProps[i] onClass:meta];
-        }];
-        free(oProps);
-        
-        // Then class
-        oProps = protocol_copyPropertyList2(protocol, &procount, NO, YES);
-        _optionalProperties = [[NSArray flex_forEachUpTo:procount map:^id(NSUInteger i) {
-            return [FLEXProperty property:oProps[i] onClass:meta];
-        }] arrayByAddingObjectsFromArray:oProperties];
-        free(oProps);
-        
-    } else {
-        unsigned int prcount;
-        objc_property_t *objcproperties = protocol_copyPropertyList(protocol, &prcount);
-        _properties = [NSArray flex_forEachUpTo:prcount map:^id(NSUInteger i) {
-            return [FLEXProperty property:objcproperties[i]];
-        }];
-        
-        _requiredProperties = @[];
-        _optionalProperties = @[];
-        
-        free(objcproperties);
-    }
+    unsigned int prrcount, procount;
+    Class instance = [NSObject class], meta = objc_getMetaClass("NSObject");
+
+    // Required class and instance properties //
+
+    // Instance first
+    objc_property_t *rProps = protocol_copyPropertyList2(protocol, &prrcount, YES, YES);
+    NSArray *rProperties = [NSArray flex_forEachUpTo:prrcount map:^id(NSUInteger i) {
+        return [FLEXProperty property:rProps[i] onClass:instance];
+    }];
+    free(rProps);
+
+    // Then class
+    rProps = protocol_copyPropertyList2(protocol, &prrcount, NO, YES);
+    _requiredProperties = [[NSArray flex_forEachUpTo:prrcount map:^id(NSUInteger i) {
+        return [FLEXProperty property:rProps[i] onClass:instance];
+    }] arrayByAddingObjectsFromArray:rProperties];
+    free(rProps);
+
+    // Optional class and instance properties //
+
+    // Instance first
+    objc_property_t *oProps = protocol_copyPropertyList2(protocol, &procount, YES, YES);
+    NSArray *oProperties = [NSArray flex_forEachUpTo:prrcount map:^id(NSUInteger i) {
+        return [FLEXProperty property:oProps[i] onClass:meta];
+    }];
+    free(oProps);
+
+    // Then class
+    oProps = protocol_copyPropertyList2(protocol, &procount, NO, YES);
+    _optionalProperties = [[NSArray flex_forEachUpTo:procount map:^id(NSUInteger i) {
+        return [FLEXProperty property:oProps[i] onClass:meta];
+    }] arrayByAddingObjectsFromArray:oProperties];
+    free(oProps);
 }
 
 - (BOOL)conformsTo:(Protocol *)protocol {

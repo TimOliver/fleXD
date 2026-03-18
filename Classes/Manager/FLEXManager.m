@@ -70,11 +70,9 @@
 - (void)showExplorer {
     UIWindow *flex = self.explorerWindow;
     flex.hidden = NO;
-    if (@available(iOS 13.0, *)) {
-        // Only look for a new scene if we don't have one
-        if (!flex.windowScene) {
-            flex.windowScene = FLEXUtility.appKeyWindow.windowScene;
-        }
+    // Only look for a new scene if we don't have one
+    if (!flex.windowScene) {
+        flex.windowScene = FLEXUtility.appKeyWindow.windowScene;
     }
 }
 
@@ -84,11 +82,7 @@
 
 - (void)toggleExplorer {
     if (self.explorerWindow.isHidden) {
-        if (@available(iOS 13.0, *)) {
-            [self showExplorerFromScene:FLEXUtility.appKeyWindow.windowScene];
-        } else {
-            [self showExplorer];
-        }
+        [self showExplorerFromScene:FLEXUtility.appKeyWindow.windowScene];
     } else {
         [self hideExplorer];
     }
@@ -122,9 +116,7 @@
 }
 
 - (void)showExplorerFromScene:(UIWindowScene *)scene {
-    if (@available(iOS 13.0, *)) {
-        self.explorerWindow.windowScene = scene;
-    }
+    self.explorerWindow.windowScene = scene;
     self.explorerWindow.hidden = NO;
 }
 

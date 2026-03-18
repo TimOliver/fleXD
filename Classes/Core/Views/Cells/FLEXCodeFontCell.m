@@ -22,13 +22,7 @@
     self.subtitleLabel.adjustsFontSizeToFitWidth = YES;
     self.subtitleLabel.minimumScaleFactor = 0.75;
     
-    // Disable mutli-line pre iOS 11
-    if (@available(iOS 11, *)) {
-        self.subtitleLabel.numberOfLines = 5;
-    } else {
-        self.titleLabel.numberOfLines = 1;
-        self.subtitleLabel.numberOfLines = 1;
-    }
+    self.subtitleLabel.numberOfLines = 5;
 }
 
 @end

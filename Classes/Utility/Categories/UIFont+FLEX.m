@@ -23,21 +23,11 @@
 }
 
 + (UIFont *)flex_codeFont {
-    // Actually only available in iOS 13, the SDK headers are wrong
-    if (@available(iOS 13, *)) {
-        return [self monospacedSystemFontOfSize:kFLEXDefaultCellFontSize weight:UIFontWeightRegular];
-    } else {
-        return [self fontWithName:@"Menlo-Regular" size:kFLEXDefaultCellFontSize];
-    }
+    return [self monospacedSystemFontOfSize:kFLEXDefaultCellFontSize weight:UIFontWeightRegular];
 }
 
 + (UIFont *)flex_smallCodeFont {
-        // Actually only available in iOS 13, the SDK headers are wrong
-    if (@available(iOS 13, *)) {
-        return [self monospacedSystemFontOfSize:self.smallSystemFontSize weight:UIFontWeightRegular];
-    } else {
-        return [self fontWithName:@"Menlo-Regular" size:self.smallSystemFontSize];
-    }
+    return [self monospacedSystemFontOfSize:self.smallSystemFontSize weight:UIFontWeightRegular];
 }
 
 @end

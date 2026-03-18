@@ -39,11 +39,7 @@
         
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         
-        if (@available(iOS 13, *)) {
-            self.appearance = UIKeyboardAppearanceDefault;
-        } else {
-            self.appearance = UIKeyboardAppearanceLight;
-        }
+        self.appearance = UIKeyboardAppearanceDefault;
     }
     
     return self;
@@ -106,18 +102,15 @@
     
     switch (_appearance) {
         case UIKeyboardAppearanceDefault:
-            if (@available(iOS 13, *)) {
-                borderColor = UIColor.systemBackgroundColor;
-                
-                if (self.usingDarkMode) {
-                    // style = UIBlurEffectStyleSystemThickMaterial;
-                    backgroundColor = darkColor;
-                } else {
-                    // style = UIBlurEffectStyleSystemUltraThinMaterialLight;
-                    backgroundColor = lightColor;
-                }
-                break;
+            borderColor = UIColor.systemBackgroundColor;
+            if (self.usingDarkMode) {
+                // style = UIBlurEffectStyleSystemThickMaterial;
+                backgroundColor = darkColor;
+            } else {
+                // style = UIBlurEffectStyleSystemUltraThinMaterialLight;
+                backgroundColor = lightColor;
             }
+            break;
         case UIKeyboardAppearanceLight: {
             borderColor = UIColor.clearColor;
             backgroundColor = lightColor;
@@ -203,21 +196,15 @@
 }
 
 - (BOOL)usingDarkMode {
-    if (@available(iOS 12, *)) {
-        return self.useSystemAppearance && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
-    }
-    
-    return self.appearance == UIKeyboardAppearanceDark;
+    return self.useSystemAppearance && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previous {
-    if (@available(iOS 12, *)) {
-        // Was darkmode toggled?
-        if (previous.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-            if (self.useSystemAppearance) {
-                // Recreate the background view with the proper colors
-                self.appearance = self.appearance;
-            }
+    // Was darkmode toggled?
+    if (previous.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+        if (self.useSystemAppearance) {
+            // Recreate the background view with the proper colors
+            self.appearance = self.appearance;
         }
     }
 }

@@ -48,35 +48,29 @@
     [self.navigationBar addGestureRecognizer:navbarTapGesture];
     
     // Add gesture to dismiss if not presented with a sheet style
-    if (@available(iOS 13, *)) {
-        switch (self.modalPresentationStyle) {
-            case UIModalPresentationAutomatic:
-            case UIModalPresentationPageSheet:
-            case UIModalPresentationFormSheet:
-                break;
-                
-            default:
-                [self addNavigationBarSwipeGesture];
-                break;
-        }
-    } else {
-        [self addNavigationBarSwipeGesture];
+    switch (self.modalPresentationStyle) {
+        case UIModalPresentationAutomatic:
+        case UIModalPresentationPageSheet:
+        case UIModalPresentationFormSheet:
+            break;
+
+        default:
+            [self addNavigationBarSwipeGesture];
+            break;
     }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    if (@available(iOS 15.0, *)) {
-        UISheetPresentationController *presenter = self.sheetPresentationController;
-        presenter.detents = @[
-            UISheetPresentationControllerDetent.mediumDetent,
-            UISheetPresentationControllerDetent.largeDetent,
-        ];
-        presenter.prefersScrollingExpandsWhenScrolledToEdge = NO;
-        presenter.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-        presenter.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
-    }
+    UISheetPresentationController *presenter = self.sheetPresentationController;
+    presenter.detents = @[
+        UISheetPresentationControllerDetent.mediumDetent,
+        UISheetPresentationControllerDetent.largeDetent,
+    ];
+    presenter.prefersScrollingExpandsWhenScrolledToEdge = NO;
+    presenter.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
+    presenter.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
     
     if (self.beingPresented && !self.didSetupPendingDismissButtons) {
         for (UIViewController *vc in self.viewControllers) {

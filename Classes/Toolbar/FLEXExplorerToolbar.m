@@ -245,12 +245,7 @@
 }
 
 - (CGRect)safeArea {
-    CGRect safeArea = self.bounds;
-    if (@available(iOS 11.0, *)) {
-        safeArea = UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
-    }
-
-    return safeArea;
+    return UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
 }
 
 @end

@@ -31,11 +31,9 @@
         @"delegate", @"keyWindow", @"windows"
     ]).forClass(UIApplication.class);
 
-    if (@available(iOS 13, *)) {
-        self.append.properties(@[
-            @"connectedScenes", @"openSessions", @"supportsMultipleScenes"
-        ]).forClass(UIApplication.class);
-    }
+    self.append.properties(@[
+        @"connectedScenes", @"openSessions", @"supportsMultipleScenes"
+    ]).forClass(UIApplication.class);
 }
 
 @end
@@ -100,9 +98,7 @@
         @"subviews"
     ]).forClass(UIWindow.class);
 
-    if (@available(iOS 13, *)) {
-        self.append.properties(@[@"windowScene"]).forClass(UIWindow.class);
-    }
+    self.append.properties(@[@"windowScene"]).forClass(UIWindow.class);
 
     ivars = @[@"_targetActions", @"_gestureRecognizers"];
     
@@ -160,9 +156,7 @@
         @"title", @"message", @"actions", @"textFields",
         @"preferredAction", @"presentingViewController", @"viewIfLoaded",
     ].mutableCopy;
-    if (@available(iOS 14.0, *)) {
-        [alertControllerProps insertObject:@"image" atIndex:4];
-    }
+    [alertControllerProps insertObject:@"image" atIndex:4];
     self.append
         .properties(alertControllerProps)
         .methods(@[@"addAction:"])
@@ -188,9 +182,7 @@
         @"alignmentRectInsets", @"duration", @"images"
     ]).forClass(UIImage.class);
 
-    if (@available(iOS 13, *)) {
-        self.append.properties(@[@"symbolImage"]).forClass(UIImage.class);
-    }
+    self.append.properties(@[@"symbolImage"]).forClass(UIImage.class);
 }
 
 @end
@@ -384,16 +376,12 @@
         self.append.properties(@[
             @"delegate"
         ]).forClass(SafariVC);
-        if (@available(iOS 10.0, *)) {
-            self.append.properties(@[
-                @"preferredBarTintColor", @"preferredControlTintColor"
-            ]).forClass(SafariVC);
-        }
-        if (@available(iOS 11.0, *)) {
-            self.append.properties(@[
-                @"configuration", @"dismissButtonStyle"
-            ]).forClass(SafariVC);
-        }
+        self.append.properties(@[
+            @"preferredBarTintColor", @"preferredControlTintColor"
+        ]).forClass(SafariVC);
+        self.append.properties(@[
+            @"configuration", @"dismissButtonStyle"
+        ]).forClass(SafariVC);
     }
 }
 

@@ -30,21 +30,13 @@ FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell = @"kFLEXCodeFontCell";
 @implementation FLEXTableView
 
 + (instancetype)flexDefaultTableView {
-    if (@available(iOS 13.0, *)) {
-        return [[self alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
-    } else {
-        return [[self alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
-    }
+    return [[self alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
 }
 
 #pragma mark - Initialization
 
 + (id)groupedTableView {
-    if (@available(iOS 13.0, *)) {
-        return [[self alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
-    } else {
-        return [[self alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
-    }
+    return [[self alloc] initWithFrame:CGRectZero style:UITableViewStyleInsetGrouped];
 }
 
 + (id)plainTableView {

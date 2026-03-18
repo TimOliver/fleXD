@@ -50,11 +50,7 @@
         [self setTitle:self.title forState:UIControlStateNormal];
         [self sizeToFit];
         
-        if (@available(iOS 13, *)) {
-            self.appearance = UIKeyboardAppearanceDefault;
-        } else {
-            self.appearance = UIKeyboardAppearanceLight;
-        }
+        self.appearance = UIKeyboardAppearanceDefault;
         
         CGRect frame = self.frame;
         frame.size.width  += title.length < 3 ? 30 : 15;
@@ -84,18 +80,15 @@
     switch (_appearance) {
         default:
         case UIKeyboardAppearanceDefault:
-            if (@available(iOS 13, *)) {
-                titleColor = UIColor.labelColor;
-                
-                if (self.usingDarkMode) {
-                    // style = UIBlurEffectStyleSystemUltraThinMaterialLight;
-                    backgroundColor = darkColor;
-                } else {
-                    // style = UIBlurEffectStyleSystemMaterialLight;
-                    backgroundColor = lightColor;
-                }
-                break;
+            titleColor = UIColor.labelColor;
+            if (self.usingDarkMode) {
+                // style = UIBlurEffectStyleSystemUltraThinMaterialLight;
+                backgroundColor = darkColor;
+            } else {
+                // style = UIBlurEffectStyleSystemMaterialLight;
+                backgroundColor = lightColor;
             }
+            break;
         case UIKeyboardAppearanceLight:
             titleColor = UIColor.blackColor;
             backgroundColor = lightColor;
@@ -129,21 +122,15 @@
 }
 
 - (BOOL)usingDarkMode {
-    if (@available(iOS 12, *)) {
-        return self.useSystemAppearance && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
-    }
-    
-    return self.appearance == UIKeyboardAppearanceDark;
+    return self.useSystemAppearance && self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previous {
-    if (@available(iOS 12, *)) {
-        // Was darkmode toggled?
-        if (previous.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
-            if (self.useSystemAppearance) {
-                // Recreate the background view with the proper colors
-                self.appearance = self.appearance;
-            }
+    // Was darkmode toggled?
+    if (previous.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+        if (self.useSystemAppearance) {
+            // Recreate the background view with the proper colors
+            self.appearance = self.appearance;
         }
     }
 }

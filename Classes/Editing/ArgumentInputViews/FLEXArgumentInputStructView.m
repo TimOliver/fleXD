@@ -47,11 +47,9 @@ static NSMutableDictionary<NSString *, NSArray<NSString *> *> *structFieldNameRe
     
     [structFieldNameRegistrar addEntriesFromDictionary:defaults];
     
-    if (@available(iOS 11.0, *)) {
-        structFieldNameRegistrar[@(@encode(NSDirectionalEdgeInsets))] = @[
-            @"CGFloat top", @"CGFloat leading", @"CGFloat bottom", @"CGFloat trailing"
-        ];
-    }
+    structFieldNameRegistrar[@(@encode(NSDirectionalEdgeInsets))] = @[
+        @"CGFloat top", @"CGFloat leading", @"CGFloat bottom", @"CGFloat trailing"
+    ];
 }
 
 - (instancetype)initWithArgumentTypeEncoding:(const char *)typeEncoding {

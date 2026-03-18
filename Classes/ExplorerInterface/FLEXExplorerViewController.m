@@ -124,9 +124,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     [self.view addGestureRecognizer:self.movePanGR];
     
     // Feedback
-    if (@available(iOS 10.0, *)) {
-        _selectionFBG = [UISelectionFeedbackGenerator new];
-    }
+    _selectionFBG = [UISelectionFeedbackGenerator new];
     
     // Observe keyboard to move self out of the way
     [NSNotificationCenter.defaultCenter
@@ -427,11 +425,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 }
 
 - (UIWindow *)statusWindow {
-    if (!@available(iOS 16, *)) {
-        NSString *statusBarString = [NSString stringWithFormat:@"%@arWindow", @"_statusB"];
-        return [UIApplication.sharedApplication valueForKey:statusBarString];
-    }
-    
     return nil;
 }
 
@@ -673,9 +666,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 }
 
 - (void)actuateSelectionChangedFeedback {
-    if (@available(iOS 10.0, *)) {
-        [self.selectionFBG selectionChanged];
-    }
+    [self.selectionFBG selectionChanged];
 }
 
 - (void)updateOutlineViewsForSelectionPoint:(CGPoint)selectionPointInWindow {
@@ -812,29 +803,22 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 #pragma mark - Safe Area Handling
 
 - (CGRect)viewSafeArea {
-    CGRect safeArea = self.view.bounds;
-    if (@available(iOS 11.0, *)) {
-        safeArea = UIEdgeInsetsInsetRect(self.view.bounds, self.view.safeAreaInsets);
-    }
-
-    return safeArea;
+    return UIEdgeInsetsInsetRect(self.view.bounds, self.view.safeAreaInsets);
 }
 
 - (void)viewSafeAreaInsetsDidChange {
-    if (@available(iOS 11.0, *)) {
-        [super viewSafeAreaInsetsDidChange];
+    [super viewSafeAreaInsetsDidChange];
 
-        CGRect safeArea = [self viewSafeArea];
-        CGSize toolbarSize = [self.explorerToolbar sizeThatFits:CGSizeMake(
-            CGRectGetWidth(self.view.bounds), CGRectGetHeight(safeArea)
-        )];
-        [self updateToolbarPositionWithUnconstrainedFrame:CGRectMake(
-            CGRectGetMinX(self.explorerToolbar.frame),
-            CGRectGetMinY(self.explorerToolbar.frame),
-            toolbarSize.width,
-            toolbarSize.height)
-        ];
-    }
+    CGRect safeArea = [self viewSafeArea];
+    CGSize toolbarSize = [self.explorerToolbar sizeThatFits:CGSizeMake(
+        CGRectGetWidth(self.view.bounds), CGRectGetHeight(safeArea)
+    )];
+    [self updateToolbarPositionWithUnconstrainedFrame:CGRectMake(
+        CGRectGetMinX(self.explorerToolbar.frame),
+        CGRectGetMinY(self.explorerToolbar.frame),
+        toolbarSize.width,
+        toolbarSize.height)
+    ];
 }
 
 
@@ -904,10 +888,6 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     // Make our window key to correctly handle input.
     [self.view.window makeKeyWindow];
 
-    // Move the status bar on top of FLEX so we can get scroll to top behavior for taps.
-    if (!@available(iOS 13, *)) {
-        [self statusWindow].windowLevel = self.view.window.windowLevel + 1.0;
-    }
     
     [self updateButtonStates];
     

@@ -60,10 +60,8 @@
     searchBar.delegate = controller;   
     searchBar.keyboardType = UIKeyboardTypeWebSearch;
     searchBar.autocorrectionType = UITextAutocorrectionTypeNo;
-    if (@available(iOS 11, *)) {
-        searchBar.smartQuotesType = UITextSmartQuotesTypeNo;
-        searchBar.smartInsertDeleteType = UITextSmartInsertDeleteTypeNo;
-    }
+    searchBar.smartQuotesType = UITextSmartQuotesTypeNo;
+    searchBar.smartInsertDeleteType = UITextSmartInsertDeleteTypeNo;
 
     return controller;
 }
@@ -339,9 +337,7 @@
 
         cell.accessoryType        = UITableViewCellAccessoryDisclosureIndicator;
         cell.textLabel.text       = self.filteredClasses[indexPath.row];
-        if (@available(iOS 10, *)) {
-            cell.detailTextLabel.text = summary.length ? summary : nil;
-        }
+        cell.detailTextLabel.text = summary.length ? summary : nil;
 
     }
     else {
