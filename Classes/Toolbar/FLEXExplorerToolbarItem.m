@@ -127,29 +127,30 @@
 
 #pragma mark - UIButton Layout Overrides
 
-- (CGRect)titleRectForContentRect:(CGRect)contentRect {
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CGRect contentRect = self.bounds;
+    
+    // Title: bottom aligned and centered
     NSDictionary *attrs = [[self class] titleAttributes];
-    // Bottom aligned and centered.
-    CGRect titleRect = CGRectZero;
     CGSize titleSize = [self.title boundingRectWithSize:contentRect.size
-                                                options:0
-                                             attributes:attrs
-                                                context:nil].size;
+                                               options:0
+                                            attributes:attrs
+                                               context:nil].size;
     titleSize = CGSizeMake(ceil(titleSize.width), ceil(titleSize.height));
+    CGRect titleRect = CGRectZero;
     titleRect.size = titleSize;
     titleRect.origin.y = contentRect.origin.y + CGRectGetMaxY(contentRect) - titleSize.height;
     titleRect.origin.x = contentRect.origin.x + FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
-    return titleRect;
-}
-
-- (CGRect)imageRectForContentRect:(CGRect)contentRect {
+    self.titleLabel.frame = titleRect;
+    
+    // Image: vertically centered in space above the title
     CGSize imageSize = self.image.size;
-    CGRect titleRect = [self titleRectForContentRect:contentRect];
-    CGFloat availableHeight = contentRect.size.height - titleRect.size.height - [[self class] topMargin];
+    CGFloat availableHeight = contentRect.size.height - titleSize.height - [[self class] topMargin];
     CGFloat originY = [[self class] topMargin] + FLEXFloor((availableHeight - imageSize.height) / 2.0);
     CGFloat originX = FLEXFloor((contentRect.size.width - imageSize.width) / 2.0);
-    CGRect imageRect = CGRectMake(originX, originY, imageSize.width, imageSize.height);
-    return imageRect;
+    self.imageView.frame = CGRectMake(originX, originY, imageSize.width, imageSize.height);
 }
 
 @end
