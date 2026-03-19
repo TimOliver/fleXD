@@ -26,6 +26,8 @@
 #import "FLEX-Categories.h"
 #import "FLEX-ObjectExploring.h"
 
+#import "FLEXFileBrowserController.h"
+
 #import "FLEXMacros.h"
 #import "FLEXAlert.h"
 #import "FLEXResources.h"
