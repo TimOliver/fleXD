@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// This future should return one. We don't explicitly put FLEXCollection
 /// here because making generic collections conform to FLEXCollection breaks
 /// compile-time features of generic arrays, such as `someArray[0].property`
-typedef id<NSObject, NSFastEnumeration /* FLEXCollection */>(^FLEXCollectionContentFuture)(__kindof FLEXCollectionContentSection *section);
+typedef id<NSObject, NSFastEnumeration /* FLEXCollection */> _Nonnull (^FLEXCollectionContentFuture)(__kindof FLEXCollectionContentSection *section);
 
 #pragma mark Collection
 /// A protocol that enables `FLEXCollectionContentSection` to operate on any arbitrary collection.

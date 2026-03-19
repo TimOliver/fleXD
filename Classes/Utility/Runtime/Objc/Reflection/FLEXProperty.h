@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// `0` if created via `+propertyWithName:attributes:`
 @property (nonatomic, readonly) objc_property_t  objc_property;
 /// All underlying `objc_property_t` values, e.g. when a property is defined in multiple images.
-@property (nonatomic, readonly) objc_property_t  *objc_properties;
+@property (nonatomic, readonly) objc_property_t _Nonnull * _Nullable objc_properties;
 /// The number of underlying `objc_property_t` values.
 @property (nonatomic, readonly) NSInteger        objc_propertyCount;
 /// Whether this is a class property (as opposed to an instance property).
