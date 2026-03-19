@@ -51,7 +51,7 @@
         self.backgroundColorCheckerPatternView = [UIView new];
         self.backgroundColorCheckerPatternView.clipsToBounds = YES;
         self.backgroundColorCheckerPatternView.layer.borderColor = FLEXColor.tertiaryBackgroundColor.CGColor;
-        self.backgroundColorCheckerPatternView.layer.borderWidth = 2.f / UIScreen.mainScreen.scale;
+        self.backgroundColorCheckerPatternView.layer.borderWidth = 2.f / self.traitCollection.displayScale;
         self.backgroundColorCheckerPatternView.backgroundColor = checkerPatternColor;
         [self.contentView addSubview:self.backgroundColorCheckerPatternView];
         self.viewBackgroundColorView = [UIView new];

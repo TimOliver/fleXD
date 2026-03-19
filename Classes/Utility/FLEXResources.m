@@ -8693,8 +8693,8 @@ static const u_int8_t FLEXHierarchyIndentPattern3x[] = {
 @implementation FLEXResources
 
 #define FLEXImage(base) ( \
-    (UIScreen.mainScreen.scale > 1.5) ? \
-        ( (UIScreen.mainScreen.scale > 2.5) ? \
+    (UITraitCollection.currentTraitCollection.displayScale > 1.5) ? \
+        ( (UITraitCollection.currentTraitCollection.displayScale > 2.5) ? \
             [self imageWithBytesNoCopy:(void *)base##3x length:sizeof(base##3x) scale:3.0] : \
             [self imageWithBytesNoCopy:(void *)base##2x length:sizeof(base##2x) scale:2.0] \
         ) : \

@@ -40,14 +40,20 @@ extern BOOL FLEXConstructorsShouldRun(void);
 /// A macro to return from the current procedure if we don't want to run constructors
 #define FLEX_EXIT_IF_NO_CTORS() if (!FLEXConstructorsShouldRun()) return;
 
+/// The display scale of the current trait environment.
+NS_INLINE CGFloat FLEXScreenScale(void) {
+    return UITraitCollection.currentTraitCollection.displayScale;
+}
+
 /// Rounds down to the nearest "point" coordinate
 NS_INLINE CGFloat FLEXFloor(CGFloat x) {
-    return floor(UIScreen.mainScreen.scale * (x)) / UIScreen.mainScreen.scale;
+    CGFloat scale = FLEXScreenScale();
+    return floor(scale * x) / scale;
 }
 
 /// Returns the given number of points in pixels
 NS_INLINE CGFloat FLEXPointsToPixels(CGFloat points) {
-    return points / UIScreen.mainScreen.scale;
+    return points / FLEXScreenScale();
 }
 
 /// Creates a CGRect with all members rounded down to the nearest "point" coordinate

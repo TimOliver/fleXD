@@ -995,7 +995,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 - (BOOL)handleDownArrowKeyPressed {
     if (self.currentMode == FLEXExplorerModeMove) {
         CGRect frame = self.selectedView.frame;
-        frame.origin.y += 1.0 / UIScreen.mainScreen.scale;
+        frame.origin.y += 1.0 / self.traitCollection.displayScale;
         self.selectedView.frame = frame;
     } else if (self.currentMode == FLEXExplorerModeSelect && self.viewsAtTapPoint.count > 0) {
         NSInteger selectedViewIndex = [self.viewsAtTapPoint indexOfObject:self.selectedView];
@@ -1012,7 +1012,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 - (BOOL)handleUpArrowKeyPressed {
     if (self.currentMode == FLEXExplorerModeMove) {
         CGRect frame = self.selectedView.frame;
-        frame.origin.y -= 1.0 / UIScreen.mainScreen.scale;
+        frame.origin.y -= 1.0 / self.traitCollection.displayScale;
         self.selectedView.frame = frame;
     } else if (self.currentMode == FLEXExplorerModeSelect && self.viewsAtTapPoint.count > 0) {
         NSInteger selectedViewIndex = [self.viewsAtTapPoint indexOfObject:self.selectedView];
@@ -1029,7 +1029,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 - (BOOL)handleRightArrowKeyPressed {
     if (self.currentMode == FLEXExplorerModeMove) {
         CGRect frame = self.selectedView.frame;
-        frame.origin.x += 1.0 / UIScreen.mainScreen.scale;
+        frame.origin.x += 1.0 / self.traitCollection.displayScale;
         self.selectedView.frame = frame;
         return YES;
     }
@@ -1040,7 +1040,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 - (BOOL)handleLeftArrowKeyPressed {
     if (self.currentMode == FLEXExplorerModeMove) {
         CGRect frame = self.selectedView.frame;
-        frame.origin.x -= 1.0 / UIScreen.mainScreen.scale;
+        frame.origin.x -= 1.0 / self.traitCollection.displayScale;
         self.selectedView.frame = frame;
         return YES;
     }
