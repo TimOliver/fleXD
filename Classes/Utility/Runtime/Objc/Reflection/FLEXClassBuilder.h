@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param name The name of the ivar, e.g. `@"_value"`
 /// @param size The size of the ivar in bytes, e.g. `sizeof(type)`
 /// @param alignment The required alignment, e.g. `log2(sizeof(type))`
-/// @param encoding The type encoding, e.g. `@(@encode(type))`
+/// @param encoding The type encoding, e.g. `\@(\@encode(type))`
 + (instancetype)name:(NSString *)name
                 size:(size_t)size
            alignment:(uint8_t)alignment

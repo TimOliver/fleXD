@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// Example usage for a `void` method that takes an `int:`
 /// @code FLEXTypeEncodingString(@encode(void), 1, @encode(int)); @endcode
-/// @param returnType The encoded return type, e.g. `@encode(void)`
+/// @param returnType The encoded return type, e.g. `\@encode(void)`
 /// @param count The number of parameter type encodings that follow.
 /// @return The full type encoding string, or `nil` if \e returnType is `NULL`
 NSString * _Nullable FLEXTypeEncodingString(const char *returnType, NSUInteger count, ...);
