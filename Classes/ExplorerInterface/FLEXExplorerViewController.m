@@ -88,6 +88,11 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 /// The actual views at the selection point with the deepest view last.
 @property (nonatomic) NSArray<UIView *> *viewsAtTapPoint;
 
+/// Tap-to-cycle state: repeated taps on the same point cycle through the view hierarchy.
+@property (nonatomic) CGPoint lastTapPoint;
+@property (nonatomic) NSInteger tapCycleIndex;
+@property (nonatomic) NSArray<UIView *> *viewsAtLastTapPoint;
+
 /// The view that we're currently highlighting with an overlay and displaying details for.
 @property (nonatomic) UIView *selectedView;
 
@@ -749,6 +754,21 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         // Thanks to @lascorbe for finding this: https://github.com/Flipboard/FLEX/pull/31
         CGPoint tapPointInView = [tapGR locationInView:self.view];
         CGPoint tapPointInWindow = [self.view convertPoint:tapPointInView toView:nil];
+
+        // Detect same-point re-tap (within 10pt tolerance) to cycle through views
+        static const CGFloat kSamePointThreshold = 10.0;
+        const CGFloat dx = tapPointInWindow.x - self.lastTapPoint.x;
+        const CGFloat dy = tapPointInWindow.y - self.lastTapPoint.y;
+        const BOOL isSamePoint = (dx * dx + dy * dy) <= (kSamePointThreshold * kSamePointThreshold);
+
+        if (isSamePoint && self.viewsAtLastTapPoint.count > 0) {
+            self.tapCycleIndex = (self.tapCycleIndex + 1) % self.viewsAtLastTapPoint.count;
+        } else {
+            self.tapCycleIndex = 0;
+            self.lastTapPoint = tapPointInWindow;
+            self.viewsAtLastTapPoint = nil;
+        }
+
         [self updateOutlineViewsForSelectionPoint:tapPointInWindow];
     }
 }
@@ -862,7 +882,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     // Select in the window that would handle the touch, but don't just use the result of
     // hitTest:withEvent: so we can still select views with interaction disabled.
     // Default to the the application's key window if none of the windows want the touch.
-    UIWindow *windowForSelection = FLEXUtility.appKeyWindow;
+    UIWindow *windowForSelection = UIApplication.sharedApplication.keyWindow;
     for (UIWindow *window in FLEXUtility.allWindows.reverseObjectEnumerator) {
         // Ignore the explorer's own window.
         if (window != self.view.window) {
@@ -873,8 +893,30 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         }
     }
 
-    // Select the deepest visible view at the tap point. This generally corresponds to what the user wants to select.
-    return [self recursiveSubviewsAtPoint:tapPointInWindow inView:windowForSelection skipHiddenViews:YES].lastObject;
+    NSArray<UIView *> *const visibleViews = [self recursiveSubviewsAtPoint:tapPointInWindow inView:windowForSelection skipHiddenViews:YES];
+    if (visibleViews.count == 0) {
+        return nil;
+    }
+
+    // If this is a same-point re-tap and the currently selected view is in
+    // the fresh visible views, cycle to the next view up the hierarchy.
+    // Using the selected view reference instead of a cached index means we
+    // always work with the current view hierarchy, not stale state.
+    static const CGFloat kSamePointThreshold = 10.0;
+    const CGFloat dx = tapPointInWindow.x - self.lastTapPoint.x;
+    const CGFloat dy = tapPointInWindow.y - self.lastTapPoint.y;
+    const BOOL isSamePoint = (dx * dx + dy * dy) <= (kSamePointThreshold * kSamePointThreshold);
+
+    if (isSamePoint && self.selectedView) {
+        const NSUInteger currentIdx = [visibleViews indexOfObjectIdenticalTo:self.selectedView];
+        if (currentIdx != NSNotFound) {
+            // Move up the hierarchy; wrap around to the deepest view
+            return currentIdx > 0 ? visibleViews[currentIdx - 1] : visibleViews.lastObject;
+        }
+    }
+
+    // New point or no current selection: select the deepest view
+    return visibleViews.lastObject;
 }
 
 /// iOS 26 introduced several system overlay views (floating bars, context menus,
