@@ -877,21 +877,63 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     return [self recursiveSubviewsAtPoint:tapPointInWindow inView:windowForSelection skipHiddenViews:YES].lastObject;
 }
 
+/// iOS 26 introduced several system overlay views (floating bars, context menus,
+/// passthrough containers) that sit above app content in the view hierarchy.
+/// These are almost never the views a developer wants to inspect, yet they
+/// dominate tap-to-select results — often requiring many taps to reach the
+/// actual app view underneath. Skip them by default on iOS 26+.
+static BOOL FLEXIsDefaultSkippedView(UIView *view) {
+    if (@available(iOS 26, *)) {
+        static NSSet<NSString *> *skippedSubstrings;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            skippedSubstrings = [NSSet setWithArray:@[
+                @"FloatingBarHostingView",
+                @"FloatingBarContainerView",
+                @"_UITabBarContainerView",
+                @"_UITouchPassthroughView",
+                @"_UIContextMenuContainerView",
+                @"_UIContextMenuPlatterTransitionView",
+            ]];
+        });
+        NSString *const className = NSStringFromClass([view class]);
+        for (NSString *substring in skippedSubstrings) {
+            if ([className containsString:substring]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 - (NSArray<UIView *> *)recursiveSubviewsAtPoint:(CGPoint)pointInView
                                          inView:(UIView *)view
                                 skipHiddenViews:(BOOL)skipHidden {
     NSMutableArray<UIView *> *subviewsAtPoint = [NSMutableArray new];
+    BOOL (^skippedPredicate)(UIView *) = self.skippedViewPredicate;
     for (UIView *subview in view.subviews) {
-        const BOOL isHidden = subview.hidden || subview.alpha < 0.01;
+        BOOL isHidden = subview.hidden || subview.alpha < 0.01;
         if (skipHidden && isHidden) {
             continue;
         }
 
-        const BOOL subviewContainsPoint = CGRectContainsPoint(subview.frame, pointInView);
+        BOOL subviewContainsPoint = CGRectContainsPoint(subview.frame, pointInView);
+
+        if (FLEXIsDefaultSkippedView(subview) || (skippedPredicate && skippedPredicate(subview))) {
+            // Skip adding this view but still recurse into its subviews
+            if (subviewContainsPoint || !subview.clipsToBounds) {
+                const CGPoint pointInSubview = [view convertPoint:pointInView toView:subview];
+                [subviewsAtPoint addObjectsFromArray:[self
+                    recursiveSubviewsAtPoint:pointInSubview inView:subview skipHiddenViews:skipHidden
+                ]];
+            }
+            continue;
+        }
+
         if (subviewContainsPoint) {
             [subviewsAtPoint addObject:subview];
         }
-
+        
         // If this view doesn't clip to its bounds, we need to check its subviews even if it
         // doesn't contain the selection point. They may be visible and contain the selection point.
         if (subviewContainsPoint || !subview.clipsToBounds) {
@@ -963,35 +1005,46 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 - (BOOL)shouldReceiveTouchAtWindowPoint:(CGPoint)pointInWindowCoordinates {
     CGPoint pointInLocalCoordinates = [self.view convertPoint:pointInWindowCoordinates fromView:nil];
 
-    // If a modal is active anywhere in the presentation chain, check each level.
-    // We must hit-test the presentation container (not just the VC's own view) because
-    // it also holds the dimming/backdrop view — tapping that is how sheets get dismissed.
-    UIViewController *presented = self.presentedViewController;
-    while (presented) {
-        UIView *container = presented.presentationController.containerView ?: presented.view;
-        CGPoint pointInContainer = [container convertPoint:pointInWindowCoordinates fromView:nil];
-        if ([container hitTest:pointInContainer withEvent:nil]) {
+    // If we have a modal presented, is it in the modal?
+    if (self.presentedViewController) {
+        UIView *presentedView = self.presentedViewController.view;
+        CGPoint pipvc = [presentedView convertPoint:pointInLocalCoordinates fromView:self.view];
+        UIView *hit = [presentedView hitTest:pipvc withEvent:nil];
+        if (hit != nil) {
             return YES;
         }
-        presented = presented.presentedViewController;
+    }
+
+    // If the touch lands on a view matched by the skipped-view predicate
+    // or the built-in iOS 26+ default skip list, let it pass through so
+    // the view remains interactive during select/move mode.
+    {
+        UIWindow *const appKeyWindow = [FLEXUtility appKeyWindow];
+        if (appKeyWindow) {
+            const CGPoint pointInWindow = [appKeyWindow convertPoint:pointInWindowCoordinates fromView:nil];
+            UIView *const hitView = [appKeyWindow hitTest:pointInWindow withEvent:nil];
+            if (hitView && (FLEXIsDefaultSkippedView(hitView) ||
+                            (self.skippedViewPredicate && self.skippedViewPredicate(hitView)))) {
+                return NO;
+            }
+        }
     }
 
     // Always if we're in selection mode
     if (self.currentMode == FLEXExplorerModeSelect) {
         return YES;
     }
-
+    
     // Always in move mode too
     if (self.currentMode == FLEXExplorerModeMove) {
         return YES;
     }
-
-    // Always if it's on the toolbar (use pointInside: to include the overhanging close button)
-    CGPoint pointInToolbar = [self.explorerToolbar convertPoint:pointInLocalCoordinates fromView:self.view];
-    if ([self.explorerToolbar pointInside:pointInToolbar withEvent:nil]) {
+    
+    // Always if it's on the toolbar
+    if (CGRectContainsPoint(self.explorerToolbar.frame, pointInLocalCoordinates)) {
         return YES;
     }
-
+    
     return NO;
 }
 
@@ -1063,7 +1116,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 }
 
 - (void)toggleToolWithViewControllerProvider:(UINavigationController *(^)(void))future
-                                  completion:(void (^)(void))completion {
+                                  completion:(void (^_Nullable)(void))completion {
     if (self.presentedViewController) {
         // We do NOT want to present the future; this is
         // a convenience method for toggling the SAME TOOL
@@ -1074,7 +1127,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 }
 
 - (void)presentTool:(UINavigationController *(^)(void))future
-         completion:(void (^)(void))completion {
+         completion:(void (^_Nullable)(void))completion {
     if (self.presentedViewController) {
         // If a tool is already presented, dismiss it first
         [self dismissViewControllerAnimated:YES completion:^{

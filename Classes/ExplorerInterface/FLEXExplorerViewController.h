@@ -41,17 +41,23 @@
 - (void)explorerViewControllerDidFinish:(FLEXExplorerViewController *)explorerViewController;
 @end
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// A view controller that manages the FLEX toolbar.
 @interface FLEXExplorerViewController : UIViewController
 
 /// The delegate that is notified when the explorer finishes.
-@property (nonatomic, weak) id <FLEXExplorerViewControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) id <FLEXExplorerViewControllerDelegate> delegate;
 
 /// Whether the FLEX window should become the key window while the explorer is active.
 @property (nonatomic, readonly) BOOL wantsWindowToBecomeKey;
 
 /// The floating toolbar managed by this view controller.
 @property (nonatomic, readonly) FLEXExplorerToolbar *explorerToolbar;
+
+/// A predicate block that returns YES if the given view should be excluded
+/// from tap-to-select. Set by FLEXManager from the skipped view predicate.
+@property (nonatomic, copy, nullable) BOOL (^skippedViewPredicate)(UIView *view);
 
 /// Returns whether the explorer should receive a touch at the given point in window coordinates.
 - (BOOL)shouldReceiveTouchAtWindowPoint:(CGPoint)pointInWindowCoordinates;
@@ -64,7 +70,7 @@
 /// @param future A block returning the navigation controller to present.
 /// @param completion Called after dismissal or presentation completes.
 - (void)toggleToolWithViewControllerProvider:(UINavigationController *(^)(void))future
-                                  completion:(void (^)(void))completion;
+                                  completion:(void (^_Nullable)(void))completion;
 
 /// Presents a modal tool, dismissing any currently presented tool first.
 ///
@@ -73,7 +79,7 @@
 /// @param future A block returning the navigation controller to present.
 /// @param completion Called after the tool has been presented.
 - (void)presentTool:(UINavigationController *(^)(void))future
-         completion:(void (^)(void))completion;
+         completion:(void (^_Nullable)(void))completion;
 
 // Keyboard shortcut helpers
 
@@ -93,3 +99,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
