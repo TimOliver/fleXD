@@ -64,7 +64,7 @@
 
 @interface OSCache_Private : NSObject
 
-@property (nonatomic, unsafe_unretained) id<OSCacheDelegate> delegate;
+@property (nonatomic, weak) id<OSCacheDelegate> delegate;
 @property (nonatomic, assign) NSUInteger countLimit;
 @property (nonatomic, assign) NSUInteger totalCostLimit;
 @property (nonatomic, copy) NSString *name;
