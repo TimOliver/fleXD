@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Text colors
 @property (readonly, class) UIColor *primaryTextColor;
 @property (readonly, class) UIColor *deemphasizedTextColor;
+@property (readonly, class) UIColor *mutedTextColor;
 
 // UI element colors
 @property (readonly, class) UIColor *tintColor;

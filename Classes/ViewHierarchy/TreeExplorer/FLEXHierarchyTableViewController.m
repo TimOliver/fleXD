@@ -254,10 +254,10 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
 
     if (view.isHidden || view.alpha < 0.01) {
         cell.textLabel.textColor = FLEXColor.deemphasizedTextColor;
-        cell.detailTextLabel.textColor = FLEXColor.deemphasizedTextColor;
+        cell.detailTextLabel.textColor = FLEXColor.mutedTextColor;
     } else {
         cell.textLabel.textColor = FLEXColor.primaryTextColor;
-        cell.detailTextLabel.textColor = FLEXColor.primaryTextColor;
+        cell.detailTextLabel.textColor = FLEXColor.deemphasizedTextColor;
     }
 
     return cell;

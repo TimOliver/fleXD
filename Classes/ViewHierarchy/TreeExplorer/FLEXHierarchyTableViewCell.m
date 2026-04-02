@@ -53,7 +53,7 @@
 @implementation FLEXHierarchyTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self = [super initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier];
     if (self) {
         self.depthIndicatorView = [UIView new];
         self.depthIndicatorView.backgroundColor = FLEXUtility.hierarchyIndentPatternColor;
