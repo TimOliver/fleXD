@@ -80,7 +80,7 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
     // TODO: rename it to FLEXNSObjectShortcuts or something?
     FLEXShortcutsSection *shortcutsSection = [FLEXShortcutsSection forObject:object];
     NSArray *sections = @[shortcutsSection];
-    
+
     Class customSectionClass = nil;
     Class cls = object_getClass(object);
     do {
@@ -90,7 +90,7 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
     if (customSectionClass) {
         id customSection = [customSectionClass forObject:object];
         BOOL isFLEXShortcutSection = [customSection respondsToSelector:@selector(isNewSection)];
-        
+
         // If the section "replaces" the default shortcuts section,
         // only return that section. Otherwise, return both this
         // section and the default shortcuts section.
@@ -213,7 +213,7 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
 
             return nil;
         }
-        
+
         case FLEXGlobalsRowNetworkHistory:
         case FLEXGlobalsRowSystemLog:
         case FLEXGlobalsRowLiveObjects:
@@ -227,7 +227,7 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
         case FLEXGlobalsRowCount:
             return nil;
     }
-    
+
     return nil;
 }
 
@@ -243,7 +243,7 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
                     ];
                     [host.navigationController pushViewController:explorer animated:YES];
                 } else {
-                    NSString *msg = @"The app delegate doesn't respond to -window";
+                    NSString * const msg = @"The app delegate doesn't respond to -window";
                     [FLEXAlert showAlert:@":(" message:msg from:host];
                 }
             };

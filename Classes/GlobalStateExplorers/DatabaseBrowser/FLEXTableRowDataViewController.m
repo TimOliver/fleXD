@@ -27,7 +27,7 @@
 
 - (NSArray<FLEXTableViewSection *> *)makeSections {
     NSDictionary<NSString *, NSString *> *rowsByColumn = self.rowsByColumn;
-    
+
     FLEXMutableListSection<NSString *> *section = [FLEXMutableListSection list:self.rowsByColumn.allKeys
         cellConfiguration:^(UITableViewCell *cell, NSString *column, NSInteger row) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -38,7 +38,7 @@
                 [rowsByColumn[column] localizedCaseInsensitiveContainsString:filterText];
         }
     ];
-    
+
     section.selectionHandler = ^(UIViewController *host, NSString *column) {
         UIPasteboard.generalPasteboard.string = rowsByColumn[column].description;
         [FLEXAlert makeAlert:^(FLEXAlert *make) {

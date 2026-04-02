@@ -231,9 +231,9 @@ BOOL const kFHSViewControllerExcludeFLEXWindows = YES;
 }
 
 - (void)resizeToolbarItems:(CGSize)viewSize {
-    CGFloat sliderHeights = self.snapshotView.spacingSlider.bounds.size.height;
-    CGFloat sliderWidths = viewSize.width / 3.f;
-    CGRect frame = CGRectMake(0, 0, sliderWidths, sliderHeights);
+    const CGFloat sliderHeights = self.snapshotView.spacingSlider.bounds.size.height;
+    const CGFloat sliderWidths = viewSize.width / 3.f;
+    const CGRect frame = CGRectMake(0, 0, sliderWidths, sliderHeights);
     self.snapshotView.spacingSlider.frame = frame;
     self.snapshotView.depthSlider.frame = frame;
 

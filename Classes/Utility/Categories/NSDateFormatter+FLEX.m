@@ -15,7 +15,7 @@
     if (!formatter) {
         formatter = [NSDateFormatter new];
     }
-    
+
     switch (format) {
         case FLEXDateFormatClock:
             formatter.dateFormat = @"h:mm a";
@@ -27,7 +27,7 @@
             formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
             break;
     }
-    
+
     return [formatter stringFromDate:date];
 }
 

@@ -50,18 +50,18 @@ static const CGFloat kColumnMargin = 1;
         self.autoresizingMask |= UIViewAutoresizingFlexibleHeight;
         self.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin;
         self.backgroundColor  = FLEXColor.groupedBackgroundColor;
-        
+
         [self loadHeaderScrollView];
         [self loadContentScrollView];
         [self loadLeftView];
     }
-    
+
     return self;
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
+
     CGFloat width  = self.frame.size.width;
     CGFloat height = self.frame.size.height;
     CGFloat topheaderHeight = self.topHeaderHeight;
@@ -69,15 +69,15 @@ static const CGFloat kColumnMargin = 1;
     CGFloat topInsets = 0.f;
 
     topInsets = self.safeAreaInsets.top;
-    
+
     CGFloat contentWidth = 0.0;
     NSInteger columnsCount = self.numberOfColumns;
     for (int i = 0; i < columnsCount; i++) {
         contentWidth += CGRectGetWidth(self.headerViews[i].bounds);
     }
-    
+
     CGFloat contentHeight = height - topheaderHeight - topInsets;
-    
+
     self.leftHeader.frame = CGRectMake(0, topInsets, self.leftHeaderWidth, self.topHeaderHeight);
     self.leftTableView.frame = CGRectMake(
         0, topheaderHeight + topInsets, leftHeaderWidth, contentHeight
@@ -105,7 +105,7 @@ static const CGFloat kColumnMargin = 1;
     headerScrollView.delegate        = self;
     headerScrollView.backgroundColor = FLEXColor.secondaryGroupedBackgroundColor;
     self.headerScrollView            = headerScrollView;
-    
+
     [self addSubview:headerScrollView];
 }
 
@@ -113,7 +113,7 @@ static const CGFloat kColumnMargin = 1;
     UIScrollView *scrollView = [UIScrollView new];
     scrollView.bounces       = NO;
     scrollView.delegate      = self;
-    
+
     UITableView *tableView   = [UITableView new];
     tableView.delegate       = self;
     tableView.dataSource     = self;
@@ -121,10 +121,10 @@ static const CGFloat kColumnMargin = 1;
     [tableView registerClass:[FLEXDBQueryRowCell class]
         forCellReuseIdentifier:kFLEXDBQueryRowCellReuse
     ];
-    
+
     [scrollView addSubview:tableView];
     [self addSubview:scrollView];
-    
+
     self.contentScrollView = scrollView;
     self.contentTableView  = tableView;
 }
@@ -136,7 +136,7 @@ static const CGFloat kColumnMargin = 1;
     leftTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.leftTableView           = leftTableView;
     [self addSubview:leftTableView];
-    
+
     UIView *leftHeader         = [UIView new];
     leftHeader.backgroundColor = FLEXColor.secondaryBackgroundColor;
     self.leftHeader            = leftHeader;
@@ -157,13 +157,13 @@ static const CGFloat kColumnMargin = 1;
     for (UIView *subview in self.headerViews) {
         [subview removeFromSuperview];
     }
-    
+
     __block CGFloat xOffset = 0;
-    
+
     self.headerViews = [NSArray flex_forEachUpTo:self.numberOfColumns map:^id(NSUInteger column) {
         FLEXTableColumnHeader *header = [FLEXTableColumnHeader new];
         header.titleLabel.text = [self columnTitle:column];
-        
+
         CGSize fittingSize = CGSizeMake(CGFLOAT_MAX, self.topHeaderHeight - 1);
         CGFloat width = self.columnMargin + MAX(
             [self minContentWidthForColumn:column],
@@ -174,14 +174,14 @@ static const CGFloat kColumnMargin = 1;
         if (column == self.sortColumn) {
             header.sortType = self.sortType;
         }
-        
+
         // Header tap gesture
         UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc]
             initWithTarget:self action:@selector(contentHeaderTap:)
         ];
         [header addGestureRecognizer:gesture];
         header.userInteractionEnabled = YES;
-        
+
         xOffset += width;
         [self.headerScrollView addSubview:header];
         return header;
@@ -191,15 +191,15 @@ static const CGFloat kColumnMargin = 1;
 - (void)contentHeaderTap:(UIGestureRecognizer *)gesture {
     NSInteger newSortColumn = [self.headerViews indexOfObject:gesture.view];
     FLEXTableColumnHeaderSortType newType = FLEXNextTableColumnHeaderSortType(self.sortType);
-    
+
     // Reset old header
     FLEXTableColumnHeader *oldHeader = (id)self.headerViews[self.sortColumn];
     oldHeader.sortType = FLEXTableColumnHeaderSortTypeNone;
-    
+
     // Update new header
     FLEXTableColumnHeader *newHeader = (id)self.headerViews[newSortColumn];
     newHeader.sortType = newType;
-    
+
     // Update self
     self.sortColumn = newSortColumn;
     self.sortType = newType;
@@ -222,7 +222,7 @@ static const CGFloat kColumnMargin = 1;
     if (indexPath.row % 2 != 0) {
         backgroundColor = FLEXColor.secondaryBackgroundColor;
     }
-    
+
     // Left side table view for row numbers
     if (tableView == self.leftTableView) {
         FLEXTableLeftCell *cell = [FLEXTableLeftCell cellWithTableView:tableView];
@@ -235,7 +235,7 @@ static const CGFloat kColumnMargin = 1;
         FLEXDBQueryRowCell *cell = [tableView
             dequeueReusableCellWithIdentifier:kFLEXDBQueryRowCellReuse forIndexPath:indexPath
         ];
-        
+
         cell.contentView.backgroundColor = backgroundColor;
         cell.data = [self.dataSource contentForRow:indexPath.row];
         cell.layoutSource = self;

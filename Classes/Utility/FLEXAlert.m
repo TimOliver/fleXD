@@ -39,7 +39,7 @@ NSAssert(!self._action, @"Cannot mutate action after retreiving underlying UIAle
     UIAlertController *alert = [self makeAlert:^(FLEXAlert *make) {
         make.title(title);
     }];
-    
+
     [viewController presentViewController:alert animated:YES completion:^{
         flex_dispatch_after(0.5, dispatch_get_main_queue(), ^{
             [alert dismissViewControllerAnimated:YES completion:nil];
@@ -74,7 +74,7 @@ NSAssert(!self._action, @"Cannot mutate action after retreiving underlying UIAle
     }
 
     UIAlertController *controller = alert._controller;
-    
+
     // Set preferred action on alert controller
     for (FLEXAlertAction *builder in alert._actions) {
         UIAlertAction *action = builder.action;
@@ -83,7 +83,7 @@ NSAssert(!self._action, @"Cannot mutate action after retreiving underlying UIAle
             break;
         }
     }
-    
+
     return controller;
 }
 

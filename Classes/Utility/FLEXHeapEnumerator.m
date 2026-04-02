@@ -29,7 +29,7 @@ typedef struct {
     snapshot->_classNames = counts.allKeys;
     snapshot->_instanceCountsForClassNames = counts;
     snapshot->_instanceSizesForClassNames = sizes;
-    
+
     return snapshot;
 }
 @end
@@ -40,7 +40,7 @@ static void range_callback(task_t task, void *context, unsigned type, vm_range_t
     if (!context) {
         return;
     }
-    
+
     for (unsigned int i = 0; i < rangeCount; i++) {
         vm_range_t range = ranges[i];
         flex_maybe_object_t *tryObject = (flex_maybe_object_t *)range.address;
@@ -68,18 +68,18 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
     if (!block) {
         return;
     }
-    
+
     // Refresh the class list on every call in case classes are added to the runtime.
     [self updateRegisteredClasses];
-    
+
     // Inspired by:
     // https://llvm.org/svn/llvm-project/lldb/tags/RELEASE_34/final/examples/darwin/heap_find/heap/heap_find.cpp
     // https://gist.github.com/samdmarshall/17f4e66b5e2e579fd396
-    
+
     vm_address_t *zones = NULL;
     unsigned int zoneCount = 0;
     kern_return_t result = malloc_get_all_zones(TASK_NULL, reader, &zones, &zoneCount);
-    
+
     if (result == KERN_SUCCESS) {
         for (unsigned int i = 0; i < zoneCount; i++) {
             malloc_zone_t *zone = (malloc_zone_t *)zones[i];
@@ -100,7 +100,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
                 block(object, actualClass);
                 lock_zone(zone);
             };
-            
+
             BOOL lockZoneValid = FLEXPointerIsReadable(lock_zone);
             BOOL unlockZoneValid =  FLEXPointerIsReadable(unlock_zone);
 
@@ -157,7 +157,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
         if (!FLEXPointerIsValidObjcObject((__bridge void *)tryObject)) {
             return;
         }
-        
+
         // Get all the ivars on the object. Start with the class and and travel up the
         // inheritance chain. Once we find a match, record it and move on to the next object.
         // There's no reason to find multiple matches within the same object.
@@ -205,7 +205,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
     for (unsigned int i = 0; i < classCount; i++) {
         CFDictionarySetValue(mutableCountsForClasses, (__bridge const void *)classes[i], (const void *)0);
     }
-    
+
     // Enumerate all objects on the heap to build the counts of instances for each class
     [FLEXHeapEnumerator enumerateLiveObjectsUsingBlock:^(__unsafe_unretained id object, __unsafe_unretained Class cls) {
         NSUInteger instanceCount = (NSUInteger)CFDictionaryGetValue(
@@ -216,7 +216,7 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
             mutableCountsForClasses, (__bridge const void *)cls, (const void *)instanceCount
         );
     }];
-    
+
     // Convert our CF primitive dictionary into a nicer mapping of class name strings to instance counts
     NSMutableDictionary<NSString *, NSNumber *> *countsForClassNames = [NSMutableDictionary new];
     NSMutableDictionary<NSString *, NSNumber *> *sizesForClassNames = [NSMutableDictionary new];
@@ -224,14 +224,14 @@ static kern_return_t reader(__unused task_t remote_task, vm_address_t remote_add
         Class class = classes[i];
         NSUInteger instanceCount = (NSUInteger)CFDictionaryGetValue(mutableCountsForClasses, (__bridge const void *)(class));
         NSString *className = @(class_getName(class));
-        
+
         if (instanceCount > 0) {
             countsForClassNames[className] = @(instanceCount);
             sizesForClassNames[className] = @(class_getInstanceSize(class));
         }
     }
     free(classes);
-    
+
     return [FLEXHeapSnapshot snapshotWithCounts:countsForClassNames sizes:sizesForClassNames];
 }
 

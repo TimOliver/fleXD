@@ -21,7 +21,7 @@ static NSCharacterSet *keyPathDisallowed = nil;
 static NSCharacterSet *methodAllowed     = nil;
 + (void)initialize {
     if (self == [self class]) {
-        NSString *_methodFirstAllowed    = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$";
+        NSString * const _methodFirstAllowed    = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$";
         NSString *_identifierAllowed     = [_methodFirstAllowed stringByAppendingString:@"1234567890"];
         NSString *_methodAllowedSansType = [_identifierAllowed stringByAppendingString:@":"];
         NSString *_filenameNameAllowed   = [_identifierAllowed stringByAppendingString:@"-+?!"];
@@ -68,7 +68,7 @@ static NSCharacterSet *methodAllowed     = nil;
     if (!text.length) {
         return YES;
     }
-    
+
     return [text rangeOfCharacterFromSet:keyPathDisallowed].location == NSNotFound;
 }
 
@@ -103,7 +103,7 @@ static NSCharacterSet *methodAllowed     = nil;
         if (scanner.isAtEnd) {
             return FLEXSearchToken.any;
         }
-        
+
         options |= TBWildcardOptionsPrefix;
     }
 
@@ -189,7 +189,7 @@ static NSCharacterSet *methodAllowed     = nil;
         // Methods cannot end with '.' except for '\.'
         @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Method token cannot end with '.'" userInfo:nil];
     }
-    
+
     if ([scanner scanString:@"-" intoString:nil]) {
         *instance = @YES;
     } else if ([scanner scanString:@"+" intoString:nil]) {

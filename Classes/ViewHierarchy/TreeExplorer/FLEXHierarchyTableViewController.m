@@ -58,7 +58,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
         self.depthsForViews = depthsForViews;
         self.viewsAtTap = viewsAtTap;
         self.selectedView = selectedView;
-        
+
         self.title = @"View Hierarchy Tree";
     }
 
@@ -78,7 +78,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     // Separator inset clashes with persistent cell selection
     [self.tableView setSeparatorInset:UIEdgeInsetsZero];
-    
+
     self.showsSearchBar = YES;
     self.showSearchBarInitially = YES;
     // Using pinSearchBar on this screen causes a weird visual
@@ -92,19 +92,19 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
         self.searchController.searchBar.scopeButtonTitles = @[@"Full Hierarchy", @"Views at Tap"];
         self.selectedScope = FLEXHierarchyScopeViewsAtTap;
     }
-    
+
     [self updateDisplayedViews];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+
     [self disableToolbar];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
+
     [self trySelectCellForSelectedView];
 }
 
@@ -168,7 +168,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
     } else {
         candidateViews = self.allViews;
     }
-    
+
     if (self.searchText.length) {
         self.displayedViews = [candidateViews filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UIView *candidateView, NSDictionary<NSString *, id> *bindings) {
             NSString *title = [FLEXUtility descriptionForView:candidateView includingFrame:NO];
@@ -180,7 +180,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
     } else {
         self.displayedViews = candidateViews;
     }
-    
+
     [self.tableView reloadData];
 }
 
@@ -200,7 +200,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
 
 - (void)updateSearchResults:(NSString *)newText {
     [self updateDisplayedViews];
-    
+
     // If the search bar text field is active, don't scroll on selection because we may want
     // to continue typing. Otherwise, scroll so that the selected cell is visible.
     if (!self.searchController.searchBar.isFirstResponder) {
@@ -217,7 +217,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     FLEXHierarchyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
-    
+
     UIView *view = self.displayedViews[indexPath.row];
 
     cell.textLabel.text = [FLEXUtility descriptionForView:view includingFrame:NO];
@@ -233,7 +233,7 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyScope) {
         cell.textLabel.textColor = FLEXColor.primaryTextColor;
         cell.detailTextLabel.textColor = FLEXColor.primaryTextColor;
     }
-    
+
     return cell;
 }
 

@@ -79,7 +79,7 @@
     _logMessages = [FLEXMutableListSection list:@[]
         cellConfiguration:^(FLEXSystemLogCell *cell, FLEXSystemLogMessage *message, NSInteger row) {
             strongify(self)
-        
+
             cell.logMessage = message;
             cell.highlightedText = self.filterText;
 
@@ -138,8 +138,8 @@
 
     NSString *persistence = persistent ? @"Disable persistent logging" : @"Enable persistent logging";
 
-    NSString *title = @"System Log Settings";
-    NSString *body = @"Logs must be collected manually at launch and stored. "
+    NSString * const title = @"System Log Settings";
+    NSString * const body = @"Logs must be collected manually at launch and stored. "
     "You should only enable persistent logging when you need it.";
 
     FLEXOSLogController *logController = (FLEXOSLogController *)self.logController;

@@ -55,7 +55,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         self.path = path;
         self.title = [path lastPathComponent];
         self.operationQueue = [NSOperationQueue new];
-        
+
         // Compute path size
         weakify(self)
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -279,7 +279,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
                 error:NULL
             ] ?: [NSDictionary dictionaryWithContentsOfFile:fullPath]
               ?: [NSArray arrayWithContentsOfFile:fullPath];
-            
+
             if (object) {
                 drillInViewController = [FLEXObjectExplorerFactory explorerViewControllerForObject:object];
             } else {
@@ -287,7 +287,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
                 if (fileData.length > sizeof(struct mach_header_64)) {
                     struct mach_header_64 header;
                     [fileData getBytes:&header length:sizeof(struct mach_header_64)];
-                    
+
                     // Does it have the mach header magic number?
                     if (header.magic == MH_MAGIC_64) {
                         // See if we can get some classes out of it...
@@ -295,7 +295,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
                         const char **classList = objc_copyClassNamesForImage(
                             fullPath.UTF8String, &count
                         );
-                        
+
                         if (count > 0) {
                             NSArray<NSString *> *classNames = [NSArray flex_forEachUpTo:count map:^id(NSUInteger i) {
                                 return objc_getClass(classList[i]);
@@ -358,7 +358,7 @@ contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
                     [self fileBrowserShare:cell];
                 }
             ];
-            
+
             return [UIMenu menuWithTitle:@"Manage File" image:nil
                 identifier:@"Manage File"
                 options:UIMenuOptionsDisplayInline

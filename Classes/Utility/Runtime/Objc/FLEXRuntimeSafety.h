@@ -33,12 +33,12 @@ static inline BOOL FLEXClassIsSafe(Class cls) {
     if (!cls || CFSetContainsValue(FLEXKnownUnsafeClasses, (__bridge void *)cls)) {
         return NO;
     }
-    
+
     // Is it a known root class?
     if (!class_getSuperclass(cls)) {
         return cls == cNSObject || cls == cNSProxy;
     }
-    
+
     // Probably safe
     return YES;
 }
@@ -46,7 +46,7 @@ static inline BOOL FLEXClassIsSafe(Class cls) {
 /// @return `YES` if the class name is not in the known-unsafe class list, `NO` otherwise.
 static inline BOOL FLEXClassNameIsSafe(NSString *cls) {
     if (!cls) return NO;
-    
+
     NSSet *ignored = FLEXKnownUnsafeClassNames();
     return ![ignored containsObject:cls];
 }

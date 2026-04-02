@@ -49,7 +49,7 @@
 
 - (id)initWithAttributesDictionary:(NSDictionary *)attributes {
     NSParameterAssert(attributes);
-    
+
     self = [super init];
     if (self) {
         _dictionary           = attributes;
@@ -71,7 +71,7 @@
 
         _fullDeclaration = [self buildFullDeclaration];
     }
-    
+
     return self;
 }
 
@@ -97,7 +97,7 @@
     if (attributesCount) {
         *attributesCount = (unsigned int)attrs.count;
     }
-    
+
     NSUInteger i = 0;
     for (NSString *key in attrs.allKeys) {
         FLEXPropertyAttribute c = (FLEXPropertyAttribute)[key characterAtIndex:0];
@@ -180,7 +180,7 @@
         }
         i++;
     }
-    
+
     return propertyAttributes;
 }
 
@@ -331,16 +331,21 @@ PropertyWithDeltaFlag(BOOL, isGarbageCollectable, IsGarbageCollectable);
         // so we must generate ONE by hand using our properties.
         // We arbitrarily choose to generate the dictionary.
         NSMutableDictionary *attrs = [NSMutableDictionary new];
-        if (self.typeEncoding)
+        if (self.typeEncoding) {
             attrs[kFLEXPropertyAttributeKeyTypeEncoding]         = self.typeEncoding;
-        if (self.backingIvar)
+        }
+        if (self.backingIvar) {
             attrs[kFLEXPropertyAttributeKeyBackingIvarName]      = self.backingIvar;
-        if (self.oldTypeEncoding)
+        }
+        if (self.oldTypeEncoding) {
             attrs[kFLEXPropertyAttributeKeyOldStyleTypeEncoding] = self.oldTypeEncoding;
-        if (self.customGetter)
+        }
+        if (self.customGetter) {
             attrs[kFLEXPropertyAttributeKeyCustomGetter]         = NSStringFromSelector(self.customGetter);
-        if (self.customSetter)
+        }
+        if (self.customSetter) {
             attrs[kFLEXPropertyAttributeKeyCustomSetter]         = NSStringFromSelector(self.customSetter);
+        }
 
         if (self.isReadOnly)           attrs[kFLEXPropertyAttributeKeyReadOnly] = @YES;
         if (self.isCopy)               attrs[kFLEXPropertyAttributeKeyCopy] = @YES;

@@ -17,10 +17,10 @@
     UIViewController *shareSheet = [[UIActivityViewController alloc]
         initWithActivityItems:items applicationActivities:nil
     ];
-    
+
     if (sender && UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPad) {
         UIPopoverPresentationController *popover = shareSheet.popoverPresentationController;
-        
+
         // Source view
         if ([sender isKindOfClass:UIView.self]) {
             popover.sourceView = sender;
@@ -35,7 +35,7 @@
             popover.sourceRect = rect;
         }
     }
-    
+
     return shareSheet;
 }
 

@@ -37,7 +37,7 @@
                     [self.date isEqualToDate:[object date]];
         }
     }
-    
+
     return NO;
 }
 

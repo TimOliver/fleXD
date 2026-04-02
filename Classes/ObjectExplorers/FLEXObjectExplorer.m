@@ -60,12 +60,12 @@
 
 - (id)initWithObject:(id)objectOrClass {
     NSParameterAssert(objectOrClass);
-    
+
     self = [super init];
     if (self) {
         _object = objectOrClass;
         _objectIsInstance = !object_isClass(objectOrClass);
-        
+
         [self reloadMetadata];
     }
 
@@ -74,17 +74,17 @@
 
 - (id<FLEXMirror>)mirrorForClass:(Class)cls {
     static Class FLEXSwiftMirror = nil;
-    
+
     // Should we use Reflex?
     if (FLEXIsSwiftObjectOrClass(cls) && FLEXObjectExplorer.reflexAvailable) {
         // Initialize FLEXSwiftMirror class if needed
         if (!FLEXSwiftMirror) {
             FLEXSwiftMirror = NSClassFromString(@"FLEXSwiftMirror");            
         }
-        
+
         return [(id<FLEXMirror>)[FLEXSwiftMirror alloc] initWithSubject:cls];
     }
-    
+
     // No; not swift object, or Reflex unavailable
     return [FLEXMirror reflect:cls];
 }
@@ -130,7 +130,7 @@
             NSString *address = [FLEXUtility addressOfObject:self.object];
             return [NSString stringWithFormat:@"Object at %@ returned empty description", address];
         }
-        
+
         if (description.length > 10000) {
             description = [description substringToIndex:10000];
         }
@@ -143,7 +143,7 @@
 
 - (void)setClassScope:(NSInteger)classScope {
     _classScope = classScope;
-    
+
     [self reloadScopedMetadata];
 }
 
@@ -159,13 +159,13 @@
     _objectDescription = nil;
 
     [self reloadClassHierarchy];
-    
+
     NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
     BOOL hideBackingIvars = defaults.flex_explorerHidesPropertyIvars;
     BOOL hidePropertyMethods = defaults.flex_explorerHidesPropertyMethods;
     BOOL hidePrivateMethods = defaults.flex_explorerHidesPrivateMethods;
     BOOL showMethodOverrides = defaults.flex_explorerShowsMethodOverrides;
-    
+
     NSMutableArray<NSArray<FLEXProperty *> *> *allProperties = [NSMutableArray new];
     NSMutableArray<NSArray<FLEXProperty *> *> *allClassProps = [NSMutableArray new];
     NSMutableArray<NSArray<FLEXMethod *> *> *allMethods = [NSMutableArray new];
@@ -217,7 +217,7 @@
             kind:FLEXMetadataKindProtocols
             skip:NO
         ]];
-        
+
         // TODO: join instance size, image name, and class hierarchy into a single model object
         // This would greatly reduce the laziness that has begun to manifest itself here
         [_allInstanceSizes addObject:[FLEXStaticMetadata
@@ -229,11 +229,11 @@
             title:@"Image Name" string:@(class_getImageName(cls) ?: "Created at Runtime")
         ]];
     }
-    
+
     _classHierarchy = [FLEXStaticMetadata classHierarchy:self.classHierarchyClasses];
-    
+
     NSArray<NSArray<FLEXProperty *> *> *properties = allProperties;
-    
+
     // Potentially filter property-backing ivars
     if (hideBackingIvars) {
         NSArray<NSArray<FLEXIvar *> *> *ivars = _allIvars.copy;
@@ -245,14 +245,14 @@
                     return p.likelyIvarName;
                 }];
             })];
-            
+
             // Remove ivars whose name is in the ivar names list
             return [list flex_filtered:^BOOL(FLEXIvar *ivar, NSUInteger idx) {
                 return ![ivarNames containsObject:ivar.name];
             }];
         }];
     }
-    
+
     // Potentially filter property-backing methods
     if (hidePropertyMethods) {
         allMethods = [allMethods flex_mapped:^id(NSArray<FLEXMethod *> *list, NSUInteger idx) {
@@ -263,23 +263,23 @@
                         if (p.likelySetterExists) {
                             return @[p.likelyGetterString, p.likelySetterString];
                         }
-                        
+
                         return @[p.likelyGetterString];
                     } else if (p.likelySetterExists) {
                         return @[p.likelySetterString];
                     }
-                    
+
                     return nil;
                 }];
             })];
-            
+
             // Remove methods whose name is in the property method names list
             return [list flex_filtered:^BOOL(FLEXMethod *method, NSUInteger idx) {
                 return ![methodNames containsObject:method.selectorString];
             }];
         }];
     }
-    
+
     if (hidePrivateMethods) {
         id methodMapBlock = ^id(NSArray<FLEXMethod *> *list, NSUInteger idx) {
             // Remove methods which contain an underscore
@@ -293,13 +293,13 @@
                 return ![prop.name containsString:@"_"];
             }];
         };
-        
+
         allMethods = [allMethods flex_mapped:methodMapBlock];
         allClassMethods = [allClassMethods flex_mapped:methodMapBlock];
         allProperties = [allProperties flex_mapped:propertyMapBlock];
         allClassProps = [allClassProps flex_mapped:propertyMapBlock];
     }
-    
+
     _allProperties = allProperties;
     _allClassProperties = allClassProps;
     _allMethods = allMethods;
@@ -317,7 +317,7 @@
             [FLEXObjectExplorer configureDefaultsForItems:metadataByClass];
         }
     }
-    
+
     [self reloadScopedMetadata];
 }
 
@@ -345,7 +345,7 @@
     if (skipUniquing) {
         return list;
     }
-    
+
     // Remove items with same name and return filtered list
     NSMutableSet *names = [NSMutableSet new];
     return [list flex_filtered:^BOOL(id obj, NSUInteger idx) {
@@ -356,7 +356,7 @@
             if (!name) {
                 return NO;
             }
-            
+
             [names addObject:name];
 
             // Skip methods and properties which are just overrides,
@@ -388,7 +388,7 @@
                 case FLEXMetadataKindOther:
                     return YES; // These types are already uniqued
                     break;
-                    
+
                 // Ivars cannot be overidden
                 case FLEXMetadataKindIvars: break;
             }

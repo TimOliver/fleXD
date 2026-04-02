@@ -34,7 +34,7 @@
             bodyData = [FLEXUtility inflatedDataFromCompressedData:bodyData];
         }
         NSString *body = [[NSString alloc] initWithData:bodyData encoding:NSUTF8StringEncoding];
-        
+
         if (body != nil) {
             [curlCommandString appendFormat:@"-d \'%@\'", body];
         } else {

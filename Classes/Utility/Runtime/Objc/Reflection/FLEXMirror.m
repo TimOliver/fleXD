@@ -34,13 +34,13 @@
 
 - (id)initWithSubject:(id)objectOrClass {
     NSParameterAssert(objectOrClass);
-    
+
     self = [super init];
     if (self) {
         _value = objectOrClass;
         [self examine];
     }
-    
+
     return self;
 }
 
@@ -58,7 +58,7 @@
     Class meta = object_getClass(cls);
     _className = NSStringFromClass(cls);
     _isClass   = isClass;
-    
+
     unsigned int pcount, cpcount, mcount, cmcount, ivcount, pccount;
     Ivar *objcIvars                       = class_copyIvarList(cls, &ivcount);
     Method *objcMethods                   = class_copyMethodList(cls, &mcount);
@@ -66,29 +66,29 @@
     objc_property_t *objcProperties       = class_copyPropertyList(cls, &pcount);
     objc_property_t *objcClsProperties    = class_copyPropertyList(meta, &cpcount);
     Protocol *__unsafe_unretained *protos = class_copyProtocolList(cls, &pccount);
-    
+
     _ivars = [NSArray flex_forEachUpTo:ivcount map:^id(NSUInteger i) {
         return [FLEXIvar ivar:objcIvars[i]];
     }];
-    
+
     _methods = [NSArray flex_forEachUpTo:mcount map:^id(NSUInteger i) {
         return [FLEXMethod method:objcMethods[i] isInstanceMethod:YES];
     }];
     _classMethods = [NSArray flex_forEachUpTo:cmcount map:^id(NSUInteger i) {
         return [FLEXMethod method:objcClsMethods[i] isInstanceMethod:NO];
     }];
-    
+
     _properties = [NSArray flex_forEachUpTo:pcount map:^id(NSUInteger i) {
         return [FLEXProperty property:objcProperties[i] onClass:cls];
     }];
     _classProperties = [NSArray flex_forEachUpTo:cpcount map:^id(NSUInteger i) {
         return [FLEXProperty property:objcClsProperties[i] onClass:meta];
     }];
-    
+
     _protocols = [NSArray flex_forEachUpTo:pccount map:^id(NSUInteger i) {
         return [FLEXProtocol protocol:protos[i]];
     }];
-    
+
     // Cleanup
     free(objcClsProperties);
     free(objcProperties);

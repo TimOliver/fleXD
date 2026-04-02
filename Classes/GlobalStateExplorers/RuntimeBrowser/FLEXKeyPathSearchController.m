@@ -55,7 +55,7 @@
 
     delegate.tableView.delegate   = controller;
     delegate.tableView.dataSource = controller;
-    
+
     UISearchBar *searchBar = delegate.searchController.searchBar;
     searchBar.delegate = controller;   
     searchBar.keyboardType = UIKeyboardTypeWebSearch;
@@ -125,7 +125,7 @@
 
 - (void)didPressButton:(NSString *)text insertInto:(UISearchBar *)searchBar {
     [self.toolbar setKeyPath:self.keyPath suggestions:nil];
-    
+
     // Available since at least iOS 9, still present in iOS 13
     UITextField *field = [searchBar valueForKey:@"_searchBarTextField"];
 
@@ -141,20 +141,20 @@
                 // We have selected a class and are searching metadata
                 return nil;
             }
-            
+
             // We are currently searching classes
             return [self.filteredClasses flex_subArrayUpto:10];
         }
-        
+
         if (!self.keyPath) {
             // Search bar is empty
             return @[self.emptySuggestion];
         }
-        
+
         // We are currently searching bundles
         return [self.bundlesOrClasses flex_subArrayUpto:10];
     }
-    
+
     // We have nothing at all to even search
     return nil;
 }
@@ -173,7 +173,7 @@
                 instance:self.keyPath.instanceMethods
                 inClasses:self.classes
             ].mutableCopy;
-            
+
             // Remove classes without results if we're searching for a method
             //
             // Note: this will remove classes without any methods or overrides
@@ -189,7 +189,7 @@
             NSArray *models = [FLEXRuntimeController dataForKeyPath:keyPath];
             if (keyPath.methodKey) { // We're looking at methods
                 self.bundlesOrClasses = nil;
-                
+
                 NSMutableArray *methods = models.mutableCopy;
                 NSMutableArray<NSString *> *classes = [
                     FLEXRuntimeController classesForKeyPath:keyPath
@@ -201,7 +201,7 @@
                 self.classesToMethods = nil;
             }
         }
-        
+
         // Finally, reload the table on the main thread
         dispatch_async(dispatch_get_main_queue(), ^{
             [self updateToolbarButtons];
@@ -224,7 +224,7 @@
     }];
     [methods removeObjectsAtIndexes:allEmpty];
     [classes removeObjectsAtIndexes:allEmpty];
-    
+
     self.filteredClasses = classes;
     self.classesToMethods = methods;
 }
@@ -234,7 +234,7 @@
     if (![FLEXRuntimeKeyPathTokenizer allowedInKeyPath:text]) {
         return NO;
     }
-    
+
     BOOL terminatedToken = NO;
     BOOL isAppending = range.length == 0 && range.location == searchBar.text.length;
     if (isAppending && [text isEqualToString:@"."]) {
@@ -307,7 +307,7 @@
         dequeueReusableCellWithIdentifier:kFLEXMultilineDetailCell
         forIndexPath:indexPath
     ];
-    
+
     if (self.bundlesOrClasses.count) {
         cell.accessoryType        = UITableViewCellAccessoryDetailButton;
         cell.textLabel.text       = self.bundlesOrClasses[indexPath.row];

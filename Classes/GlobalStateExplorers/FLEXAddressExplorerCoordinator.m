@@ -29,8 +29,8 @@
 + (FLEXGlobalsEntryRowAction)globalsEntryRowAction:(FLEXGlobalsRow)row {
     return ^(UITableViewController *host) {
 
-        NSString *title = @"Explore Object at Address";
-        NSString *message = @"Paste a hexadecimal address below, starting with '0x'. "
+        NSString * const title = @"Explore Object at Address";
+        NSString * const message = @"Paste a hexadecimal address below, starting with '0x'. "
         "Use the unsafe option if you need to bypass pointer validation, "
         "but know that it may crash the app if the address is invalid.";
 

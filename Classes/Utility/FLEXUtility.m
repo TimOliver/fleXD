@@ -19,15 +19,15 @@ BOOL FLEXConstructorsShouldRun(void) {
         return NO;
     #else
         static BOOL _FLEXConstructorsShouldRun_storage = YES;
-        
+
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            NSString *key = @"FLEX_SKIP_INIT";
+            NSString * const key = @"FLEX_SKIP_INIT";
             if (getenv(key.UTF8String) || [NSUserDefaults.standardUserDefaults boolForKey:key]) {
                 _FLEXConstructorsShouldRun_storage = NO;
             }
         });
-        
+
         return _FLEXConstructorsShouldRun_storage;
     #endif
 }
@@ -57,7 +57,7 @@ BOOL FLEXConstructorsShouldRun(void) {
             return (UIWindowScene *)scene;
         }
     }
-    
+
     return nil;
 }
 
@@ -70,27 +70,27 @@ BOOL FLEXConstructorsShouldRun(void) {
 }
 
 + (UIColor *)consistentRandomColorForObject:(id)object {
-    CGFloat hue = (((NSUInteger)object >> 4) % 256) / 255.0;
+    const CGFloat hue = (((NSUInteger)object >> 4) % 256) / 255.0;
     return [UIColor colorWithHue:hue saturation:1.0 brightness:1.0 alpha:1.0];
 }
 
 + (NSString *)descriptionForView:(UIView *)view includingFrame:(BOOL)includeFrame {
     NSString *description = [[view class] description];
-    
+
     NSString *viewControllerDescription = [[[self viewControllerForView:view] class] description];
     if (viewControllerDescription.length > 0) {
         description = [description stringByAppendingFormat:@" (%@)", viewControllerDescription];
     }
-    
+
     if (includeFrame) {
         description = [description stringByAppendingFormat:@" %@", [self stringForCGRect:view.frame]];
     }
-    
+
     if (view.accessibilityLabel.length > 0 || view.accessibilityIdentifier.length > 0) {
         description = [description stringByAppendingFormat:@" · %@",
                        view.accessibilityLabel.length > 0 ? view.accessibilityLabel : view.accessibilityIdentifier];
     }
-    
+
     return description;
 }
 
@@ -101,7 +101,7 @@ BOOL FLEXConstructorsShouldRun(void) {
 }
 
 + (UIViewController *)viewControllerForView:(UIView *)view {
-    NSString *viewDelegate = @"_viewDelegate";
+    NSString * const viewDelegate = @"_viewDelegate";
     if ([view respondsToSelector:NSSelectorFromString(viewDelegate)]) {
         return [view valueForKey:viewDelegate];
     }
@@ -110,7 +110,7 @@ BOOL FLEXConstructorsShouldRun(void) {
 }
 
 + (UIViewController *)viewControllerForAncestralView:(UIView *)view {
-    NSString *_viewControllerForAncestor = @"_viewControllerForAncestor";
+    NSString * const _viewControllerForAncestor = @"_viewControllerForAncestor";
     if ([view respondsToSelector:NSSelectorFromString(_viewControllerForAncestor)]) {
         return [view valueForKey:_viewControllerForAncestor];
     }
@@ -122,7 +122,7 @@ BOOL FLEXConstructorsShouldRun(void) {
     if (CGRectIsEmpty(view.bounds)) {
         return [UIImage new];
     }
-    
+
     CGSize viewSize = view.bounds.size;
     UIGraphicsBeginImageContextWithOptions(viewSize, NO, 0.0);
     [view drawViewHierarchyInRect:CGRectMake(0, 0, viewSize.width, viewSize.height) afterScreenUpdates:YES];
@@ -135,7 +135,7 @@ BOOL FLEXConstructorsShouldRun(void) {
     if (CGRectIsEmpty(layer.bounds)) {
         return nil;
     }
-    
+
     UIGraphicsBeginImageContextWithOptions(layer.bounds.size, NO, 0.0);
     CGContextRef imageContext = UIGraphicsGetCurrentContext();
     [layer renderInContext:imageContext];
@@ -149,7 +149,7 @@ BOOL FLEXConstructorsShouldRun(void) {
 }
 
 + (UIImage *)circularImageWithColor:(UIColor *)color radius:(CGFloat)radius {
-    CGFloat diameter = radius * 2.0;
+    const CGFloat diameter = radius * 2.0;
     UIGraphicsBeginImageContextWithOptions(CGSizeMake(diameter, diameter), NO, 0.0);
     CGContextRef imageContext = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(imageContext, color.CGColor);
@@ -219,9 +219,9 @@ BOOL FLEXConstructorsShouldRun(void) {
                                 };
         regex = [NSRegularExpression regularExpressionWithPattern:@"(&|>|<|'|\"|«|»)" options:0 error:NULL];
     });
-    
+
     NSMutableString *mutableString = originalString.mutableCopy;
-    
+
     NSArray<NSTextCheckingResult *> *matches = [regex
         matchesInString:mutableString options:0 range:NSMakeRange(0, mutableString.length)
     ];
@@ -232,7 +232,7 @@ BOOL FLEXConstructorsShouldRun(void) {
             [mutableString replaceCharactersInRange:result.range withString:replacementString];
         }
     }
-    
+
     return [mutableString copy];
 }
 
@@ -311,7 +311,7 @@ BOOL FLEXConstructorsShouldRun(void) {
         NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
         return httpResponse.statusCode >= 400;
     }
-    
+
     return NO;
 }
 
@@ -336,7 +336,7 @@ BOOL FLEXConstructorsShouldRun(void) {
 
 + (NSString *)prettyJSONStringFromData:(NSData *)data {
     NSString *prettyString = nil;
-    
+
     id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
     if ([NSJSONSerialization isValidJSONObject:jsonObject]) {
         // Thanks RaziPour1993
@@ -352,7 +352,7 @@ BOOL FLEXConstructorsShouldRun(void) {
     } else {
         prettyString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     }
-    
+
     return prettyString;
 }
 
@@ -444,7 +444,7 @@ BOOL FLEXConstructorsShouldRun(void) {
     if ([cls instancesRespondToSelector:selector]) {
         unsigned int numMethods = 0;
         Method *methods = class_copyMethodList(cls, &numMethods);
-        
+
         BOOL implementsSelector = NO;
         for (int index = 0; index < numMethods; index++) {
             SEL methodSelector = method_getName(methods[index]);
@@ -453,14 +453,14 @@ BOOL FLEXConstructorsShouldRun(void) {
                 break;
             }
         }
-        
+
         free(methods);
-        
+
         if (!implementsSelector) {
             return YES;
         }
     }
-    
+
     return NO;
 }
 
@@ -474,7 +474,7 @@ BOOL FLEXConstructorsShouldRun(void) {
     if (!originalMethod) {
         return;
     }
-    
+
     IMP implementation = imp_implementationWithBlock(block);
     class_addMethod(class, swizzledSelector, implementation, method_getTypeEncoding(originalMethod));
     Method newMethod = class_getInstanceMethod(class, swizzledSelector);
@@ -489,11 +489,11 @@ BOOL FLEXConstructorsShouldRun(void) {
     if ([self instanceRespondsButDoesNotImplementSelector:selector class:cls]) {
         return;
     }
-    
+
     IMP implementation = imp_implementationWithBlock((id)(
         [cls instancesRespondToSelector:selector] ? implementationBlock : undefinedBlock)
     );
-    
+
     Method oldMethod = class_getInstanceMethod(cls, selector);
     const char *types = methodDescription.types;
     if (oldMethod) {

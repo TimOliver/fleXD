@@ -14,10 +14,10 @@
     if (!object) {
         return;
     }
-    
+
     if ([object isKindOfClass:[NSString class]]) {
         UIPasteboard.generalPasteboard.string = object;
-    } else if([object isKindOfClass:[NSData class]]) {
+    } else if ([object isKindOfClass:[NSData class]]) {
         [UIPasteboard.generalPasteboard setData:object forPasteboardType:@"public.data"];
     } else if ([object isKindOfClass:[NSNumber class]]) {
         UIPasteboard.generalPasteboard.string = [object stringValue];

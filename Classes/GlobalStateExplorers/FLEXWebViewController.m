@@ -37,7 +37,7 @@
     if (self) {
         self.originalText = text;
 
-        NSString *html = @"<head><style>:root{ color-scheme: light dark; }</style>"
+        NSString * const html = @"<head><style>:root{ color-scheme: light dark; }</style>"
             "<meta name='viewport' content='initial-scale=1.0'></head><body><pre>%@</pre></body>";
 
         // Loading message for when input text takes a long time to escape
@@ -71,11 +71,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     [self.view addSubview:self.webView];
     self.webView.frame = self.view.bounds;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    
+
     if (self.originalText.length > 0) {
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
             initWithTitle:@"Copy" style:UIBarButtonItemStylePlain target:self action:@selector(copyButtonTapped:)
@@ -132,7 +132,7 @@
             @"3gp2", @"aiff", @"aif", @"aifc", @"cdda", @"amr", @"mp3", @"swa", @"mp4", @"mpeg",
             @"mpg", @"mp3", @"wav", @"bwf", @"m4a", @"m4b", @"m4p", @"mov", @"qt", @"mqv", @"m4v"
         ]];
-        
+
     });
 
     return pathExtensions;

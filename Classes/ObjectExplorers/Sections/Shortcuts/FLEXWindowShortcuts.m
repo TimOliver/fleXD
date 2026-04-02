@@ -26,7 +26,7 @@
                     textField.placeholder = @"Default: 1.0";
                     textField.keyboardType = UIKeyboardTypeDecimalPad;
                 });
-                
+
                 make.button(@"OK").handler(^(NSArray<NSString *> *strings) {
                     NSNumberFormatter *formatter = [NSNumberFormatter new];
                     formatter.numberStyle = NSNumberFormatterDecimalStyle;

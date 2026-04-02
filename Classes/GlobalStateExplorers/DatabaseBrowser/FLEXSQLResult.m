@@ -29,14 +29,14 @@
 - (instancetype)initWithMessage:(NSString *)message columns:(NSArray<NSString *> *)columns rows:(NSArray<NSArray<NSString *> *> *)rows {
     NSParameterAssert(message || (columns && rows));
     NSParameterAssert(rows.count == 0 || columns.count == rows.firstObject.count);
-    
+
     self = [super init];
     if (self) {
         _message = message;
         _columns = columns;
         _rows = rows;
     }
-    
+
     return self;
 }
 
@@ -46,7 +46,7 @@
             return [NSDictionary dictionaryWithObjects:row forKeys:self.columns];
         }];
     }
-    
+
     return _keyedRows;
 }
 

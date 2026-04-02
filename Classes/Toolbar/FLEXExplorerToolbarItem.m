@@ -32,7 +32,7 @@
 
 + (instancetype)itemWithTitle:(NSString *)title image:(UIImage *)image sibling:(FLEXExplorerToolbarItem *)backupItem {
     NSParameterAssert(title); NSParameterAssert(image);
-    
+
     FLEXExplorerToolbarItem *toolbarItem = [self buttonWithType:UIButtonTypeCustom];
     toolbarItem.sibling = backupItem;
     toolbarItem.title = title;
@@ -51,7 +51,7 @@
     if (!self.enabled && self.sibling) {
         return self.sibling.currentItem;
     }
-    
+
     return self;
 }
 
@@ -106,7 +106,7 @@
                 [superview addSubview:self.sibling];
             }
         }
-        
+
         super.enabled = enabled;
     }
 }
@@ -129,9 +129,9 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
+
     CGRect contentRect = self.bounds;
-    
+
     // Title: bottom aligned and centered
     NSDictionary *attrs = [[self class] titleAttributes];
     CGSize titleSize = [self.title boundingRectWithSize:contentRect.size
@@ -144,7 +144,7 @@
     titleRect.origin.y = contentRect.origin.y + CGRectGetMaxY(contentRect) - titleSize.height;
     titleRect.origin.x = contentRect.origin.x + FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
     self.titleLabel.frame = titleRect;
-    
+
     // Image: vertically centered in space above the title
     CGSize imageSize = self.image.size;
     CGFloat availableHeight = contentRect.size.height - titleSize.height - [[self class] topMargin];

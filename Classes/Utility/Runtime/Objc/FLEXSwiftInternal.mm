@@ -81,9 +81,9 @@ extern "C" BOOL FLEXIsSwiftObjectOrClass(id objOrClass) {
     if (!object_isClass(objOrClass)) {
         cls = object_getClass(objOrClass);
     }
-    
+
     class_data_bits_t rodata = ((__bridge objc_class_ *)(cls))->bits;
-    
+
     if (@available(macOS 10.14.4, iOS 12.2, tvOS 12.2, watchOS 5.2, *)) {
         return (rodata & FAST_IS_SWIFT_STABLE) != 0;
     } else {

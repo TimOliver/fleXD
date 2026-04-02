@@ -20,7 +20,7 @@
     FLEXMITMDataSource *ds = [self new];
     ds->_dataProvider = future;
     [ds reloadData:nil];
-    
+
     return ds;
 }
 
@@ -40,7 +40,7 @@
 
 - (void)filter:(NSString *)searchString completion:(void (^)(FLEXMITMDataSource *dataSource))completion {
     self.filterString = searchString;
-    
+
     if (!searchString.length) {
         self.filteredTransactions = self.allTransactions;
         if (completion) completion(self);
@@ -79,7 +79,7 @@
     for (FLEXNetworkTransaction *transaction in self.transactions) {
         bytesReceived += transaction.receivedDataLength;
     }
-    
+
     self.bytesReceived = bytesReceived;
 }
 
@@ -88,7 +88,7 @@
     for (FLEXNetworkTransaction *transaction in self.transactions) {
         filteredBytesReceived += transaction.receivedDataLength;
     }
-    
+
     self.bytesReceived = filteredBytesReceived;
 }
 

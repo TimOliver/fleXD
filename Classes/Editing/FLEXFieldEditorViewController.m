@@ -63,7 +63,7 @@
     self.toolbarItems = @[
         UIBarButtonItem.flex_flexibleSpace, self.getterButton, self.actionButton
     ];
-    
+
     [self registerAuxiliaryInfo];
 
     // Configure input view
@@ -100,7 +100,7 @@
         // this currently could and would assign NSArray to NSMutableArray
         [self.ivar setValue:self.firstInputView.inputValue onObject:self.target];
     }
-    
+
     // Dismiss keyboard and handle committed changes
     [super actionButtonPressed:sender];
 
@@ -131,7 +131,7 @@
     NSDictionary<NSString *, NSArray *> *labels = [self.auxiliaryInfoProvider
         auxiliaryInfoForKey:FLEXAuxiliarynfoKeyFieldLabels
     ];
-    
+
     for (NSString *type in labels) {
         [FLEXArgumentInputViewFactory registerFieldNames:labels[type] forTypeEncoding:type];
     }

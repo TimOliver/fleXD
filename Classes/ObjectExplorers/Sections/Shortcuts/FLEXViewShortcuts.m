@@ -25,7 +25,7 @@
 }
 
 + (UIViewController *)viewControllerForView:(UIView *)view {
-    NSString *viewDelegate = @"viewDelegate";
+    NSString * const viewDelegate = @"viewDelegate";
     if ([view respondsToSelector:NSSelectorFromString(viewDelegate)]) {
         return [view valueForKey:viewDelegate];
     }
@@ -34,7 +34,7 @@
 }
 
 + (UIViewController *)viewControllerForAncestralView:(UIView *)view {
-    NSString *_viewControllerForAncestor = @"_viewControllerForAncestor";
+    NSString * const _viewControllerForAncestor = @"_viewControllerForAncestor";
     if ([view respondsToSelector:NSSelectorFromString(_viewControllerForAncestor)]) {
         return [view valueForKey:_viewControllerForAncestor];
     }

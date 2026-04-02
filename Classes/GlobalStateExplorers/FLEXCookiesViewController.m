@@ -41,7 +41,7 @@
     NSArray *cookies = [NSHTTPCookieStorage.sharedHTTPCookieStorage.cookies
        sortedArrayUsingDescriptors:@[nameSortDescriptor]
     ];
-    
+
     _cookies = [FLEXMutableListSection list:cookies
         cellConfiguration:^(UITableViewCell *cell, NSHTTPCookie *cookie, NSInteger row) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -54,13 +54,13 @@
                 [cookie.path localizedCaseInsensitiveContainsString:filterText];
         }
     ];
-    
+
     self.cookies.selectionHandler = ^(UIViewController *host, NSHTTPCookie *cookie) {
         [host.navigationController pushViewController:[
             FLEXObjectExplorerFactory explorerViewControllerForObject:cookie
         ] animated:YES];
     };
-    
+
     return @[self.cookies];
 }
 
