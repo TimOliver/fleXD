@@ -83,8 +83,9 @@ static const NSInteger kFLEXLiveObjectsSortBySizeIndex = 2;
         }
         [mutableSizesForClassNames setObject:@(class_getInstanceSize(class)) forKey:className];
     }
+    CFRelease(mutableCountsForClasses);
     free(classes);
-    
+
     self.instanceCountsForClassNames = mutableCountsForClassNames;
     self.instanceSizesForClassNames = mutableSizesForClassNames;
     
