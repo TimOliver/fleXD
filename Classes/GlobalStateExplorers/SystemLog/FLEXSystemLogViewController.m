@@ -15,8 +15,6 @@
 #import "FLEXResources.h"
 #import "UIBarButtonItem+FLEX.h"
 #import "NSUserDefaults+FLEX.h"
-#import "flex_fishhook.h"
-#import <dlfcn.h>
 
 @interface FLEXSystemLogViewController ()
 
@@ -25,66 +23,9 @@
 
 @end
 
-static void (*MSHookFunction)(void *symbol, void *replace, void **result);
-
-static BOOL FLEXDidHookNSLog = NO;
-static BOOL FLEXNSLogHookWorks = NO;
-
-BOOL (*os_log_shim_enabled)(void *addr) = nil;
-BOOL (*orig_os_log_shim_enabled)(void *addr) = nil;
-static BOOL my_os_log_shim_enabled(void *addr) {
-    return NO;
-}
-
 @implementation FLEXSystemLogViewController
 
 #pragma mark - Initialization
-
-+ (void)load {
-    // User must opt-into disabling os_log
-    if (!NSUserDefaults.standardUserDefaults.flex_disableOSLog) {
-        return;
-    }
-
-    // Thanks to @Ram4096 on GitHub for telling me that
-    // os_log is conditionally enabled by the SDK version
-    void *addr = __builtin_return_address(0);
-    void *libsystem_trace = dlopen("/usr/lib/system/libsystem_trace.dylib", RTLD_LAZY);
-    os_log_shim_enabled = dlsym(libsystem_trace, "os_log_shim_enabled");
-    if (!os_log_shim_enabled) {
-        return;
-    }
-
-    FLEXDidHookNSLog = flex_rebind_symbols((struct rebinding[1]) {{
-        "os_log_shim_enabled",
-        (void *)my_os_log_shim_enabled,
-        (void **)&orig_os_log_shim_enabled
-    }}, 1) == 0;
-
-    if (FLEXDidHookNSLog && orig_os_log_shim_enabled != nil) {
-        // Check if our rebinding worked
-        FLEXNSLogHookWorks = my_os_log_shim_enabled(addr) == NO;
-    }
-
-    // So, just because we rebind the lazily loaded symbol for
-    // this function doesn't mean it's even going to be used.
-    // While it seems to be sufficient for the simulator, for
-    // whatever reason it is not sufficient on-device. We need
-    // to actually hook the function with something like Substrate.
-
-    // Check if we have substrate, and if so use that instead
-    void *handle = dlopen("/usr/lib/libsubstrate.dylib", RTLD_LAZY);
-    if (handle) {
-        MSHookFunction = dlsym(handle, "MSHookFunction");
-
-        if (MSHookFunction) {
-            // Set the hook and check if it worked
-            void *unused;
-            MSHookFunction(os_log_shim_enabled, my_os_log_shim_enabled, &unused);
-            FLEXNSLogHookWorks = os_log_shim_enabled(addr) == NO;
-        }
-    }
-}
 
 - (id)init {
     return [super initWithStyle:UITableViewStylePlain];
@@ -193,32 +134,18 @@ static BOOL my_os_log_shim_enabled(void *addr) {
 
 - (void)showLogSettings {
     NSUserDefaults *defaults = NSUserDefaults.standardUserDefaults;
-    BOOL disableOSLog = defaults.flex_disableOSLog;
     BOOL persistent = defaults.flex_cacheOSLogMessages;
 
-    NSString *aslToggle = disableOSLog ? @"Enable os_log (default)" : @"Disable os_log";
     NSString *persistence = persistent ? @"Disable persistent logging" : @"Enable persistent logging";
 
     NSString *title = @"System Log Settings";
-    NSString *body = @"In iOS 10 and up, ASL has been replaced by os_log. "
-    "The os_log API is much more limited. Below, you can opt-into the old behavior "
-    "if you want cleaner, more reliable logs within FLEX, but this will break "
-    "anything that expects os_log to be working, such as Console.app. "
-    "This setting requires the app to restart to take effect. \n\n"
-
-    "To get as close to the old behavior as possible with os_log enabled, logs must "
-    "be collected manually at launch and stored. This setting has no effect "
-    "on iOS 9 and below, or if os_log is disabled. "
+    NSString *body = @"Logs must be collected manually at launch and stored. "
     "You should only enable persistent logging when you need it.";
 
     FLEXOSLogController *logController = (FLEXOSLogController *)self.logController;
 
     [FLEXAlert makeAlert:^(FLEXAlert *make) {
         make.title(title).message(body);
-        make.button(aslToggle).destructiveStyle().handler(^(NSArray<NSString *> *strings) {
-            [defaults flex_toggleBoolForKey:kFLEXDefaultsDisableOSLogForceASLKey];
-        });
-
         make.button(persistence).handler(^(NSArray<NSString *> *strings) {
             [defaults flex_toggleBoolForKey:kFLEXDefaultsiOSPersistentOSLogKey];
             logController.persistent = !persistent;

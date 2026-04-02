@@ -18,7 +18,6 @@ NSString * const kFLEXDefaultsHideVariablePreviewsKey = @"com.flipboard.FLEX.hid
 NSString * const kFLEXDefaultsNetworkObserverEnabledKey = @"com.flex.FLEXNetworkObserver.enableOnLaunch";
 NSString * const kFLEXDefaultsNetworkObserverLastModeKey = @"com.flex.FLEXNetworkObserver.lastMode";
 NSString * const kFLEXDefaultsNetworkHostDenylistKey = @"com.flipboard.FLEX.network_host_denylist";
-NSString * const kFLEXDefaultsDisableOSLogForceASLKey = @"com.flipboard.FLEX.try_disable_os_log";
 NSString * const kFLEXDefaultsAPNSCaptureEnabledKey = @"com.flipboard.FLEX.capture_apns";
 NSString * const kFLEXDefaultsRegisterJSONExplorerKey = @"com.flipboard.FLEX.view_json_as_object";
 
@@ -103,14 +102,6 @@ NSString * const kFLEXDefaultsRegisterJSONExplorerKey = @"com.flipboard.FLEX.vie
 }
 
 #pragma mark System Log
-
-- (BOOL)flex_disableOSLog {
-    return [self boolForKey:kFLEXDefaultsDisableOSLogForceASLKey];
-}
-
-- (void)setFlex_disableOSLog:(BOOL)disable {
-    [self setBool:disable forKey:kFLEXDefaultsDisableOSLogForceASLKey];
-}
 
 - (BOOL)flex_cacheOSLogMessages {
     return [self boolForKey:kFLEXDefaultsiOSPersistentOSLogKey];

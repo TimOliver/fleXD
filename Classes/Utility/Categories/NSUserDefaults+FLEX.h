@@ -20,7 +20,6 @@ extern NSString * const kFLEXDefaultsShowMethodOverridesKey;
 extern NSString * const kFLEXDefaultsHideVariablePreviewsKey;
 extern NSString * const kFLEXDefaultsNetworkObserverEnabledKey;
 extern NSString * const kFLEXDefaultsNetworkHostDenylistKey;
-extern NSString * const kFLEXDefaultsDisableOSLogForceASLKey;
 extern NSString * const kFLEXDefaultsAPNSCaptureEnabledKey;
 extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
@@ -47,8 +46,6 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 /// The index of the last selected screen in the network observer.
 @property (nonatomic) NSInteger flex_lastNetworkObserverMode;
 
-/// Whether to disable `os_log` and re-enable ASL. May affect Console.app output.
-@property (nonatomic) BOOL flex_disableOSLog;
 /// Whether to cache `os_log` messages for display in the system log viewer.
 @property (nonatomic) BOOL flex_cacheOSLogMessages;
 
