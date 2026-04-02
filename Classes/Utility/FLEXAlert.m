@@ -15,7 +15,7 @@
 @end
 
 #define FLEXAlertActionMutationAssertion() \
-NSAssert(!self._action, @"Cannot mutate action after retreiving underlying UIAlertAction");
+NSAssert(!self._action, @"Cannot mutate action after retrieving underlying UIAlertAction");
 
 @interface FLEXAlertAction ()
 @property (nonatomic) UIAlertController *_controller;

@@ -88,7 +88,7 @@
         fontLabel = (UILabel*)view;
     }
     UIFont *font = [UIFont fontWithName:self.availableFonts[row] size:15.0];
-    NSDictionary<NSString *, id> *attributesDictionary = [NSDictionary<NSString *, id> dictionaryWithObject:font forKey:NSFontAttributeName];
+    NSDictionary<NSString *, id> *attributesDictionary = @{NSFontAttributeName: font};
     NSAttributedString *attributesString = [[NSAttributedString alloc] initWithString:self.availableFonts[row] attributes:attributesDictionary];
     fontLabel.attributedText = attributesString;
     [fontLabel sizeToFit];

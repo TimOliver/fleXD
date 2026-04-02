@@ -190,7 +190,7 @@ kQuery(ROWIDS, @"SELECT rowid FROM \"%@\" ORDER BY rowid ASC");
                 result = _lastResult = [FLEXSQLResult message:message];
             }
         } else {
-            // An error occured executing the query
+            // An error occurred executing the query
             result = _lastResult = [self errorResult:@"Execution"];
         }
     } else {

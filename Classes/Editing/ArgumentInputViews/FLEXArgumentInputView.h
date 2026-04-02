@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, FLEXArgumentInputViewSize) {
 @property (nonatomic, copy) NSString *title;
 
 /// To populate the filed with an initial value, set this property.
-/// To reteive the value input by the user, access the property.
+/// To retrieve the value input by the user, access the property.
 /// Primitive types and structs should/will be boxed in NSValue containers.
 /// Concrete subclasses should override both the setter and getter for this property.
 /// Subclasses can call super.inputValue to access a backing store for the value.
