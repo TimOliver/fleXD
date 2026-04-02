@@ -22,25 +22,28 @@ static const CGFloat kColumnGap = 4.0;
         _avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
         _avatarImageView.clipsToBounds = YES;
         _avatarImageView.layer.cornerRadius = kAvatarSize / 2.0f;
-        _avatarImageView.backgroundColor = UIColor.tertiarySystemFillColor;
         [self.contentView addSubview:_avatarImageView];
 
         _nameLabel = [UILabel new];
         _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
+        _nameLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         _loginLabel = [UILabel new];
         _loginLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _loginLabel.textColor = UIColor.secondaryLabelColor;
+        _loginLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         _hashLabel = [UILabel new];
         _hashLabel.font = [UIFont monospacedSystemFontOfSize:15 weight:UIFontWeightRegular];
         _hashLabel.textColor = UIColor.tertiaryLabelColor;
         _hashLabel.textAlignment = NSTextAlignmentRight;
+        _hashLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         _messageLabel = [UILabel new];
         _messageLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
         _messageLabel.numberOfLines = 3;
         _messageLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        _messageLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         for (UILabel *label in @[_nameLabel, _loginLabel, _hashLabel, _messageLabel]) {
             [self.contentView addSubview:label];
@@ -53,6 +56,8 @@ static const CGFloat kColumnGap = 4.0;
     [super layoutSubviews];
 
     UIEdgeInsets margins = self.contentView.layoutMargins;
+    self.separatorInset = UIEdgeInsetsMake(0, margins.left + kAvatarSize + kAvatarGap, 0, 0);
+
     CGFloat top = margins.top;
     CGFloat contentWidth = CGRectGetWidth(self.contentView.bounds) - margins.left - margins.right;
 
