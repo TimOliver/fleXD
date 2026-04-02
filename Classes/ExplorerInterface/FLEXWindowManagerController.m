@@ -53,12 +53,13 @@
     }
     self.windows = windows;
 
-    self.keyWindowSubtitle = self.windowSubtitles[[self.windows indexOfObject:self.keyWindow]];
     self.windowSubtitles = [self.windows flex_mapped:^id(UIWindow *window, NSUInteger idx) {
         return [NSString stringWithFormat:@"Level: %@ — Root: %@",
             @(window.windowLevel), window.rootViewController
         ];
     }];
+    NSUInteger keyWindowIndex = [self.windows indexOfObject:self.keyWindow];
+    self.keyWindowSubtitle = keyWindowIndex != NSNotFound ? self.windowSubtitles[keyWindowIndex] : nil;
     self.sceneSubtitles = [self.scenes flex_mapped:^id(UIScene *scene, NSUInteger idx) {
         return [self sceneDescription:scene];
     }];
