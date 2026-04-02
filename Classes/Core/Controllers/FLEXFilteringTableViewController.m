@@ -185,7 +185,8 @@
 }
 
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-    [self.filterDelegate.sections[indexPath.section] didPressInfoButtonAction:indexPath.row](self);
+    void (^action)(__kindof UIViewController *) = [self.filterDelegate.sections[indexPath.section] didPressInfoButtonAction:indexPath.row];
+    if (action) action(self);
 }
 
 - (UIContextMenuConfiguration *)tableView:(UITableView *)tableView contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath point:(CGPoint)point {
