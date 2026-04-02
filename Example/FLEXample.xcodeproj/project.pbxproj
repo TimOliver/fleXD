@@ -10,6 +10,7 @@
 		2231457F2F694153003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 2231457E2F694153003FE94F /* FLEX */; };
 		223145852F6941C1003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145842F6941C1003FE94F /* FLEX */; };
 		223145882F6A513C003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145872F6A513C003FE94F /* FLEX */; };
+		2286A6C72F7E9AAB00FE01E8 /* CommitListViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2286A6C62F7E9AAB00FE01E8 /* CommitListViewCell.m */; };
 		C386D6D02419975A00699085 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6CF2419975A00699085 /* AppDelegate.swift */; };
 		C386D6D22419975A00699085 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6D12419975A00699085 /* SceneDelegate.swift */; };
 		C386D6D62419975B00699085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C386D6D52419975B00699085 /* Assets.xcassets */; };
@@ -30,6 +31,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2286A6C52F7E9AAB00FE01E8 /* CommitListViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommitListViewCell.h; sourceTree = "<group>"; };
+		2286A6C62F7E9AAB00FE01E8 /* CommitListViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CommitListViewCell.m; sourceTree = "<group>"; };
 		BBD699DDBAC5A16D8CFD39AC /* libPods-FLEXample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FLEXample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C386D6CC2419975A00699085 /* FLEXample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FLEXample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C386D6CF2419975A00699085 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -147,6 +150,8 @@
 				C3A67857241ADDF7005A4681 /* Commit.swift */,
 				C386D6E42419984700699085 /* CommitListViewController.h */,
 				C386D6E52419984700699085 /* CommitListViewController.m */,
+				2286A6C52F7E9AAB00FE01E8 /* CommitListViewCell.h */,
+				2286A6C62F7E9AAB00FE01E8 /* CommitListViewCell.m */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -265,6 +270,7 @@
 				C3A67856241AB8AD005A4681 /* MiscNetworkRequests.m in Sources */,
 				C386D70C241AA67800699085 /* Owner.m in Sources */,
 				C386D6D22419975A00699085 /* SceneDelegate.swift in Sources */,
+				2286A6C72F7E9AAB00FE01E8 /* CommitListViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

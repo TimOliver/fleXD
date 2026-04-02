@@ -119,4 +119,35 @@ public class Commit: NSObject, Codable {
     }()
     
     public lazy var identifier: Int = self.sha.hashValue
+
+    private static let relativeDateFormatter: RelativeDateTimeFormatter = {
+        let f = RelativeDateTimeFormatter()
+        f.unitsStyle = .abbreviated
+        return f
+    }()
+
+    @objc public var committerName: String {
+        return details.committer.name ?? details.author.name ?? "Anonymous"
+    }
+
+    @objc public var commitMessage: String {
+        return details.message
+    }
+
+    @objc public var relativeDate: String {
+        guard let date = details.committer.date ?? details.author.date else {
+            return "unknown date"
+        }
+        return Commit.relativeDateFormatter.localizedString(for: date, relativeTo: Date())
+    }
+
+    public override var description: String {
+        return "\(shortHash) — \(details.message)"
+    }
+
+    public override var debugDescription: String {
+        let name = details.committer.name ?? details.author.name ?? "Anonymous"
+        let login = committer?.login ?? "unknown"
+        return "<Commit: \(shortHash) by \(name) (@\(login)) on \(date)> \(details.message)"
+    }
 }

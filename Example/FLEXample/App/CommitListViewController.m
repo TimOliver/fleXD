@@ -9,6 +9,7 @@
 #import "CommitListViewController.h"
 #import "FLEXample-Swift.h"
 #import "Person.h"
+#import "CommitListViewCell.h"
 #import <FLEX.h>
 
 @interface CommitListViewController ()
@@ -104,33 +105,17 @@
 
 - (NSArray<FLEXTableViewSection *> *)makeSections {
     _commits = [FLEXMutableListSection list:@[]
-        cellConfiguration:^(__kindof UITableViewCell *cell, Commit *commit, NSInteger row) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.textLabel.text = commit.firstLine;
-            cell.detailTextLabel.text = commit.secondLine;
-            cell.detailTextLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-//            cell.textLabel.numberOfLines = 2;
-//            cell.detailTextLabel.numberOfLines = 3;
-        
-            NSString *login = commit.committer.login;
-            UIImage *avi = login ? self.avatars[login] : nil;
-            if (avi) {
-                cell.imageView.image = avi;
+        cellConfiguration:^(__kindof CommitListViewCell *cell, Commit *commit, NSInteger row) {
+            cell.nameLabel.text = commit.committerName;
+            NSString *login = commit.committer.login ? [@"@" stringByAppendingString:commit.committer.login] : nil;
+            NSString *date = commit.relativeDate;
+            if (login) {
+                cell.loginLabel.text = [NSString stringWithFormat:@"%@ \u00B7 %@", login, date];
             } else {
-                cell.tag = commit.identifier;
-                [self loadImage:commit.committer.avatarUrl completion:^(UIImage *image) {
-                    if (login) {
-                        self.avatars[login] = image;
-                    }
-                    if (cell.tag == commit.identifier) {
-                        cell.imageView.image = image;
-                    } else {
-                        [self.tableView reloadRowsAtIndexPaths:@[
-                            [NSIndexPath indexPathForRow:row inSection:0]
-                        ] withRowAnimation:UITableViewRowAnimationAutomatic];
-                    }
-                }];
+                cell.loginLabel.text = date;
             }
+            cell.hashLabel.text = commit.shortHash;
+            cell.messageLabel.text = commit.commitMessage;
         } filterMatcher:^BOOL(NSString *filterText, Commit *commit) {
             return [commit matchesWithQuery:filterText];
         }
@@ -141,7 +126,9 @@
             FLEXObjectExplorerFactory explorerViewControllerForObject:commit
         ] animated:YES];
     };
-    
+
+    self.commits.cellRegistrationMapping = @{ @"Cell" : [CommitListViewCell class] };
+
     return @[self.commits];
 }
 
