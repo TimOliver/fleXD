@@ -54,9 +54,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.navigationController.navigationBar.prefersLargeTitles = YES;
+    
     _avatars = [NSMutableDictionary new];
     
-    self.title = @"Swift Commit History";
+    self.title = @"Commit History";
     self.showsSearchBar = YES;
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem
         flex_itemWithTitle:@"FLEX" target:FLEXManager.sharedManager action:@selector(toggleExplorer)
