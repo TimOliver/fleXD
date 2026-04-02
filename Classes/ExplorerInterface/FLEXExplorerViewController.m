@@ -948,6 +948,35 @@ static BOOL FLEXIsDefaultSkippedView(UIView *view) {
     return NO;
 }
 
+/// iOS 26 introduced several system overlay views (floating bars, context menus,
+/// passthrough containers) that sit above app content in the view hierarchy.
+/// These are almost never the views a developer wants to inspect, yet they
+/// dominate tap-to-select results — often requiring many taps to reach the
+/// actual app view underneath. Skip them by default on iOS 26+.
+static BOOL FLEXIsDefaultSkippedView(UIView *view) {
+    if (@available(iOS 26, *)) {
+        static NSSet<NSString *> *skippedSubstrings;
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            skippedSubstrings = [NSSet setWithArray:@[
+                @"FloatingBarHostingView",
+                @"FloatingBarContainerView",
+                @"_UITabBarContainerView",
+                @"_UITouchPassthroughView",
+                @"_UIContextMenuContainerView",
+                @"_UIContextMenuPlatterTransitionView",
+            ]];
+        });
+        NSString *const className = NSStringFromClass([view class]);
+        for (NSString *substring in skippedSubstrings) {
+            if ([className containsString:substring]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 - (NSArray<UIView *> *)recursiveSubviewsAtPoint:(CGPoint)pointInView
                                          inView:(UIView *)view
                                 skipHiddenViews:(BOOL)skipHidden {
