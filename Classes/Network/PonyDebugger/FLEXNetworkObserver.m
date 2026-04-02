@@ -566,24 +566,12 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
 + (void)injectIntoNSURLSessionTaskResume {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        // In iOS 7 resume lives in __NSCFLocalSessionTask
-        // In iOS 8 resume lives in NSURLSessionTask
-        // In iOS 9 resume lives in __NSCFURLSessionTask
-        // In iOS 14 resume lives in NSURLSessionTask
-        Class baseResumeClass = Nil;
-        if (![NSProcessInfo.processInfo respondsToSelector:@selector(operatingSystemVersion)]) {
-            // iOS ... 7
-            baseResumeClass = NSClassFromString(@"__NSCFLocalSessionTask");
-        } else {
-            NSInteger majorVersion = NSProcessInfo.processInfo.operatingSystemVersion.majorVersion;
-            if (majorVersion < 9 || majorVersion >= 14) {
-                // iOS 8 or iOS 14+
-                baseResumeClass = [NSURLSessionTask class];
-            } else {
-                // iOS 9 ... 13
-                baseResumeClass = NSClassFromString(@"__NSCFURLSessionTask");
-            }
-        }
+        // In iOS 9-13 resume lives in __NSCFURLSessionTask
+        // In iOS 14+ resume lives in NSURLSessionTask
+        NSInteger majorVersion = NSProcessInfo.processInfo.operatingSystemVersion.majorVersion;
+        Class baseResumeClass = majorVersion >= 14
+            ? [NSURLSessionTask class]
+            : NSClassFromString(@"__NSCFURLSessionTask");
         
         // Hook the base implementation of -resume
         IMP originalResume = [baseResumeClass instanceMethodForSelector:@selector(resume)];
@@ -675,8 +663,8 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
             SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
 
             if ([FLEXUtility instanceRespondsButDoesNotImplementSelector:selector class:class]) {
-                // iOS 7 does not implement these methods on NSURLSession. We actually want to
-                // swizzle __NSCFURLSession, which we can get from the class of the shared session
+                // NSURLSession may not directly implement these methods; get the concrete subclass
+                // from the shared session instead
                 class = [NSURLSession.sharedSession class];
             }
             
@@ -743,8 +731,8 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
             SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
 
             if ([FLEXUtility instanceRespondsButDoesNotImplementSelector:selector class:class]) {
-                // iOS 7 does not implement these methods on NSURLSession. We actually want to
-                // swizzle __NSCFURLSession, which we can get from the class of the shared session
+                // NSURLSession may not directly implement these methods; get the concrete subclass
+                // from the shared session instead
                 class = [NSURLSession.sharedSession class];
             }
 
