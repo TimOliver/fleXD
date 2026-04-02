@@ -50,13 +50,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)delegate:(id<FHSSnapshotViewDelegate>)delegate;
 
 @property (nonatomic, weak) id<FHSSnapshotViewDelegate> delegate;
-
 @property (nonatomic) NSArray<FHSViewSnapshot *> *snapshots;
 @property (nonatomic, nullable) FHSViewSnapshot *selectedView;
 
 /// Views of these classes will have their headers hidden
 @property (nonatomic) NSArray<Class> *headerExclusions;
-
 @property (nonatomic, readonly) UISlider *spacingSlider;
 @property (nonatomic, readonly) FHSRangeSlider *depthSlider;
 

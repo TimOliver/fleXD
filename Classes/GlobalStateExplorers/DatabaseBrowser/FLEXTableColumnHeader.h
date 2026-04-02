@@ -57,7 +57,6 @@ NS_INLINE FLEXTableColumnHeaderSortType FLEXNextTableColumnHeaderSortType(
 
 @property (nonatomic) NSInteger index;
 @property (nonatomic, readonly) UILabel *titleLabel;
-
 @property (nonatomic) FLEXTableColumnHeaderSortType sortType;
 
 @end

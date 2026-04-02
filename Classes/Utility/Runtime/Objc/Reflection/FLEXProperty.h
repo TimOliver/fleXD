@@ -64,38 +64,48 @@ NS_ASSUME_NONNULL_BEGIN
 /// The first underlying `objc_property_t` for this property.
 /// `0` if created via `+propertyWithName:attributes:`
 @property (nonatomic, readonly) objc_property_t  objc_property;
+
 /// All underlying `objc_property_t` values, e.g. when a property is defined in multiple images.
 @property (nonatomic, readonly) objc_property_t _Nonnull * _Nullable objc_properties;
+
 /// The number of underlying `objc_property_t` values.
 @property (nonatomic, readonly) NSInteger        objc_propertyCount;
+
 /// Whether this is a class property (as opposed to an instance property).
 @property (nonatomic, readonly) BOOL             isClassProperty;
 
 /// The name of the property.
 @property (nonatomic, readonly) NSString         *name;
+
 /// The broad type of the property. For the full type encoding, use `attributes.typeEncoding`
 @property (nonatomic, readonly) FLEXTypeEncoding type;
+
 /// The property's attributes.
 @property (nonatomic          ) FLEXPropertyAttributes *attributes;
 
 /// The most likely setter selector for this property, including any custom setter.
 @property (nonatomic, readonly) SEL likelySetter;
+
 /// The string form of `likelySetter`
 @property (nonatomic, readonly) NSString *likelySetterString;
+
 /// Whether a method matching `likelySetter` exists on the owning class.
 /// Not valid unless this property was initialized with a class.
 @property (nonatomic, readonly) BOOL likelySetterExists;
 
 /// The most likely getter selector for this property, including any custom getter.
 @property (nonatomic, readonly) SEL likelyGetter;
+
 /// The string form of `likelyGetter`
 @property (nonatomic, readonly) NSString *likelyGetterString;
+
 /// Whether a method matching `likelyGetter` exists on the owning class.
 /// Not valid unless this property was initialized with a class.
 @property (nonatomic, readonly) BOOL likelyGetterExists;
 
 /// The name of the ivar most likely backing this property. Always `nil` for class properties.
 @property (nonatomic, readonly, nullable) NSString *likelyIvarName;
+
 /// Whether an ivar matching `likelyIvarName` exists on the owning class.
 /// Not valid unless this property was initialized with a class.
 @property (nonatomic, readonly) BOOL likelyIvarExists;

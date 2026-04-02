@@ -54,6 +54,7 @@
 
 /// For example, "NSString 0x1d4085d0" or "NSLayoutConstraint _object"
 @property (nonatomic, readonly) NSString *reference;
+
 /// For instances, this is the result of -[FLEXRuntimeUtility summaryForObject:]
 /// For classes, there is no summary.
 @property (nonatomic, readonly) NSString *summary;

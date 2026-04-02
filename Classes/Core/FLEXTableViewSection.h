@@ -60,9 +60,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// A title to be displayed for the custom section.
 /// Subclasses may override or use the `_title` ivar.
 @property (nonatomic, readonly, nullable, copy) NSString *title;
+
 /// The number of rows in this section. Subclasses must override.
 /// This should not change until `filterText` is changed or `reloadData` is called.
 @property (nonatomic, readonly) NSInteger numberOfRows;
+
 /// A map of reuse identifiers to `UITableViewCell` (sub)class objects.
 /// Subclasses \e may override this as necessary, but are not required to.
 /// See `FLEXTableView.h` for more information.

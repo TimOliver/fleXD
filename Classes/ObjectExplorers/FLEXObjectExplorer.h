@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// `YES` for properties and ivars that support editing, `NO` otherwise.
 @property (nonatomic, readonly) BOOL isEditable;
+
 /// `YES` to show live value previews for properties and ivars, `NO` otherwise.
 @property (nonatomic, readonly) BOOL wantsDynamicPreviews;
 
@@ -59,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The object or class being explored.
 @property (nonatomic, readonly) id object;
+
 /// A human-readable description of the object. Subclasses can override for more detail.
 @property (nonatomic, readonly) NSString *objectDescription;
 
@@ -71,31 +73,22 @@ NS_ASSUME_NONNULL_BEGIN
 /// For example, `properties` returns the properties of the selected class scope,
 /// while `allProperties` contains one array per class in the hierarchy.
 @property (nonatomic) NSInteger classScope;
-
 @property (nonatomic, readonly) NSArray<NSArray<FLEXProperty *> *> *allProperties;
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *properties;
-
 @property (nonatomic, readonly) NSArray<NSArray<FLEXProperty *> *> *allClassProperties;
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *classProperties;
-
 @property (nonatomic, readonly) NSArray<NSArray<FLEXIvar *> *> *allIvars;
 @property (nonatomic, readonly) NSArray<FLEXIvar *> *ivars;
-
 @property (nonatomic, readonly) NSArray<NSArray<FLEXMethod *> *> *allMethods;
 @property (nonatomic, readonly) NSArray<FLEXMethod *> *methods;
-
 @property (nonatomic, readonly) NSArray<NSArray<FLEXMethod *> *> *allClassMethods;
 @property (nonatomic, readonly) NSArray<FLEXMethod *> *classMethods;
-
 @property (nonatomic, readonly) NSArray<Class> *classHierarchyClasses;
 @property (nonatomic, readonly) NSArray<FLEXStaticMetadata *> *classHierarchy;
-
 @property (nonatomic, readonly) NSArray<NSArray<FLEXProtocol *> *> *allConformedProtocols;
 @property (nonatomic, readonly) NSArray<FLEXProtocol *> *conformedProtocols;
-
 @property (nonatomic, readonly) NSArray<FLEXStaticMetadata *> *allInstanceSizes;
 @property (nonatomic, readonly) FLEXStaticMetadata *instanceSize;
-
 @property (nonatomic, readonly) NSArray<FLEXStaticMetadata *> *allImageNames;
 @property (nonatomic, readonly) FLEXStaticMetadata *imageName;
 

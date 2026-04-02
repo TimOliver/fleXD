@@ -56,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A list of column names
 @property (nonatomic, readonly, nullable) NSArray<NSString *> *columns;
+
 /// A list of rows, where each element in the row corresponds
 /// to the value of the column at the same index in `columns`
 ///
@@ -63,6 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// the contents of `columns` will give you key-value pairs of
 /// column names to column values for that row.
 @property (nonatomic, readonly, nullable) NSArray<NSArray<NSString *> *> *rows;
+
 /// A list of rows where the fields are paired to column names.
 ///
 /// This property is lazily constructed by looping over

@@ -80,12 +80,16 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
 /// Whether the object explorer hides backing ivars for properties.
 @property (nonatomic) BOOL flex_explorerHidesPropertyIvars;
+
 /// Whether the object explorer hides getter/setter methods for properties.
 @property (nonatomic) BOOL flex_explorerHidesPropertyMethods;
+
 /// Whether the object explorer hides methods whose names begin with an underscore.
 @property (nonatomic) BOOL flex_explorerHidesPrivateMethods;
+
 /// Whether the object explorer shows which methods override a superclass implementation.
 @property (nonatomic) BOOL flex_explorerShowsMethodOverrides;
+
 /// Whether the object explorer hides live value previews for properties and ivars.
 @property (nonatomic) BOOL flex_explorerHidesVariablePreviews;
 

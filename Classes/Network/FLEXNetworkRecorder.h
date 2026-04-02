@@ -60,7 +60,6 @@ typedef NS_ENUM(NSUInteger, FLEXNetworkTransactionKind) {
 /// If NO, the recorder not cache will not cache response for content types
 /// with an "image", "video", or "audio" prefix.
 @property (nonatomic) BOOL shouldCacheMediaResponses;
-
 @property (nonatomic) NSMutableArray<NSString *> *hostDenylist;
 
 /// Call this after adding to or setting the `hostDenylist` to remove excluded transactions
@@ -74,8 +73,10 @@ typedef NS_ENUM(NSUInteger, FLEXNetworkTransactionKind) {
 
 /// Array of FLEXHTTPTransaction objects ordered by start time with the newest first.
 @property (nonatomic, readonly) NSArray<FLEXHTTPTransaction *> *HTTPTransactions;
+
 /// Array of FLEXWebsocketTransaction objects ordered by start time with the newest first.
 @property (nonatomic, readonly) NSArray<FLEXWebsocketTransaction *> *websocketTransactions;
+
 /// Array of FLEXFirebaseTransaction objects ordered by start time with the newest first.
 @property (nonatomic, readonly) NSArray<FLEXFirebaseTransaction *> *firebaseTransactions;
 

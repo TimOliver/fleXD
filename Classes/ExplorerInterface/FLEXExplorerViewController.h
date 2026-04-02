@@ -46,8 +46,10 @@
 
 /// The delegate that is notified when the explorer finishes.
 @property (nonatomic, weak) id <FLEXExplorerViewControllerDelegate> delegate;
+
 /// Whether the FLEX window should become the key window while the explorer is active.
 @property (nonatomic, readonly) BOOL wantsWindowToBecomeKey;
+
 /// The floating toolbar managed by this view controller.
 @property (nonatomic, readonly) FLEXExplorerToolbar *explorerToolbar;
 

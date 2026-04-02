@@ -17,15 +17,13 @@
 /// Intentionally not weak
 @property (nonatomic, readonly) UIView *view;
 @property (nonatomic, readonly) NSString *identifier;
-
 @property (nonatomic, readonly) NSString *title;
+
 /// Whether or not this view item should be visually distinguished
 @property (nonatomic, readwrite) BOOL important;
-
 @property (nonatomic, readonly) CGRect frame;
 @property (nonatomic, readonly) BOOL hidden;
 @property (nonatomic, readonly) UIImage *snapshotImage;
-
 @property (nonatomic, readonly) NSArray<FHSView *> *children;
 @property (nonatomic, readonly) NSString *summary;
 

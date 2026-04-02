@@ -19,6 +19,7 @@
 
 /// Contains the result of the last operation, which may be an error
 @property (nonatomic, readonly) FLEXSQLResult *lastResult;
+
 /// Calls into `sqlite3_last_insert_rowid()`
 @property (nonatomic, readonly) NSInteger lastRowID;
 

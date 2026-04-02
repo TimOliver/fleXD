@@ -64,6 +64,7 @@ typedef void (^FLEXMutableListCellForElement)(__kindof UITableViewCell *cell, id
 
 /// The full, unfiltered list of objects in this section.
 @property (nonatomic) NSArray<ObjectType> *list;
+
 /// The subset of `list` that passes the current filter, if any.
 @property (nonatomic, readonly) NSArray<ObjectType> *filteredList;
 

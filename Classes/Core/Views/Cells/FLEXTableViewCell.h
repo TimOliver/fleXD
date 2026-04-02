@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The primary label of the cell. Use instead of `textLabel`
 @property (nonatomic, readonly) UILabel *titleLabel;
+
 /// The secondary label of the cell. Use instead of `detailTextLabel`
 @property (nonatomic, readonly) UILabel *subtitleLabel;
 

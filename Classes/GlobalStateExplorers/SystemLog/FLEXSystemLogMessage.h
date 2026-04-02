@@ -41,7 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)logMessageFromDate:(NSDate *)date text:(NSString *)text;
 
 @property (nonatomic, readonly, nullable) NSString *sender;
-
 @property (nonatomic, readonly) NSDate *date;
 @property (nonatomic, readonly) NSString *messageText;
 @property (nonatomic, readonly) long long messageID;

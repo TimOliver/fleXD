@@ -56,16 +56,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The method signature of the block, if it has one, derived from `FLEXBlockOptionHasSignature`
 @property (nonatomic, readonly, nullable) NSMethodSignature *signature;
+
 /// A human-readable string representation of the block's signature, if available.
 @property (nonatomic, readonly, nullable) NSString *signatureString;
+
 /// The source declaration of the block as encoded at compile time, if available.
 @property (nonatomic, readonly, nullable) NSString *sourceDeclaration;
+
 /// The raw option flags of the block's internal layout structure.
 @property (nonatomic, readonly) FLEXBlockOptions flags;
+
 /// The total size of the block's internal layout structure in bytes.
 @property (nonatomic, readonly) NSUInteger size;
+
 /// A human-readable summary of the block's attributes.
 @property (nonatomic, readonly) NSString *summary;
+
 /// The original block object passed to `+describing:`
 @property (nonatomic, readonly) id block;
 

@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A flexible-space bar button item.
 @property (nonatomic, readonly, class) UIBarButtonItem *flex_flexibleSpace;
+
 /// A zero-width fixed-space bar button item.
 @property (nonatomic, readonly, class) UIBarButtonItem *flex_fixedSpace;
 

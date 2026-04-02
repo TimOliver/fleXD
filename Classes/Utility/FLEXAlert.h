@@ -77,14 +77,18 @@ typedef FLEXAlertAction * _Nonnull (^FLEXAlertActionHandler)(void(^handler)(NSAr
 ///
 /// Call in succession to append strings to the title.
 @property (nonatomic, readonly) FLEXAlertStringProperty title;
+
 /// Set the alert's message.
 ///
 /// Call in succession to append strings to the message.
 @property (nonatomic, readonly) FLEXAlertStringProperty message;
+
 /// Add a button with a given title with the default style and no action.
 @property (nonatomic, readonly) FLEXAlertAddAction button;
+
 /// Add a text field with the given (optional) placeholder text.
 @property (nonatomic, readonly) FLEXAlertStringArg textField;
+
 /// Add and configure the given text field.
 ///
 /// Use this if you need to more than set the placeholder, such as
@@ -99,17 +103,23 @@ typedef FLEXAlertAction * _Nonnull (^FLEXAlertActionHandler)(void(^handler)(NSAr
 ///
 /// Call in succession to append strings to the title.
 @property (nonatomic, readonly) FLEXAlertActionStringProperty title;
+
 /// Make the action destructive. It appears with red text.
 @property (nonatomic, readonly) FLEXAlertActionProperty destructiveStyle;
+
 /// Make the action cancel-style. It sometimes appears with a bolder font.
 @property (nonatomic, readonly) FLEXAlertActionProperty cancelStyle;
+
 /// Make the action the preferred action. It appears with a bolder font.
 /// The first action that is set as preferred will be used as the preferred action.
 @property (nonatomic, readonly) FLEXAlertActionProperty preferred;
+
 /// Enable or disable the action. Enabled by default.
 @property (nonatomic, readonly) FLEXAlertActionBOOLProperty enabled;
+
 /// Give the button an action. The action takes an array of text field strings.
 @property (nonatomic, readonly) FLEXAlertActionHandler handler;
+
 /// Access the underlying UIAlertAction, should you need to change it while
 /// the encompassing alert is being displayed. For example, you may want to
 /// enable or disable a button based on the input of some text fields in the alert.

@@ -64,20 +64,23 @@ typedef NS_ENUM(NSUInteger, FLEXWebsocketMessageDirection) {
 + (NSString *)readableStringFromTransactionState:(FLEXNetworkTransactionState)state;
 
 @property (nonatomic) NSError *error;
+
 /// Subclasses can override to provide error state based on response data as well
 @property (nonatomic, readonly) BOOL displayAsError;
 @property (nonatomic, readonly) NSDate *startTime;
-
 @property (nonatomic) FLEXNetworkTransactionState state;
 @property (nonatomic) int64_t receivedDataLength;
+
 /// A small thumbnail to preview the type of/the response
 @property (nonatomic) UIImage *thumbnail;
 
 /// The most prominent line of the cell. Typically a URL endpoint or other distinguishing attribute.
 /// This line turns red when the transaction indicates an error.
 @property (nonatomic, readonly) NSString *primaryDescription;
+
 /// Something less important, such as a blob of data or the URL's domain.
 @property (nonatomic, readonly) NSString *secondaryDescription;
+
 /// Minor details to display at the bottom of the cell, such as a timestamp, HTTP method, or status.
 @property (nonatomic, readonly) NSString *tertiaryDescription;
 
@@ -99,6 +102,7 @@ typedef NS_ENUM(NSUInteger, FLEXWebsocketMessageDirection) {
 + (instancetype)withRequest:(NSURLRequest *)request startTime:(NSDate *)startTime;
 
 @property (nonatomic, readonly) NSURLRequest *request;
+
 /// Subclasses should implement for when the transaction is complete
 @property (nonatomic, readonly) NSArray<NSString *> *details;
 
@@ -112,7 +116,6 @@ typedef NS_ENUM(NSUInteger, FLEXWebsocketMessageDirection) {
 @property (nonatomic, readonly) NSString *requestID;
 @property (nonatomic) NSURLResponse *response;
 @property (nonatomic, copy) NSString *requestMechanism;
-
 @property (nonatomic) NSTimeInterval latency;
 @property (nonatomic) NSTimeInterval duration;
 
@@ -136,7 +139,6 @@ typedef NS_ENUM(NSUInteger, FLEXWebsocketMessageDirection) {
 //@property (nonatomic, readonly) NSURLSessionWebSocketTask *task;
 @property (nonatomic, readonly) NSURLSessionWebSocketMessage *message;
 @property (nonatomic, readonly) FLEXWebsocketMessageDirection direction;
-
 @property (nonatomic, readonly) int64_t dataLength;
 
 @end
@@ -161,8 +163,10 @@ typedef NS_ENUM(NSUInteger, FLEXFIRRequestType) {
 @interface FLEXFirebaseSetDataInfo : NSObject
 /// The data that was set
 @property (nonatomic, readonly) NSDictionary *documentData;
+
 /// `nil` if `mergeFields` is populated
 @property (nonatomic, readonly) NSNumber *merge;
+
 /// `nil` if `merge` is populated
 @property (nonatomic, readonly) NSArray *mergeFields;
 @end
@@ -181,7 +185,6 @@ typedef NS_ENUM(NSUInteger, FLEXFIRRequestType) {
 
 @property (nonatomic, readonly) FLEXFIRTransactionDirection direction;
 @property (nonatomic, readonly) FLEXFIRRequestType requestType;
-
 @property (nonatomic, readonly) id initiator;
 @property (nonatomic, readonly) FIRQuery *initiator_query;
 @property (nonatomic, readonly) FIRDocumentReference *initiator_doc;
@@ -189,13 +192,15 @@ typedef NS_ENUM(NSUInteger, FLEXFIRRequestType) {
 
 /// Only used for fetch types
 @property (nonatomic, copy) NSArray<FIRDocumentSnapshot *> *documents;
+
 /// Only used for the "set data" type
 @property (nonatomic, readonly) FLEXFirebaseSetDataInfo *setDataInfo;
+
 /// Only used for the "update data" type
 @property (nonatomic, readonly) NSDictionary *updateData;
+
 /// Only used for the "add document" type
 @property (nonatomic, readonly) FIRDocumentReference *addedDocument;
-
 @property (nonatomic, readonly) NSString *path;
 
 //@property (nonatomic, readonly) NSString *responseString;

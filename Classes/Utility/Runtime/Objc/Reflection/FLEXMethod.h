@@ -69,23 +69,31 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The underlying `Method` data structure.
 @property (nonatomic, readonly) Method            objc_method;
+
 /// The implementation of the method.
 ///
 /// Setting `implementation` will change the implementation of this method for the entire
 /// class that implements it. It will not modify the selector of the method.
 @property (nonatomic          ) IMP               implementation;
+
 /// Whether the method is an instance method or not.
 @property (nonatomic, readonly) BOOL              isInstanceMethod;
+
 /// The number of arguments to the method.
 @property (nonatomic, readonly) NSUInteger        numberOfArguments;
+
 /// The `NSMethodSignature` object corresponding to the method's type encoding.
 @property (nonatomic, readonly) NSMethodSignature *signature;
+
 /// Same as \e typeEncoding but with parameter sizes up front and offsets after the types.
 @property (nonatomic, readonly) NSString          *signatureString;
+
 /// The return type of the method.
 @property (nonatomic, readonly) FLEXTypeEncoding  *returnType;
+
 /// The return size of the method.
 @property (nonatomic, readonly) NSUInteger        returnSize;
+
 /// The full path of the image that contains this method definition,
 /// or `nil` if this method was probably defined at runtime.
 @property (nonatomic, readonly) NSString          *imagePath;

@@ -44,6 +44,7 @@
 /// Whether log messages are to be recorded and kept in-memory in the background.
 /// You do not need to initialize this value, only change it.
 @property (nonatomic) BOOL persistent;
+
 /// Used mostly internally, but also used by the log VC to persist messages
 /// that were created prior to enabling persistence.
 @property (nonatomic) NSMutableArray<FLEXSystemLogMessage *> *messages;

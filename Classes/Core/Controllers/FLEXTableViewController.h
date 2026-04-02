@@ -79,6 +79,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 ///
 /// Setting this to YES will initialize the carousel and the view.
 @property (nonatomic) BOOL showsCarousel;
+
 /// A horizontally scrolling list with functionality similar to
 /// that of a search bar's scope bar. You'd want to use this when
 /// you have potentially more than 4 scope options.
@@ -88,11 +89,13 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 ///
 /// Setting this to YES will initialize searchController and the view.
 @property (nonatomic) BOOL showsSearchBar;
+
 /// Defaults to NO.
 ///
 /// Setting this to YES will make the search bar appear whenever the view appears.
 /// Otherwise, iOS will only show the search bar when you scroll up.
 @property (nonatomic) BOOL showSearchBarInitially;
+
 /// Defaults to NO.
 ///
 /// Setting this to YES will make the search bar activate whenever the view appears.
@@ -104,14 +107,17 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 /// The search bar will not dim the background or hide the navigation bar by default.
 /// The search bar appears in the navigation bar, below the title.
 @property (nonatomic) UISearchController *searchController;
+
 /// Used to initialize the search controller. Defaults to nil.
 @property (nonatomic) UIViewController *searchResultsController;
+
 /// Defaults to "Fast"
 ///
 /// Determines how often search bar results will be "debounced."
 /// Empty query events are always sent instantly. Query events will
 /// be sent when the user has not changed the query for this interval.
 @property (nonatomic) FLEXDebounceInterval searchBarDebounceInterval;
+
 /// Whether the search bar stays at the top of the view while scrolling.
 ///
 /// Calls into self.navigationItem.hidesSearchBarWhenScrolling.
@@ -119,6 +125,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 /// or it will not be respsected. Use this instead.
 /// Defaults to NO.
 @property (nonatomic) BOOL pinSearchBar;
+
 /// By default, we will show the search bar's cancel button when
 /// search becomes active and hide it when search is dismissed.
 ///
@@ -131,6 +138,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 /// If using the scope bar, self.searchController.searchBar.selectedScopeButtonIndex.
 /// Otherwise, this is the selected index of the carousel, or NSNotFound if using neither.
 @property (nonatomic) NSInteger selectedScope;
+
 /// self.searchController.searchBar.text
 @property (nonatomic, readonly, copy) NSString *searchText;
 

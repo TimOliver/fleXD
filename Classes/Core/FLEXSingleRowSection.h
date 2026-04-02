@@ -50,8 +50,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A view controller to push when the row is selected. Takes precedence over `selectionAction`
 @property (nullable, nonatomic) UIViewController *pushOnSelection;
+
 /// An action block to invoke when the row is selected, if `pushOnSelection` is nil.
 @property (nullable, nonatomic) void (^selectionAction)(UIViewController *host);
+
 /// Called with the current filter text to determine whether the single row should be visible.
 /// If `nil` the row is always visible.
 @property (nonatomic, nullable) BOOL (^filterMatcher)(NSString *filterText);

@@ -149,7 +149,6 @@ NS_SWIFT_NAME(DocumentSnapshot)
 @property(nonatomic, readonly) BOOL exists;
 @property(nonatomic, readonly) FIRDocumentReference *reference;
 @property(nonatomic, copy, readonly) NSString *documentID;
-
 @property(nonatomic, readonly, nullable) NSDictionary<NSString *, id> *data;
 
 - (nullable id)valueForField:(id)field NS_SWIFT_NAME(get(_:));

@@ -59,6 +59,7 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */> _Nonnull (^FLEXColl
 
 /// Unordered, unkeyed collections must implement this
 @property (nonatomic, readonly) NSArray *allObjects;
+
 /// Keyed collections must implement this and `objectForKeyedSubscript:`
 @property (nonatomic, readonly) NSArray *allKeys;
 
@@ -96,8 +97,10 @@ typedef id<NSObject, NSFastEnumeration /* FLEXCollection */> _Nonnull (^FLEXColl
 
 /// Defaults to `NO`
 @property (nonatomic) BOOL hideSectionTitle;
+
 /// Defaults to `nil`
 @property (nonatomic, copy) NSString *customTitle;
+
 /// Defaults to `NO`
 ///
 /// Setting this to `NO` will not display the element index for ordered collections.

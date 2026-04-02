@@ -20,16 +20,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The view image itself
 @property (nonatomic, nullable) SCNNode *snapshot;
+
 /// Goes on top of the snapshot, has rounded top corners
 @property (nonatomic, nullable) SCNNode *header;
+
 /// The bounding box drawn around the snapshot
 @property (nonatomic, nullable) SCNNode *border;
 
 /// Used to indicate when a view is selected
 @property (nonatomic, getter=isHighlighted) BOOL highlighted;
+
 /// Used to indicate when a view is de-emphasized
 @property (nonatomic, getter=isDimmed) BOOL dimmed;
-
 @property (nonatomic) BOOL forceHideHeader;
 
 @end

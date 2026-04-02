@@ -61,6 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The object being explored, which may be an instance of a class or a class itself.
 @property (nonatomic, readonly) id object;
+
 /// This object provides the object's metadata for the explorer view controller.
 @property (nonatomic, readonly) FLEXObjectExplorer *explorer;
 

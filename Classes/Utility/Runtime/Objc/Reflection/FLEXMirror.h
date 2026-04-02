@@ -48,11 +48,12 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 
 /// The underlying object or `Class` used to create this `FLEXMirror`
 @property (nonatomic, readonly) id   value;
+
 /// Whether `value` was a class or a class instance.
 @property (nonatomic, readonly) BOOL isClass;
+
 /// The name of the `Class` of the `value` property.
 @property (nonatomic, readonly) NSString *className;
-
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *properties;
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *classProperties;
 @property (nonatomic, readonly) NSArray<FLEXIvar *>     *ivars;
@@ -92,21 +93,28 @@ NS_SWIFT_NAME(FLEXMirrorProtocol)
 
 /// The object or class passed to `+reflect:`.
 @property (nonatomic, readonly) id   value;
+
 /// Whether `value` is a class object rather than an instance.
 @property (nonatomic, readonly) BOOL isClass;
+
 /// The name of the class of `value`.
 @property (nonatomic, readonly) NSString *className;
 
 /// The instance properties declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *properties;
+
 /// The class properties declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXProperty *> *classProperties;
+
 /// The instance variables declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXIvar *>     *ivars;
+
 /// The instance methods declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXMethod *>   *methods;
+
 /// The class methods declared on this class (not superclasses).
 @property (nonatomic, readonly) NSArray<FLEXMethod *>   *classMethods;
+
 /// The protocols this class directly conforms to.
 @property (nonatomic, readonly) NSArray<FLEXProtocol *> *protocols;
 

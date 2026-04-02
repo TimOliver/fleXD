@@ -39,11 +39,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLEXTabList : NSObject
 
 @property (nonatomic, readonly, class) FLEXTabList *sharedList;
-
 @property (nonatomic, readonly, nullable) UINavigationController *activeTab;
 @property (nonatomic, readonly) NSArray<UINavigationController *> *openTabs;
+
 /// Snapshots of each tab when they were last active.
 @property (nonatomic, readonly) NSArray<UIImage *> *openTabSnapshots;
+
 /// `NSNotFound` if no tabs are present.
 /// Setting this property changes the active tab to one of the already open tabs.
 @property (nonatomic) NSInteger activeTabIndex;

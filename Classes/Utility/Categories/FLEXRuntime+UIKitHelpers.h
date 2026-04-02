@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// `YES` for properties and ivars that support editing, `NO` for all methods.
 @property (nonatomic, readonly) BOOL isEditable;
+
 /// `NO` for ivars, `YES` for supported methods and properties.
 @property (nonatomic, readonly) BOOL isCallable;
 

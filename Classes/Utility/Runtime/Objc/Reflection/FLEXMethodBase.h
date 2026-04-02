@@ -56,12 +56,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The selector of the method.
 @property (nonatomic, readonly) SEL      selector;
+
 /// The string form of the method's selector. Same as `name`
 @property (nonatomic, readonly) NSString *selectorString;
+
 /// The string form of the method's selector. Same as `selectorString`
 @property (nonatomic, readonly) NSString *name;
+
 /// The type encoding of the method.
 @property (nonatomic, readonly) NSString *typeEncoding;
+
 /// The implementation of the method.
 @property (nonatomic, readonly) IMP      implementation;
 

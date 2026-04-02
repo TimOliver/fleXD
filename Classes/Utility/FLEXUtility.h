@@ -48,8 +48,10 @@
 /// The key window of the app, if it is not a `FLEXWindow`
 /// If it is, then `FLEXWindow.previousKeyWindow` is returned.
 @property (nonatomic, readonly, class) UIWindow *appKeyWindow;
+
 /// @return the result of +[UIWindow allWindowsIncludingInternalWindows:onlyVisibleWindows:]
 @property (nonatomic, readonly, class) NSArray<UIWindow *> *allWindows;
+
 /// The first active `UIWindowScene` of the app.
 @property (nonatomic, readonly, class) UIWindowScene *activeScene;
 /// @return top-most view controller of the given window

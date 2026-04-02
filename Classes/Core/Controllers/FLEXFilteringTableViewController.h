@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// for something that matches rows in only one section, then
 /// this property would only contain that on matching section.
 @property (nonatomic, copy) NSArray<FLEXTableViewSection *> *sections;
+
 /// An array of all possible sections. Empty sections are to be removed
 /// and the resulting array stored in the `section` property. Setting
 /// this property should immediately set `sections` to `nonemptySections` 

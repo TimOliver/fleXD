@@ -55,6 +55,7 @@ typedef NS_OPTIONS(NSUInteger, TBWildcardOptions) {
 /// Opposite of "is ambiguous"
 @property (nonatomic, readonly) BOOL isAbsolute;
 @property (nonatomic, readonly) BOOL isAny;
+
 /// Still `isAny` but checks that the string is empty
 @property (nonatomic, readonly) BOOL isEmpty;
 

@@ -39,7 +39,6 @@
 @interface FLEXNetworkTransactionCell : UITableViewCell
 
 @property (nonatomic) FLEXNetworkTransaction *transaction;
-
 @property (nonatomic, readonly, class) NSString *reuseID;
 @property (nonatomic, readonly, class) CGFloat preferredCellHeight;
 

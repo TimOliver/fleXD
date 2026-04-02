@@ -44,8 +44,10 @@ typedef void (^flex_object_enumeration_block_t)(__unsafe_unretained id object, _
 
 /// The names of every class instance discovered on the heap.
 @property (nonatomic, readonly) NSArray<NSString *> *classNames;
+
 /// A mapping of instance counts to class names.
 @property (nonatomic, readonly) NSDictionary<NSString *, NSNumber *> *instanceCountsForClassNames;
+
 /// A mapping of class instance size to class name.
 ///
 /// To roughly calculate the memory usage of an entire class, multiply this number by the instance count.

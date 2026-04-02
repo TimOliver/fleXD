@@ -64,12 +64,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The number of property attributes.
 @property (nonatomic, readonly) NSUInteger count;
+
 /// For use with `class_replaceProperty` and the like.
 @property (nonatomic, readonly) objc_property_attribute_t *list;
+
 /// The string value of the property attributes.
 @property (nonatomic, readonly) NSString *string;
+
 /// A human-readable version of the property attributes.
 @property (nonatomic, readonly) NSString *fullDeclaration;
+
 /// A dictionary of the property attributes.
 /// Values are either a string or `YES` Boolean attributes
 /// which are false will not be present in the dictionary.
@@ -77,19 +81,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The name of the instance variable backing the property.
 @property (nonatomic, readonly, nullable) NSString *backingIvar;
+
 /// The type encoding of the property.
 @property (nonatomic, readonly, nullable) NSString *typeEncoding;
+
 /// The \e old type encoding of the property.
 @property (nonatomic, readonly, nullable) NSString *oldTypeEncoding;
+
 /// The property's custom getter, if any.
 @property (nonatomic, readonly, nullable) SEL customGetter;
+
 /// The property's custom setter, if any.
 @property (nonatomic, readonly, nullable) SEL customSetter;
+
 /// The property's custom getter as a string, if any.
 @property (nonatomic, readonly, nullable) NSString *customGetterString;
+
 /// The property's custom setter as a string, if any.
 @property (nonatomic, readonly, nullable) NSString *customSetterString;
-
 @property (nonatomic, readonly) BOOL isReadOnly;
 @property (nonatomic, readonly) BOOL isCopy;
 @property (nonatomic, readonly) BOOL isRetained;
@@ -109,15 +118,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The name of the instance variable backing the property.
 @property (nonatomic, nullable) NSString *backingIvar;
+
 /// The type encoding of the property.
 @property (nonatomic, nullable) NSString *typeEncoding;
+
 /// The \e old type encoding of the property.
 @property (nonatomic, nullable) NSString *oldTypeEncoding;
+
 /// The property's custom getter, if any.
 @property (nonatomic, nullable) SEL customGetter;
+
 /// The property's custom setter, if any.
 @property (nonatomic, nullable) SEL customSetter;
-
 @property (nonatomic) BOOL isReadOnly;
 @property (nonatomic) BOOL isCopy;
 @property (nonatomic) BOOL isRetained;

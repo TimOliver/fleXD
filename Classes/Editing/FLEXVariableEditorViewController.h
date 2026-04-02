@@ -63,8 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Convenience accessor since many subclasses only use one input view
 @property (nonatomic, readonly, nullable) FLEXArgumentInputView *firstInputView;
-
 @property (nonatomic, readonly) FLEXFieldEditorView *fieldEditorView;
+
 /// Subclasses can change the button title via the button's `title` property
 @property (nonatomic, readonly) UIBarButtonItem *actionButton;
 
