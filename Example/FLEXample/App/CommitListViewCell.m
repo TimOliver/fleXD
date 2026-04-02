@@ -8,7 +8,6 @@
 
 #import "CommitListViewCell.h"
 
-static const CGFloat kRowSpacing = 2.0;
 static const CGFloat kMessageTopSpacing = 6.0;
 static const CGFloat kColumnGap = 8.0;
 
@@ -50,24 +49,24 @@ static const CGFloat kColumnGap = 8.0;
     CGFloat top = margins.top;
     CGFloat contentWidth = CGRectGetWidth(self.contentView.bounds) - margins.left - margins.right;
 
-    // Row 1: name (left) | hash (right)
+    // Row 1: [name] [login+date] ... [hash]
     CGSize hashSize = [_hashLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    CGFloat nameWidth = contentWidth - hashSize.width - kColumnGap;
-    CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(nameWidth, CGFLOAT_MAX)];
+    CGFloat leftAvailable = contentWidth - hashSize.width - kColumnGap;
+    CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(leftAvailable, CGFLOAT_MAX)];
+    CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(leftAvailable, CGFLOAT_MAX)];
+    CGFloat nameWidth = MIN(nameSize.width, leftAvailable - loginSize.width - kColumnGap);
 
     _nameLabel.frame = CGRectMake(left, top, nameWidth, nameSize.height);
+    CGFloat loginX = left + nameWidth + kColumnGap;
+    CGFloat loginY = top + nameSize.height - loginSize.height;
+    _loginLabel.frame = CGRectMake(loginX, loginY, loginSize.width, loginSize.height);
     CGFloat hashY = top + nameSize.height - hashSize.height;
     _hashLabel.frame = CGRectMake(left + contentWidth - hashSize.width, hashY, hashSize.width, hashSize.height);
 
-    // Row 2: login + date
-    CGFloat row2Top = CGRectGetMaxY(_nameLabel.frame) + kRowSpacing;
-    CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    _loginLabel.frame = CGRectMake(left, row2Top, contentWidth, loginSize.height);
-
-    // Row 3: message (full width)
-    CGFloat row3Top = CGRectGetMaxY(_loginLabel.frame) + kMessageTopSpacing;
+    // Row 2: message (full width)
+    CGFloat row2Top = CGRectGetMaxY(_nameLabel.frame) + kMessageTopSpacing;
     CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    _messageLabel.frame = CGRectMake(left, row3Top, contentWidth, messageSize.height);
+    _messageLabel.frame = CGRectMake(left, row2Top, contentWidth, messageSize.height);
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
@@ -75,12 +74,10 @@ static const CGFloat kColumnGap = 8.0;
     CGFloat contentWidth = size.width - margins.left - margins.right;
 
     CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
     CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
 
     CGFloat totalHeight = margins.top
-        + nameSize.height + kRowSpacing
-        + loginSize.height + kMessageTopSpacing
+        + nameSize.height + kMessageTopSpacing
         + messageSize.height
         + margins.bottom;
 
