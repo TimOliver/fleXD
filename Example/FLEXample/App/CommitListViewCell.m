@@ -27,24 +27,20 @@ static const CGFloat kColumnGap = 4.0;
 
         _nameLabel = [UILabel new];
         _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
-        _nameLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         _loginLabel = [UILabel new];
         _loginLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _loginLabel.textColor = UIColor.secondaryLabelColor;
-        _loginLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         _hashLabel = [UILabel new];
         _hashLabel.font = [UIFont monospacedSystemFontOfSize:15 weight:UIFontWeightRegular];
         _hashLabel.textColor = UIColor.tertiaryLabelColor;
         _hashLabel.textAlignment = NSTextAlignmentRight;
-        _hashLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         _messageLabel = [UILabel new];
         _messageLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
         _messageLabel.numberOfLines = 3;
         _messageLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        _messageLabel.backgroundColor = [UIColor systemBackgroundColor];
 
         for (UILabel *label in @[_nameLabel, _loginLabel, _hashLabel, _messageLabel]) {
             [self.contentView addSubview:label];
@@ -61,7 +57,8 @@ static const CGFloat kColumnGap = 4.0;
     CGFloat top = self.contentView.layoutMargins.top;
     CGFloat contentWidth = CGRectGetWidth(readable);
 
-    CGFloat rightInset = CGRectGetWidth(self.bounds) - CGRectGetMaxX(readable);
+    BOOL isCompact = self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    CGFloat rightInset = isCompact ? 0 : CGRectGetWidth(self.bounds) - CGRectGetMaxX(readable);
     self.separatorInset = UIEdgeInsetsMake(0, left + kAvatarSize + kAvatarGap, 0, rightInset);
 
     // Avatar on the left
