@@ -191,7 +191,7 @@ static FLEXFIRTransactionDirection FIRDirectionFromRequestType(FLEXFIRRequestTyp
         case FLEXFIRTransactionDirectionPull: {
             switch (self.requestType) {
                 case FLEXFIRRequestTypeNotFirebase:
-                    @throw NSInternalInconsistencyException;
+                    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"FLEXFIRRequestTypeNotFirebase is not valid for push/pull Firebase transactions" userInfo:nil];
 
                 case FLEXFIRRequestTypeFetchQuery:
                 case FLEXFIRRequestTypeAddDocument:

@@ -199,7 +199,7 @@ BOOL const kFHSViewControllerExcludeFLEXWindows = YES;
     }
 
     // Error: we have snapshots but the view we requested is not in one
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Requested view was not found in any snapshot" userInfo:nil];
     return nil;
 }
 

@@ -341,7 +341,7 @@
 
     }
     else {
-        @throw NSInternalInconsistencyException;
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Unexpected section index in tableView:cellForRowAtIndexPath:" userInfo:nil];
     }
 
     return cell;
@@ -392,7 +392,7 @@
             NSParameterAssert(cls);
             [self.delegate didSelectClass:cls];
         } else {
-            @throw NSInternalInconsistencyException;
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Cell selected but no class at index path" userInfo:nil];
         }
     }
 }

@@ -213,7 +213,7 @@ kQuery(ROWIDS, @"SELECT rowid FROM \"%@\" ORDER BY rowid ASC");
         
         if (idx == 0) {
             // No parameter matching that arg
-            @throw NSInternalInconsistencyException;
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"SQLite parameter name not found in prepared statement" userInfo:nil];
         }
         
         // Null
@@ -254,13 +254,13 @@ kQuery(ROWIDS, @"SELECT rowid FROM \"%@\" ORDER BY rowid ASC");
                     break;
                     
                 default:
-                    @throw NSInternalInconsistencyException;
+                    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Unsupported NSNumber type encoding for SQLite binding" userInfo:nil];
                     break;
             }
         }
         // Unsupported type
         else {
-            @throw NSInternalInconsistencyException;
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Unsupported parameter type for SQLite binding" userInfo:nil];
         }
         
         if (status != SQLITE_OK) {

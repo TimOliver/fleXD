@@ -360,19 +360,19 @@ FLEXObjectExplorerDefaultsImpl
 
 - (UIViewController *)viewerWithTarget:(id)object {
     // We disallow calling of FLEXMethodBase methods
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"FLEXMethodBase subclasses cannot be used as viewer targets" userInfo:nil];
     return nil;
 }
 
 - (UIViewController *)editorWithTarget:(id)object section:(FLEXTableViewSection *)section {
     // Methods cannot be edited
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"FLEXMethodBase subclasses cannot be edited" userInfo:nil];
     return nil;
 }
 
 - (UITableViewCellAccessoryType)suggestedAccessoryTypeWithTarget:(id)object {
     // We shouldn't be using any FLEXMethodBase objects for this
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"FLEXMethodBase subclasses do not support suggestedAccessoryTypeWithTarget:" userInfo:nil];
     return UITableViewCellAccessoryNone;
 }
 
@@ -461,7 +461,7 @@ FLEXObjectExplorerDefaultsImpl
 
 - (UIViewController *)editorWithTarget:(id)object section:(FLEXTableViewSection *)section {
     // Protocols cannot be edited
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"FLEXProtocol objects cannot be edited" userInfo:nil];
     return nil;
 }
 
@@ -571,7 +571,7 @@ FLEXObjectExplorerDefaultsImpl
 
 - (UIViewController *)editorWithTarget:(id)object section:(FLEXTableViewSection *)section {
     // Static metadata cannot be edited
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"FLEXStaticMetadata objects cannot be edited" userInfo:nil];
     return nil;
 }
 
@@ -608,7 +608,7 @@ FLEXObjectExplorerDefaultsImpl
 }
 
 - (id)initWithStyle:(FLEXStaticMetadataRowStyle)style title:(NSString *)title subtitle:(NSString *)subtitle {
-    @throw NSInternalInconsistencyException;
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Use +withClass: to initialize FLEXStaticMetadata_Class, not initWithStyle:title:subtitle:" userInfo:nil];
     return nil;
 }
 

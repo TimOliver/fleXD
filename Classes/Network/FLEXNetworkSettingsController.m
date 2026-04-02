@@ -202,7 +202,7 @@
         }
         
         default:
-            @throw NSInternalInconsistencyException;
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Unexpected section index in tableView:cellForRowAtIndexPath:" userInfo:nil];
             break;
     }
 

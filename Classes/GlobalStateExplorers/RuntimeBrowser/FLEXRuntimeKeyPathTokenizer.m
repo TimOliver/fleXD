@@ -48,7 +48,7 @@ static NSCharacterSet *methodAllowed     = nil;
     }
 
     if ([userInput containsString:@"**"]) {
-        @throw NSInternalInconsistencyException;
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path cannot contain '**'" userInfo:nil];
     }
 
     NSNumber *instance = nil;
@@ -94,7 +94,7 @@ static NSCharacterSet *methodAllowed     = nil;
 
     // Token cannot start with '.'
     if ([scanner scanString:@"." intoString:nil]) {
-        @throw NSInternalInconsistencyException;
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path token cannot start with '.'" userInfo:nil];
     }
 
     if ([scanner scanString:@"*." intoString:nil]) {
@@ -126,11 +126,11 @@ static NSCharacterSet *methodAllowed     = nil;
                 } else {
                     // Token starts with a number, period, or something else not allowed,
                     // or token is a standalone '\' with no '*' prefix
-                    @throw NSInternalInconsistencyException;
+                    @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path token: '\\' must be followed by '.'" userInfo:nil];
                 }
             } else {
                 // Token starts with a number, period, or something else not allowed
-                @throw NSInternalInconsistencyException;
+                @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path token: first character not in allowed set" userInfo:nil];
             }
         } else if ([scanner scanCharactersFromSet:allowedChars intoString:&tmp]) {
             [token appendString:tmp];
@@ -144,7 +144,7 @@ static NSCharacterSet *methodAllowed     = nil;
                 return [FLEXSearchToken string:token options:options | TBWildcardOptionsSuffix];
             } else {
                 // Only periods can follow a forward slash
-                @throw NSInternalInconsistencyException;
+                @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path token: '\\' must be followed by '.'" userInfo:nil];
             }
         }
         // Scan '*.'
@@ -157,11 +157,11 @@ static NSCharacterSet *methodAllowed     = nil;
         else if ([scanner scanString:@"*" intoString:nil]) {
             if (!scanner.isAtEnd) {
                 // Invalid token, wildcard in middle of token
-                @throw NSInternalInconsistencyException;
+                @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path token: '*' wildcard cannot appear in the middle of a token" userInfo:nil];
             }
         } else if ([scanner scanCharactersFromSet:disallowed intoString:nil]) {
             // Invalid token, invalid characters
-            @throw NSInternalInconsistencyException;
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Key path token: contains disallowed characters" userInfo:nil];
         }
     }
 
@@ -187,7 +187,7 @@ static NSCharacterSet *methodAllowed     = nil;
 
     if ([scanner.string hasSuffix:@"."] && ![scanner.string hasSuffix:@"\\."]) {
         // Methods cannot end with '.' except for '\.'
-        @throw NSInternalInconsistencyException;
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Method token cannot end with '.'" userInfo:nil];
     }
     
     if ([scanner scanString:@"-" intoString:nil]) {
@@ -199,13 +199,13 @@ static NSCharacterSet *methodAllowed     = nil;
             // Just checking... It has to start with one of these three!
             scanner.scanLocation--;
         } else {
-            @throw NSInternalInconsistencyException;
+            @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Method token must begin with '-', '+', or '*'" userInfo:nil];
         }
     }
 
     // -*foo not allowed
     if (*instance && [scanner scanString:@"*" intoString:nil]) {
-        @throw NSInternalInconsistencyException;
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Method token: '*' wildcard cannot precede instance method indicator '-'" userInfo:nil];
     }
 
     if (scanner.isAtEnd) {
