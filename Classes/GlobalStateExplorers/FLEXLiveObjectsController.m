@@ -103,7 +103,9 @@ static const NSInteger kFLEXLiveObjectsSortBySizeIndex = 2;
     for (unsigned int i = 0; i < classCount; i++) {
         Class class = classes[i];
         NSUInteger instanceCount = (NSUInteger)CFDictionaryGetValue(mutableCountsForClasses, (__bridge const void *)(class));
-        NSString *className = @(class_getName(class));
+        const char *name = class_getName(class);
+        if (!name) { continue; }
+        NSString *className = @(name);
         if (instanceCount > 0) {
             [mutableCountsForClassNames setObject:@(instanceCount) forKey:className];
         }
