@@ -10,6 +10,7 @@
 
 static const CGFloat kAvatarSize = 52.0;
 static const CGFloat kAvatarGap = 10.0;
+static const CGFloat kRowSpacing = 2.0;
 static const CGFloat kMessageTopSpacing = 2.0;
 static const CGFloat kColumnGap = 4.0;
 
@@ -65,24 +66,24 @@ static const CGFloat kColumnGap = 4.0;
     CGFloat textLeft = margins.left + kAvatarSize + kAvatarGap;
     CGFloat textWidth = contentWidth - kAvatarSize - kAvatarGap;
 
-    // Row 1: [name] [login+date] ... [hash]
+    // Row 1: [name] ... [hash]
     CGSize hashSize = [_hashLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
-    CGFloat leftAvailable = textWidth - hashSize.width - kColumnGap;
-    CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(leftAvailable, CGFLOAT_MAX)];
-    CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(leftAvailable, CGFLOAT_MAX)];
-    CGFloat nameWidth = MIN(nameSize.width, leftAvailable - loginSize.width - kColumnGap);
+    CGFloat nameWidth = textWidth - hashSize.width - kColumnGap;
+    CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(nameWidth, CGFLOAT_MAX)];
 
     _nameLabel.frame = CGRectMake(textLeft, top, nameWidth, nameSize.height);
-    CGFloat loginX = textLeft + nameWidth + kColumnGap;
-    CGFloat loginY = top + nameSize.height - loginSize.height;
-    _loginLabel.frame = CGRectMake(loginX, loginY, loginSize.width, loginSize.height);
     CGFloat hashY = top + nameSize.height - hashSize.height;
     _hashLabel.frame = CGRectMake(textLeft + textWidth - hashSize.width, hashY, hashSize.width, hashSize.height);
 
-    // Row 2: message (full width of text area)
-    CGFloat row2Top = CGRectGetMaxY(_nameLabel.frame) + kMessageTopSpacing;
+    // Row 2: [login+date]
+    CGFloat row2Top = CGRectGetMaxY(_nameLabel.frame) + kRowSpacing;
+    CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
+    _loginLabel.frame = CGRectMake(textLeft, row2Top, textWidth, loginSize.height);
+
+    // Row 3: message (full width of text area)
+    CGFloat row3Top = CGRectGetMaxY(_loginLabel.frame) + kMessageTopSpacing;
     CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
-    _messageLabel.frame = CGRectMake(textLeft, row2Top, textWidth, messageSize.height);
+    _messageLabel.frame = CGRectMake(textLeft, row3Top, textWidth, messageSize.height);
 
     // Align avatar with top of name label
     _avatarImageView.frame = CGRectMake(margins.left, top, kAvatarSize, kAvatarSize);
@@ -94,9 +95,10 @@ static const CGFloat kColumnGap = 4.0;
 
     CGFloat textWidth = contentWidth - kAvatarSize - kAvatarGap;
     CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
+    CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
     CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
 
-    CGFloat textHeight = nameSize.height + kMessageTopSpacing + messageSize.height;
+    CGFloat textHeight = nameSize.height + kRowSpacing + loginSize.height + kMessageTopSpacing + messageSize.height;
     CGFloat totalHeight = margins.top
         + MAX(textHeight, kAvatarSize)
         + margins.bottom;
