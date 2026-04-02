@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CommitListViewCell : UITableViewCell
 
+@property (nonatomic, readonly) UIImageView *avatarImageView;
 @property (nonatomic, readonly) UILabel *nameLabel;
 @property (nonatomic, readonly) UILabel *loginLabel;
 @property (nonatomic, readonly) UILabel *hashLabel;

@@ -116,6 +116,23 @@
             }
             cell.hashLabel.text = commit.shortHash;
             cell.messageLabel.text = commit.commitMessage;
+
+            NSString *avatarLogin = commit.committer.login;
+            UIImage *avi = avatarLogin ? self.avatars[avatarLogin] : nil;
+            if (avi) {
+                cell.avatarImageView.image = avi;
+            } else {
+                cell.avatarImageView.image = nil;
+                cell.tag = commit.identifier;
+                [self loadImage:commit.committer.avatarUrl completion:^(UIImage *image) {
+                    if (avatarLogin) {
+                        self.avatars[avatarLogin] = image;
+                    }
+                    if (cell.tag == commit.identifier) {
+                        cell.avatarImageView.image = image;
+                    }
+                }];
+            }
         } filterMatcher:^BOOL(NSString *filterText, Commit *commit) {
             return [commit matchesWithQuery:filterText];
         }

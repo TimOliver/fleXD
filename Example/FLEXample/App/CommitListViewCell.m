@@ -8,29 +8,37 @@
 
 #import "CommitListViewCell.h"
 
-static const CGFloat kMessageTopSpacing = 6.0;
-static const CGFloat kColumnGap = 8.0;
+static const CGFloat kAvatarSize = 52.0;
+static const CGFloat kAvatarGap = 10.0;
+static const CGFloat kMessageTopSpacing = 2.0;
+static const CGFloat kColumnGap = 4.0;
 
 @implementation CommitListViewCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        _avatarImageView = [UIImageView new];
+        _avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
+        _avatarImageView.clipsToBounds = YES;
+        _avatarImageView.layer.cornerRadius = kAvatarSize / 2.0f;
+        _avatarImageView.backgroundColor = UIColor.tertiarySystemFillColor;
+        [self.contentView addSubview:_avatarImageView];
+
         _nameLabel = [UILabel new];
-        _nameLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightSemibold];
+        _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
 
         _loginLabel = [UILabel new];
-        _loginLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
+        _loginLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _loginLabel.textColor = UIColor.secondaryLabelColor;
 
         _hashLabel = [UILabel new];
-        _hashLabel.font = [UIFont monospacedSystemFontOfSize:13 weight:UIFontWeightRegular];
+        _hashLabel.font = [UIFont monospacedSystemFontOfSize:15 weight:UIFontWeightRegular];
         _hashLabel.textColor = UIColor.tertiaryLabelColor;
         _hashLabel.textAlignment = NSTextAlignmentRight;
 
         _messageLabel = [UILabel new];
-        _messageLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
-        _messageLabel.textColor = UIColor.labelColor;
+        _messageLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
         _messageLabel.numberOfLines = 3;
         _messageLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
@@ -45,40 +53,47 @@ static const CGFloat kColumnGap = 8.0;
     [super layoutSubviews];
 
     UIEdgeInsets margins = self.contentView.layoutMargins;
-    CGFloat left = margins.left;
     CGFloat top = margins.top;
     CGFloat contentWidth = CGRectGetWidth(self.contentView.bounds) - margins.left - margins.right;
 
+    // Avatar on the left, vertically centered later
+    CGFloat textLeft = margins.left + kAvatarSize + kAvatarGap;
+    CGFloat textWidth = contentWidth - kAvatarSize - kAvatarGap;
+
     // Row 1: [name] [login+date] ... [hash]
-    CGSize hashSize = [_hashLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    CGFloat leftAvailable = contentWidth - hashSize.width - kColumnGap;
+    CGSize hashSize = [_hashLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
+    CGFloat leftAvailable = textWidth - hashSize.width - kColumnGap;
     CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(leftAvailable, CGFLOAT_MAX)];
     CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(leftAvailable, CGFLOAT_MAX)];
     CGFloat nameWidth = MIN(nameSize.width, leftAvailable - loginSize.width - kColumnGap);
 
-    _nameLabel.frame = CGRectMake(left, top, nameWidth, nameSize.height);
-    CGFloat loginX = left + nameWidth + kColumnGap;
+    _nameLabel.frame = CGRectMake(textLeft, top, nameWidth, nameSize.height);
+    CGFloat loginX = textLeft + nameWidth + kColumnGap;
     CGFloat loginY = top + nameSize.height - loginSize.height;
     _loginLabel.frame = CGRectMake(loginX, loginY, loginSize.width, loginSize.height);
     CGFloat hashY = top + nameSize.height - hashSize.height;
-    _hashLabel.frame = CGRectMake(left + contentWidth - hashSize.width, hashY, hashSize.width, hashSize.height);
+    _hashLabel.frame = CGRectMake(textLeft + textWidth - hashSize.width, hashY, hashSize.width, hashSize.height);
 
-    // Row 2: message (full width)
+    // Row 2: message (full width of text area)
     CGFloat row2Top = CGRectGetMaxY(_nameLabel.frame) + kMessageTopSpacing;
-    CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    _messageLabel.frame = CGRectMake(left, row2Top, contentWidth, messageSize.height);
+    CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
+    _messageLabel.frame = CGRectMake(textLeft, row2Top, textWidth, messageSize.height);
+
+    // Align avatar with top of name label
+    _avatarImageView.frame = CGRectMake(margins.left, top, kAvatarSize, kAvatarSize);
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
     UIEdgeInsets margins = self.contentView.layoutMargins;
     CGFloat contentWidth = size.width - margins.left - margins.right;
 
-    CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
-    CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(contentWidth, CGFLOAT_MAX)];
+    CGFloat textWidth = contentWidth - kAvatarSize - kAvatarGap;
+    CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
+    CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
 
+    CGFloat textHeight = nameSize.height + kMessageTopSpacing + messageSize.height;
     CGFloat totalHeight = margins.top
-        + nameSize.height + kMessageTopSpacing
-        + messageSize.height
+        + MAX(textHeight, kAvatarSize)
         + margins.bottom;
 
     return CGSizeMake(size.width, totalHeight);
