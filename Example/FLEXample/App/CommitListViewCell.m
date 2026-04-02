@@ -56,14 +56,16 @@ static const CGFloat kColumnGap = 4.0;
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    UIEdgeInsets margins = self.contentView.layoutMargins;
-    self.separatorInset = UIEdgeInsetsMake(0, margins.left + kAvatarSize + kAvatarGap, 0, 0);
+    CGRect readable = self.contentView.readableContentGuide.layoutFrame;
+    CGFloat left = CGRectGetMinX(readable);
+    CGFloat top = self.contentView.layoutMargins.top;
+    CGFloat contentWidth = CGRectGetWidth(readable);
 
-    CGFloat top = margins.top;
-    CGFloat contentWidth = CGRectGetWidth(self.contentView.bounds) - margins.left - margins.right;
+    CGFloat rightInset = CGRectGetWidth(self.bounds) - CGRectGetMaxX(readable);
+    self.separatorInset = UIEdgeInsetsMake(0, left + kAvatarSize + kAvatarGap, 0, rightInset);
 
-    // Avatar on the left, vertically centered later
-    CGFloat textLeft = margins.left + kAvatarSize + kAvatarGap;
+    // Avatar on the left
+    CGFloat textLeft = left + kAvatarSize + kAvatarGap;
     CGFloat textWidth = contentWidth - kAvatarSize - kAvatarGap;
 
     // Row 1: [name] ... [hash]
@@ -86,7 +88,13 @@ static const CGFloat kColumnGap = 4.0;
     _messageLabel.frame = CGRectMake(textLeft, row3Top, textWidth, messageSize.height);
 
     // Align avatar with top of name label
-    _avatarImageView.frame = CGRectMake(margins.left, top, kAvatarSize, kAvatarSize);
+    _avatarImageView.frame = CGRectMake(left, top, kAvatarSize, kAvatarSize);
+}
+
+- (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize
+        withHorizontalFittingPriority:(UILayoutPriority)horizontalFittingPriority
+              verticalFittingPriority:(UILayoutPriority)verticalFittingPriority {
+    return [self sizeThatFits:targetSize];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {

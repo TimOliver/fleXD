@@ -15,6 +15,7 @@
 @interface CommitListViewController ()
 @property (nonatomic) FLEXMutableListSection<Commit *> *commits;
 @property (nonatomic, readonly) NSMutableDictionary<NSString *, UIImage *> *avatars;
+@property (nonatomic) UIView *headerSeparator;
 @end
 
 @interface UIAlertController (Private)
@@ -61,6 +62,13 @@
     
     self.title = @"Commit History";
     self.showsSearchBar = YES;
+
+    CGFloat hairline = 1.0 / UIScreen.mainScreen.scale;
+    UIView *headerContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, hairline)];
+    _headerSeparator = [[UIView alloc] initWithFrame:CGRectZero];
+    _headerSeparator.backgroundColor = self.tableView.separatorColor;
+    [headerContainer addSubview:_headerSeparator];
+    self.tableView.tableHeaderView = headerContainer;
     self.navigationItem.rightBarButtonItem = [UIBarButtonItem
         flex_itemWithTitle:@"FLEX" target:FLEXManager.sharedManager action:@selector(toggleExplorer)
     ];
@@ -99,8 +107,30 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+
     [self disableToolbar];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
+    CGRect readable = self.view.readableContentGuide.layoutFrame;
+    UINavigationBar *bar = self.navigationController.navigationBar;
+    NSDirectionalEdgeInsets barMargins = bar.directionalLayoutMargins;
+    barMargins.leading = CGRectGetMinX(readable);
+    barMargins.trailing = CGRectGetWidth(self.view.bounds) - CGRectGetMaxX(readable);
+    bar.directionalLayoutMargins = barMargins;
+
+    // Position the header separator based on size class
+    UIView *header = self.tableView.tableHeaderView;
+    BOOL isCompact = self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+    if (isCompact) {
+        UIEdgeInsets margins = self.tableView.layoutMargins;
+        CGFloat textLeft = margins.left + 52.0 + 10.0; // avatar size + gap
+        _headerSeparator.frame = CGRectMake(textLeft, 0, header.bounds.size.width - textLeft, header.bounds.size.height);
+    } else {
+        _headerSeparator.frame = CGRectMake(CGRectGetMinX(readable), 0, CGRectGetWidth(readable), header.bounds.size.height);
+    }
 }
 
 - (NSArray<FLEXTableViewSection *> *)makeSections {
