@@ -88,10 +88,8 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 /// The actual views at the selection point with the deepest view last.
 @property (nonatomic) NSArray<UIView *> *viewsAtTapPoint;
 
-/// Tap-to-cycle state: repeated taps on the same point cycle through the view hierarchy.
+/// Last tap point for detecting same-point re-taps to cycle through the view hierarchy.
 @property (nonatomic) CGPoint lastTapPoint;
-@property (nonatomic) NSInteger tapCycleIndex;
-@property (nonatomic) NSArray<UIView *> *viewsAtLastTapPoint;
 
 /// The view that we're currently highlighting with an overlay and displaying details for.
 @property (nonatomic) UIView *selectedView;
@@ -755,21 +753,8 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         CGPoint tapPointInView = [tapGR locationInView:self.view];
         CGPoint tapPointInWindow = [self.view convertPoint:tapPointInView toView:nil];
 
-        // Detect same-point re-tap (within 10pt tolerance) to cycle through views
-        static const CGFloat kSamePointThreshold = 10.0;
-        const CGFloat dx = tapPointInWindow.x - self.lastTapPoint.x;
-        const CGFloat dy = tapPointInWindow.y - self.lastTapPoint.y;
-        const BOOL isSamePoint = (dx * dx + dy * dy) <= (kSamePointThreshold * kSamePointThreshold);
-
-        if (isSamePoint && self.viewsAtLastTapPoint.count > 0) {
-            self.tapCycleIndex = (self.tapCycleIndex + 1) % self.viewsAtLastTapPoint.count;
-        } else {
-            self.tapCycleIndex = 0;
-            self.lastTapPoint = tapPointInWindow;
-            self.viewsAtLastTapPoint = nil;
-        }
-
         [self updateOutlineViewsForSelectionPoint:tapPointInWindow];
+        self.lastTapPoint = tapPointInWindow;
     }
 }
 
@@ -917,35 +902,6 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 
     // New point or no current selection: select the deepest view
     return visibleViews.lastObject;
-}
-
-/// iOS 26 introduced several system overlay views (floating bars, context menus,
-/// passthrough containers) that sit above app content in the view hierarchy.
-/// These are almost never the views a developer wants to inspect, yet they
-/// dominate tap-to-select results — often requiring many taps to reach the
-/// actual app view underneath. Skip them by default on iOS 26+.
-static BOOL FLEXIsDefaultSkippedView(UIView *view) {
-    if (@available(iOS 26, *)) {
-        static NSSet<NSString *> *skippedSubstrings;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            skippedSubstrings = [NSSet setWithArray:@[
-                @"FloatingBarHostingView",
-                @"FloatingBarContainerView",
-                @"_UITabBarContainerView",
-                @"_UITouchPassthroughView",
-                @"_UIContextMenuContainerView",
-                @"_UIContextMenuPlatterTransitionView",
-            ]];
-        });
-        NSString *const className = NSStringFromClass([view class]);
-        for (NSString *substring in skippedSubstrings) {
-            if ([className containsString:substring]) {
-                return YES;
-            }
-        }
-    }
-    return NO;
 }
 
 /// iOS 26 introduced several system overlay views (floating bars, context menus,
