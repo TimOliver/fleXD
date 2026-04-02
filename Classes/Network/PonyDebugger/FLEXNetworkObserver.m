@@ -45,20 +45,6 @@ typedef NSURLSessionTask * (^NSURLSessionNewTaskMethod)(NSURLSession *, id, NSUR
 
 @end
 
-@interface FLEXNetworkObserver (NSURLConnectionHelpers)
-
-- (void)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response delegate:(id<NSURLConnectionDelegate>)delegate;
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response delegate:(id<NSURLConnectionDelegate>)delegate;
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data delegate:(id<NSURLConnectionDelegate>)delegate;
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection delegate:(id<NSURLConnectionDelegate>)delegate;
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error delegate:(id<NSURLConnectionDelegate>)delegate;
-
-- (void)connectionWillCancel:(NSURLConnection *)connection;
-
-@end
-
 
 @interface FLEXNetworkObserver (NSURLSessionTaskHelpers)
 
@@ -471,11 +457,6 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     dispatch_once(&onceToken, ^{
         // Swizzle any classes that implement one of these selectors.
         const SEL selectors[] = {
-            @selector(connectionDidFinishLoading:),
-            @selector(connection:willSendRequest:redirectResponse:),
-            @selector(connection:didReceiveResponse:),
-            @selector(connection:didReceiveData:),
-            @selector(connection:didFailWithError:),
             @selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:),
             @selector(URLSession:dataTask:didReceiveData:),
             @selector(URLSession:dataTask:didReceiveResponse:completionHandler:),
@@ -543,11 +524,7 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
             free(classes);
         }
 
-        [self injectIntoNSURLConnectionCancel];
         [self injectIntoNSURLSessionTaskResume];
-
-        [self injectIntoNSURLConnectionAsynchronousClassMethod];
-        [self injectIntoNSURLConnectionSynchronousClassMethod];
 
         Class URLSession = [NSURLSession class];
         [self injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods:URLSession];
@@ -571,13 +548,6 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
 }
 
 + (void)injectIntoDelegateClass:(Class)cls {
-    // Connections
-    [self injectWillSendRequestIntoDelegateClass:cls];
-    [self injectDidReceiveDataIntoDelegateClass:cls];
-    [self injectDidReceiveResponseIntoDelegateClass:cls];
-    [self injectDidFinishLoadingIntoDelegateClass:cls];
-    [self injectDidFailWithErrorIntoDelegateClass:cls];
-    
     // Sessions
     [self injectTaskWillPerformHTTPRedirectionIntoDelegateClass:cls];
     [self injectTaskDidReceiveDataIntoDelegateClass:cls];
@@ -591,28 +561,6 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     // Download tasks
     [self injectDownloadTaskDidWriteDataIntoDelegateClass:cls];
     [self injectDownloadTaskDidFinishDownloadingIntoDelegateClass:cls];
-}
-
-+ (void)injectIntoNSURLConnectionCancel {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        Class class = [NSURLConnection class];
-        SEL selector = @selector(cancel);
-        SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-        Method originalCancel = class_getInstanceMethod(class, selector);
-
-        void (^swizzleBlock)(NSURLConnection *) = ^(NSURLConnection *slf) {
-            [FLEXNetworkObserver.sharedObserver connectionWillCancel:slf];
-            ((void(*)(id, SEL))objc_msgSend)(
-                slf, swizzledSelector
-            );
-        };
-
-        IMP implementation = imp_implementationWithBlock(swizzleBlock);
-        class_addMethod(class, swizzledSelector, implementation, method_getTypeEncoding(originalCancel));
-        Method newCancel = class_getInstanceMethod(class, swizzledSelector);
-        method_exchangeImplementations(originalCancel, newCancel);
-    });
 }
 
 + (void)injectIntoNSURLSessionTaskResume {
@@ -703,147 +651,6 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     class_addMethod(class, swizzledSelector, implementation, method_getTypeEncoding(originalResume));
     Method newResume = class_getInstanceMethod(class, swizzledSelector);
     method_exchangeImplementations(originalResume, newResume);
-}
-
-+ (void)injectIntoNSURLConnectionAsynchronousClassMethod {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        Class class = objc_getMetaClass(class_getName([NSURLConnection class]));
-        SEL selector = @selector(sendAsynchronousRequest:queue:completionHandler:);
-        SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-
-        typedef void (^AsyncCompletion)(
-            NSURLResponse *response, NSData *data, NSError *error
-        );
-        typedef void (^SendAsyncRequestBlock)(
-            Class, NSURLRequest *, NSOperationQueue *, AsyncCompletion
-        );
-        SendAsyncRequestBlock swizzleBlock = ^(Class slf,
-                                               NSURLRequest *request,
-                                               NSOperationQueue *queue,
-                                               AsyncCompletion completion) {
-            if (FLEXNetworkObserver.isEnabled) {
-                NSString *requestID = [self nextRequestID];
-                [FLEXNetworkRecorder.defaultRecorder
-                     recordRequestWillBeSentWithRequestID:requestID
-                     request:request
-                     redirectResponse:nil
-                ];
-                
-                NSString *mechanism = [self mechanismFromClassMethod:selector onClass:class];
-                [FLEXNetworkRecorder.defaultRecorder recordMechanism:mechanism forRequestID:requestID];
-                
-                AsyncCompletion wrapper = ^(NSURLResponse *response, NSData *data, NSError *error) {
-                    [FLEXNetworkRecorder.defaultRecorder
-                        recordResponseReceivedWithRequestID:requestID
-                        response:response
-                    ];
-                    [FLEXNetworkRecorder.defaultRecorder
-                         recordDataReceivedWithRequestID:requestID
-                         dataLength:data.length
-                    ];
-                    if (error) {
-                        [FLEXNetworkRecorder.defaultRecorder
-                            recordLoadingFailedWithRequestID:requestID
-                            error:error
-                        ];
-                    } else {
-                        [FLEXNetworkRecorder.defaultRecorder
-                            recordLoadingFinishedWithRequestID:requestID
-                            responseBody:data
-                        ];
-                    }
-
-                    // Call through to the original completion handler
-                    if (completion) {
-                        completion(response, data, error);
-                    }
-                };
-                ((void(*)(id, SEL, id, id, id))objc_msgSend)(
-                    slf, swizzledSelector, request, queue, wrapper
-                );
-            } else {
-                ((void(*)(id, SEL, id, id, id))objc_msgSend)(
-                    slf, swizzledSelector, request, queue, completion
-                );
-            }
-        };
-        
-        [FLEXUtility replaceImplementationOfKnownSelector:selector
-            onClass:class withBlock:swizzleBlock swizzledSelector:swizzledSelector
-        ];
-    });
-}
-
-+ (void)injectIntoNSURLConnectionSynchronousClassMethod {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        Class class = objc_getMetaClass(class_getName([NSURLConnection class]));
-        SEL selector = @selector(sendSynchronousRequest:returningResponse:error:);
-        SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-
-        typedef NSData * (^AsyncCompletion)(Class, NSURLRequest *, NSURLResponse **, NSError **);
-        AsyncCompletion swizzleBlock = ^NSData *(Class slf,
-                                                 NSURLRequest *request,
-                                                 NSURLResponse **response,
-                                                 NSError **error) {
-            NSData *data = nil;
-            if (FLEXNetworkObserver.isEnabled) {
-                NSString *requestID = [self nextRequestID];
-                [FLEXNetworkRecorder.defaultRecorder
-                    recordRequestWillBeSentWithRequestID:requestID
-                    request:request
-                    redirectResponse:nil
-                ];
-                
-                NSString *mechanism = [self mechanismFromClassMethod:selector onClass:class];
-                [FLEXNetworkRecorder.defaultRecorder recordMechanism:mechanism forRequestID:requestID];
-                NSError *temporaryError = nil;
-                NSURLResponse *temporaryResponse = nil;
-                data = ((id(*)(id, SEL, id, NSURLResponse **, NSError **))objc_msgSend)(
-                    slf, swizzledSelector, request, &temporaryResponse, &temporaryError
-                );
-                
-                [FLEXNetworkRecorder.defaultRecorder
-                    recordResponseReceivedWithRequestID:requestID
-                    response:temporaryResponse
-                ];
-                [FLEXNetworkRecorder.defaultRecorder
-                    recordDataReceivedWithRequestID:requestID
-                    dataLength:data.length
-                ];
-                
-                if (temporaryError) {
-                    [FLEXNetworkRecorder.defaultRecorder
-                        recordLoadingFailedWithRequestID:requestID
-                        error:temporaryError
-                    ];
-                } else {
-                    [FLEXNetworkRecorder.defaultRecorder
-                        recordLoadingFinishedWithRequestID:requestID
-                        responseBody:data
-                    ];
-                }
-                
-                if (error) {
-                    *error = temporaryError;
-                }
-                if (response) {
-                    *response = temporaryResponse;
-                }
-            } else {
-                data = ((id(*)(id, SEL, id, NSURLResponse **, NSError **))objc_msgSend)(
-                    slf, swizzledSelector, request, response, error
-                );
-            }
-
-            return data;
-        };
-        
-        [FLEXUtility replaceImplementationOfKnownSelector:selector
-            onClass:class withBlock:swizzleBlock swizzledSelector:swizzledSelector
-        ];
-    });
 }
 
 + (void)injectIntoNSURLSessionAsyncDataAndDownloadTaskMethods:(Class)sessionClass {
@@ -1020,219 +827,6 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
     };
     return completionWrapper;
 }
-
-+ (void)injectWillSendRequestIntoDelegateClass:(Class)cls {
-    SEL selector = @selector(connection:willSendRequest:redirectResponse:);
-    SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-    
-    Protocol *protocol = @protocol(NSURLConnectionDataDelegate);
-    protocol = protocol ?: @protocol(NSURLConnectionDelegate);
-    struct objc_method_description methodDescription = protocol_getMethodDescription(
-        protocol, selector, NO, YES
-    );
-    
-    typedef NSURLRequest *(^WillSendRequestBlock)(
-        id<NSURLConnectionDelegate> slf, NSURLConnection *connection,
-        NSURLRequest *request, NSURLResponse *response
-    );
-    
-    WillSendRequestBlock undefinedBlock = ^NSURLRequest *(id slf,
-                                                          NSURLConnection *connection,
-                                                          NSURLRequest *request,
-                                                          NSURLResponse *response) {
-        [FLEXNetworkObserver.sharedObserver
-            connection:connection
-            willSendRequest:request
-            redirectResponse:response
-            delegate:slf
-        ];
-        return request;
-    };
-    
-    WillSendRequestBlock implementationBlock = ^NSURLRequest *(id slf,
-                                                               NSURLConnection *connection,
-                                                               NSURLRequest *request,
-                                                               NSURLResponse *response) {
-        __block NSURLRequest *returnValue = nil;
-        [self sniffWithoutDuplicationForObject:connection selector:selector sniffingBlock:^{
-            undefinedBlock(slf, connection, request, response);
-        } originalImplementationBlock:^{
-            returnValue = ((id(*)(id, SEL, id, id, id))objc_msgSend)(
-                slf, swizzledSelector, connection, request, response
-            );
-        }];
-        return returnValue;
-    };
-    
-    [FLEXUtility replaceImplementationOfSelector:selector
-        withSelector:swizzledSelector
-        forClass:cls
-        withMethodDescription:methodDescription
-        implementationBlock:implementationBlock
-        undefinedBlock:undefinedBlock
-    ];
-}
-
-+ (void)injectDidReceiveResponseIntoDelegateClass:(Class)cls {
-    SEL selector = @selector(connection:didReceiveResponse:);
-    SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-    
-    Protocol *protocol = @protocol(NSURLConnectionDataDelegate);
-    protocol = protocol ?: @protocol(NSURLConnectionDelegate);
-    struct objc_method_description description = protocol_getMethodDescription(
-        protocol, selector, NO, YES
-    );
-    
-    typedef void (^DidReceiveResponseBlock)(
-        id<NSURLConnectionDelegate> slf, NSURLConnection *connection, NSURLResponse *response
-    );
-    
-    DidReceiveResponseBlock undefinedBlock = ^(id<NSURLConnectionDelegate> slf,
-                                               NSURLConnection *connection,
-                                               NSURLResponse *response) {
-        [FLEXNetworkObserver.sharedObserver connection:connection
-            didReceiveResponse:response delegate:slf
-        ];
-    };
-    
-    DidReceiveResponseBlock implementationBlock = ^(id<NSURLConnectionDelegate> slf,
-                                                    NSURLConnection *connection,
-                                                    NSURLResponse *response) {
-        [self sniffWithoutDuplicationForObject:connection selector:selector sniffingBlock:^{
-            undefinedBlock(slf, connection, response);
-        } originalImplementationBlock:^{
-            ((void(*)(id, SEL, id, id))objc_msgSend)(
-                slf, swizzledSelector, connection, response
-            );
-        }];
-    };
-    
-    [FLEXUtility replaceImplementationOfSelector:selector
-        withSelector:swizzledSelector
-        forClass:cls
-        withMethodDescription:description
-        implementationBlock:implementationBlock
-        undefinedBlock:undefinedBlock
-    ];
-}
-
-+ (void)injectDidReceiveDataIntoDelegateClass:(Class)cls {
-    SEL selector = @selector(connection:didReceiveData:);
-    SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-    
-    Protocol *protocol = @protocol(NSURLConnectionDataDelegate);
-    protocol = protocol ?: @protocol(NSURLConnectionDelegate);
-    struct objc_method_description description = protocol_getMethodDescription(
-        protocol, selector, NO, YES
-    );
-    
-    typedef void (^DidReceiveDataBlock)(
-        id<NSURLConnectionDelegate> slf, NSURLConnection *connection, NSData *data
-    );
-    
-    DidReceiveDataBlock undefinedBlock = ^(id<NSURLConnectionDelegate> slf,
-                                           NSURLConnection *connection,
-                                           NSData *data) {
-        [FLEXNetworkObserver.sharedObserver connection:connection 
-            didReceiveData:data delegate:slf
-        ];
-    };
-    
-    DidReceiveDataBlock implementationBlock = ^(id<NSURLConnectionDelegate> slf,
-                                                NSURLConnection *connection,
-                                                NSData *data) {
-        [self sniffWithoutDuplicationForObject:connection selector:selector sniffingBlock:^{
-            undefinedBlock(slf, connection, data);
-        } originalImplementationBlock:^{
-            ((void(*)(id, SEL, id, id))objc_msgSend)(
-                slf, swizzledSelector, connection, data
-            );
-        }];
-    };
-    
-    [FLEXUtility replaceImplementationOfSelector:selector
-        withSelector:swizzledSelector
-        forClass:cls
-        withMethodDescription:description
-        implementationBlock:implementationBlock
-        undefinedBlock:undefinedBlock
-    ];
-}
-
-+ (void)injectDidFinishLoadingIntoDelegateClass:(Class)cls {
-    SEL selector = @selector(connectionDidFinishLoading:);
-    SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-    
-    Protocol *protocol = @protocol(NSURLConnectionDataDelegate);
-    protocol = protocol ?: @protocol(NSURLConnectionDelegate);
-    struct objc_method_description description = protocol_getMethodDescription(
-        protocol, selector, NO, YES
-    );
-    
-    typedef void (^FinishLoadingBlock)(id<NSURLConnectionDelegate> slf, NSURLConnection *connection);
-    
-    FinishLoadingBlock undefinedBlock = ^(id<NSURLConnectionDelegate> slf, NSURLConnection *connection) {
-        [FLEXNetworkObserver.sharedObserver connectionDidFinishLoading:connection delegate:slf];
-    };
-    
-    FinishLoadingBlock implementationBlock = ^(id<NSURLConnectionDelegate> slf, NSURLConnection *connection) {
-        [self sniffWithoutDuplicationForObject:connection selector:selector sniffingBlock:^{
-            undefinedBlock(slf, connection);
-        } originalImplementationBlock:^{
-            ((void(*)(id, SEL, id))objc_msgSend)(
-                slf, swizzledSelector, connection
-            );
-        }];
-    };
-    
-    [FLEXUtility replaceImplementationOfSelector:selector
-        withSelector:swizzledSelector forClass:cls
-        withMethodDescription:description
-        implementationBlock:implementationBlock
-        undefinedBlock:undefinedBlock
-    ];
-}
-
-+ (void)injectDidFailWithErrorIntoDelegateClass:(Class)cls {
-    SEL selector = @selector(connection:didFailWithError:);
-    SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
-    
-    struct objc_method_description description = protocol_getMethodDescription(
-        @protocol(NSURLConnectionDelegate), selector, NO, YES
-    );
-    
-    typedef void (^DidFailWithErrorBlock)(
-        id<NSURLConnectionDelegate> slf, NSURLConnection *connection, NSError *error
-    );
-    
-    DidFailWithErrorBlock undefinedBlock = ^(id<NSURLConnectionDelegate> slf,
-                                             NSURLConnection *connection,
-                                             NSError *error) {
-        [FLEXNetworkObserver.sharedObserver connection:connection
-            didFailWithError:error delegate:slf
-        ];
-    };
-    
-    DidFailWithErrorBlock implementationBlock = ^(id<NSURLConnectionDelegate> slf,
-                                                  NSURLConnection *connection,
-                                                  NSError *error) {
-        [self sniffWithoutDuplicationForObject:connection selector:selector sniffingBlock:^{
-            undefinedBlock(slf, connection, error);
-        } originalImplementationBlock:^{
-            ((void(*)(id, SEL, id, id))objc_msgSend)(
-                slf, swizzledSelector, connection, error
-            );
-        }];
-    };
-    
-    [FLEXUtility replaceImplementationOfSelector:selector
-        withSelector:swizzledSelector forClass:cls
-        withMethodDescription:description
-        implementationBlock:implementationBlock
-        undefinedBlock:undefinedBlock
-    ];
-}
-
 + (void)injectTaskWillPerformHTTPRedirectionIntoDelegateClass:(Class)cls {
     SEL selector = @selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:);
     SEL swizzledSelector = [FLEXUtility swizzledSelectorForSelector:selector];
@@ -1744,111 +1338,6 @@ static char const * const kFLEXRequestIDKey = "kFLEXRequestIDKey";
 }
 
 @end
-
-
-@implementation FLEXNetworkObserver (NSURLConnectionHelpers)
-
-- (void)connection:(NSURLConnection *)connection
-   willSendRequest:(NSURLRequest *)request
-  redirectResponse:(NSURLResponse *)response
-          delegate:(id<NSURLConnectionDelegate>)delegate {
-    [self performBlock:^{
-        NSString *requestID = [[self class] requestIDForConnectionOrTask:connection];
-        FLEXInternalRequestState *requestState = [self requestStateForRequestID:requestID];
-        requestState.request = request;
-        
-        [FLEXNetworkRecorder.defaultRecorder
-            recordRequestWillBeSentWithRequestID:requestID
-            request:request
-            redirectResponse:response
-        ];
-        
-        NSString *mechanism = [NSString stringWithFormat:
-            @"NSURLConnection (delegate: %@)", [delegate class]
-        ];
-        [FLEXNetworkRecorder.defaultRecorder recordMechanism:mechanism forRequestID:requestID];
-    }];
-}
-
-- (void)connection:(NSURLConnection *)connection
-didReceiveResponse:(NSURLResponse *)response
-          delegate:(id<NSURLConnectionDelegate>)delegate {
-    [self performBlock:^{
-        NSString *requestID = [[self class] requestIDForConnectionOrTask:connection];
-        FLEXInternalRequestState *requestState = [self requestStateForRequestID:requestID];
-        requestState.dataAccumulator = [NSMutableData new];
-
-        [FLEXNetworkRecorder.defaultRecorder
-            recordResponseReceivedWithRequestID:requestID
-            response:response
-        ];
-    }];
-}
-
-- (void)connection:(NSURLConnection *)connection
-    didReceiveData:(NSData *)data
-          delegate:(id<NSURLConnectionDelegate>)delegate {
-    // Just to be safe since we're doing this async
-    data = [data copy];
-    [self performBlock:^{
-        NSString *requestID = [[self class] requestIDForConnectionOrTask:connection];
-        FLEXInternalRequestState *requestState = [self requestStateForRequestID:requestID];
-        [requestState.dataAccumulator appendData:data];
-        
-        [FLEXNetworkRecorder.defaultRecorder
-            recordDataReceivedWithRequestID:requestID
-            dataLength:data.length
-        ];
-    }];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-                          delegate:(id<NSURLConnectionDelegate>)delegate {
-    [self performBlock:^{
-        NSString *requestID = [[self class] requestIDForConnectionOrTask:connection];
-        FLEXInternalRequestState *requestState = [self requestStateForRequestID:requestID];
-        [FLEXNetworkRecorder.defaultRecorder
-            recordLoadingFinishedWithRequestID:requestID
-            responseBody:requestState.dataAccumulator
-        ];
-        [self removeRequestStateForRequestID:requestID];
-    }];
-}
-
-- (void)connection:(NSURLConnection *)connection
-  didFailWithError:(NSError *)error
-          delegate:(id<NSURLConnectionDelegate>)delegate {
-    [self performBlock:^{
-        NSString *requestID = [[self class] requestIDForConnectionOrTask:connection];
-        FLEXInternalRequestState *requestState = [self requestStateForRequestID:requestID];
-
-        // Cancellations can occur prior to the willSendRequest:...
-        // NSURLConnection delegate call. These are pretty common
-        // and clutter up the logs. Only record the failure if the
-        // recorder already knows about the request through willSendRequest:...
-        if (requestState.request) {
-            [FLEXNetworkRecorder.defaultRecorder 
-                recordLoadingFailedWithRequestID:requestID error:error
-            ];
-        }
-        
-        [self removeRequestStateForRequestID:requestID];
-    }];
-}
-
-- (void)connectionWillCancel:(NSURLConnection *)connection {
-    [self performBlock:^{
-        // Mimic the behavior of NSURLSession which is to create an error on cancellation.
-        NSDictionary<NSString *, id> *userInfo = @{ NSLocalizedDescriptionKey : @"cancelled" };
-        NSError *error = [NSError errorWithDomain:NSURLErrorDomain
-            code:NSURLErrorCancelled userInfo:userInfo
-        ];
-        [self connection:connection didFailWithError:error delegate:nil];
-    }];
-}
-
-@end
-
 
 @implementation FLEXNetworkObserver (NSURLSessionTaskHelpers)
 
