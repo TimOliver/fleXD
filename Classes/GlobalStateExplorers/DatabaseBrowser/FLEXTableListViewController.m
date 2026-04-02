@@ -56,7 +56,7 @@
 @implementation FLEXTableListViewController
 
 - (instancetype)initWithPath:(NSString *)path {
-    self = [super initWithStyle:UITableViewStyleGrouped];
+    self = [super initWithStyle:UITableViewStyleInsetGrouped];
     if (self) {
         _path = path.copy;
         _dbm = [self databaseManagerForFileAtPath:path];

@@ -48,7 +48,7 @@
 @implementation FLEXKeychainViewController
 
 - (id)init {
-    return [self initWithStyle:UITableViewStyleGrouped];
+    return [self initWithStyle:UITableViewStyleInsetGrouped];
 }
 
 #pragma mark - Overrides

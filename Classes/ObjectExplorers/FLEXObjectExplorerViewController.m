@@ -88,7 +88,7 @@
        customSections:(NSArray<FLEXTableViewSection *> *)customSections {
     NSParameterAssert(target);
 
-    self = [super initWithStyle:UITableViewStyleGrouped];
+    self = [super initWithStyle:UITableViewStyleInsetGrouped];
     if (self) {
         _object = target;
         _explorer = explorer;

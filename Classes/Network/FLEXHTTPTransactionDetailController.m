@@ -82,7 +82,7 @@ typedef UIViewController *(^FLEXNetworkDetailRowSelectionFuture)(void);
 
 - (instancetype)initWithStyle:(UITableViewStyle)style {
     // Force grouped style
-    return [super initWithStyle:UITableViewStyleGrouped];
+    return [super initWithStyle:UITableViewStyleInsetGrouped];
 }
 
 - (void)viewDidLoad {
