@@ -101,19 +101,26 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
     [self disableToolbar];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    UINavigationBar *bar = self.navigationController.navigationBar;
+    bar.directionalLayoutMargins = NSDirectionalEdgeInsetsZero;
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
-    CGRect readable = self.view.readableContentGuide.layoutFrame;
-    UINavigationBar *bar = self.navigationController.navigationBar;
-    NSDirectionalEdgeInsets barMargins = bar.directionalLayoutMargins;
-    barMargins.leading = CGRectGetMinX(readable);
-    barMargins.trailing = CGRectGetWidth(self.view.bounds) - CGRectGetMaxX(readable);
-    bar.directionalLayoutMargins = barMargins;
+    if (self.navigationController.viewControllers.lastObject == self) {
+        CGRect readable = self.view.readableContentGuide.layoutFrame;
+        UINavigationBar *bar = self.navigationController.navigationBar;
+        NSDirectionalEdgeInsets barMargins = bar.directionalLayoutMargins;
+        barMargins.leading = CGRectGetMinX(readable);
+        barMargins.trailing = CGRectGetWidth(self.view.bounds) - CGRectGetMaxX(readable);
+        bar.directionalLayoutMargins = barMargins;
+    }
 }
 
 - (NSArray<FLEXTableViewSection *> *)makeSections {
