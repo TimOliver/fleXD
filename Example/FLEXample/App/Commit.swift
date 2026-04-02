@@ -131,7 +131,11 @@ public class Commit: NSObject, Codable {
     }
 
     @objc public var commitMessage: String {
-        return details.message
+        let message = details.message.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let range = message.range(of: "\n\n") {
+            return String(message[..<range.lowerBound])
+        }
+        return message
     }
 
     @objc public var relativeDate: String {
