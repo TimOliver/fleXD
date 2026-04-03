@@ -13,6 +13,10 @@
 		1C27A8B91F0E5A0400F0D02D /* FLEXTestsMethodsList.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C27A8B81F0E5A0400F0D02D /* FLEXTestsMethodsList.m */; };
 		1C27A8BB1F0E5A0400F0D02D /* FLEX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A4C941F1B5B20570088C3F2 /* FLEX.framework */; };
 		222C88221C7339DC007CA15F /* FLEXRealmDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 222C88211C7339DC007CA15F /* FLEXRealmDefines.h */; };
+		222DBA812F7F76F900DEC76D /* FLEXGlobalsGridCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 222DBA802F7F76F900DEC76D /* FLEXGlobalsGridCell.m */; };
+		222DBA822F7F76F900DEC76D /* FLEXGlobalsGridCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 222DBA7F2F7F76F900DEC76D /* FLEXGlobalsGridCell.h */; };
+		222DBA852F7F780D00DEC76D /* FLEXGlobalsGridItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 222DBA842F7F780D00DEC76D /* FLEXGlobalsGridItemView.m */; };
+		222DBA862F7F780D00DEC76D /* FLEXGlobalsGridItemView.h in Headers */ = {isa = PBXBuildFile; fileRef = 222DBA832F7F780D00DEC76D /* FLEXGlobalsGridItemView.h */; };
 		224D49A81C673AB5000EAB86 /* FLEXRealmDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 224D49A41C673AB5000EAB86 /* FLEXRealmDatabaseManager.h */; };
 		224D49A91C673AB5000EAB86 /* FLEXRealmDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 224D49A51C673AB5000EAB86 /* FLEXRealmDatabaseManager.m */; };
 		224D49AA1C673AB5000EAB86 /* FLEXSQLiteDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 224D49A61C673AB5000EAB86 /* FLEXSQLiteDatabaseManager.h */; };
@@ -395,6 +399,10 @@
 		222C88211C7339DC007CA15F /* FLEXRealmDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXRealmDefines.h; sourceTree = "<group>"; };
 		222DBA4D2F7E1D4600DEC76D /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		222DBA4E2F7E1D4600DEC76D /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		222DBA7F2F7F76F900DEC76D /* FLEXGlobalsGridCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEXGlobalsGridCell.h; sourceTree = "<group>"; };
+		222DBA802F7F76F900DEC76D /* FLEXGlobalsGridCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEXGlobalsGridCell.m; sourceTree = "<group>"; };
+		222DBA832F7F780D00DEC76D /* FLEXGlobalsGridItemView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FLEXGlobalsGridItemView.h; sourceTree = "<group>"; };
+		222DBA842F7F780D00DEC76D /* FLEXGlobalsGridItemView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLEXGlobalsGridItemView.m; sourceTree = "<group>"; };
 		224D49A41C673AB5000EAB86 /* FLEXRealmDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXRealmDatabaseManager.h; sourceTree = "<group>"; };
 		224D49A51C673AB5000EAB86 /* FLEXRealmDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXRealmDatabaseManager.m; sourceTree = "<group>"; };
 		224D49A61C673AB5000EAB86 /* FLEXSQLiteDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXSQLiteDatabaseManager.h; sourceTree = "<group>"; };
@@ -1191,6 +1199,10 @@
 				C3511B9022D7C99E0057BAB7 /* FLEXGlobalsSection.m */,
 				3A4C94441B5B21410088C3F2 /* FLEXGlobalsEntry.h */,
 				3A4C94451B5B21410088C3F2 /* FLEXGlobalsEntry.m */,
+				222DBA7F2F7F76F900DEC76D /* FLEXGlobalsGridCell.h */,
+				222DBA802F7F76F900DEC76D /* FLEXGlobalsGridCell.m */,
+				222DBA832F7F780D00DEC76D /* FLEXGlobalsGridItemView.h */,
+				222DBA842F7F780D00DEC76D /* FLEXGlobalsGridItemView.m */,
 			);
 			path = Globals;
 			sourceTree = "<group>";
@@ -1643,6 +1655,7 @@
 				3A4C952C1B5B21410088C3F2 /* FLEXLiveObjectsController.h in Headers */,
 				3A4C94EF1B5B21410088C3F2 /* FLEXArgumentInputDateView.h in Headers */,
 				C36FBFCE230F3B98008D95D5 /* FLEXProperty.h in Headers */,
+				222DBA862F7F780D00DEC76D /* FLEXGlobalsGridItemView.h in Headers */,
 				C36FBFD2230F3B98008D95D5 /* FLEXMethodBase.h in Headers */,
 				71E1C2142307FBB800F5032A /* FLEXKeychainViewController.h in Headers */,
 				3A4C94F71B5B21410088C3F2 /* FLEXArgumentInputNotSupportedView.h in Headers */,
@@ -1652,6 +1665,7 @@
 				C386D6E924199C1B00699085 /* FLEX-Core.h in Headers */,
 				C3F31D3D2267D883003C991A /* FLEXSubtitleTableViewCell.h in Headers */,
 				94A515251C4CA2080063292F /* FLEXExplorerToolbar.h in Headers */,
+				222DBA822F7F76F900DEC76D /* FLEXGlobalsGridCell.h in Headers */,
 				C387C88322E0D24A00750E58 /* UIView+FLEX_Layout.h in Headers */,
 				3A4C953C1B5B21410088C3F2 /* FLEXNetworkTransaction.h in Headers */,
 				C383C3C223B6B429007A321B /* NSTimer+FLEX.h in Headers */,
@@ -1910,6 +1924,7 @@
 				3A4C94D61B5B21410088C3F2 /* FLEXObjectExplorerViewController.m in Sources */,
 				C383C3BD23B6B398007A321B /* UITextField+Range.m in Sources */,
 				3A4C94DE1B5B21410088C3F2 /* FLEXHeapEnumerator.m in Sources */,
+				222DBA852F7F780D00DEC76D /* FLEXGlobalsGridItemView.m in Sources */,
 				3A4C95251B5B21410088C3F2 /* FLEXFileBrowserController.m in Sources */,
 				C36FBFD1230F3B98008D95D5 /* FLEXClassBuilder.m in Sources */,
 				779B1ED51C0C4D7C001F5E49 /* FLEXDBQueryRowCell.m in Sources */,
@@ -1937,6 +1952,7 @@
 				C3F646F323A045DB00D4A011 /* FLEXClassShortcuts.m in Sources */,
 				C398625E23AD6E90007E6793 /* UIFont+FLEX.m in Sources */,
 				C387C88422E0D24A00750E58 /* UIView+FLEX_Layout.m in Sources */,
+				222DBA812F7F76F900DEC76D /* FLEXGlobalsGridCell.m in Sources */,
 				C32A195F231732E800EB02AC /* FLEXCollectionContentSection.m in Sources */,
 				C36FBFCD230F3B98008D95D5 /* FLEXMethod.m in Sources */,
 				779B1ED31C0C4D7C001F5E49 /* FLEXTableColumnHeader.m in Sources */,

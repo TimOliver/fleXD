@@ -33,6 +33,7 @@
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "FLEXGlobalsGridCell.h"
+#import "FLEXGlobalsGridItemView.h"
 #import "FLEXGlobalsEntry.h"
 
 NSString * const kFLEXGlobalsGridCellIdentifier = @"FLEXGlobalsGridCell";
@@ -55,6 +56,9 @@ static UIColor *FLEXGridColorForName(NSString *name) {
     });
     return palette[name.hash % palette.count];
 }
+
+
+#pragma mark - FLEXGlobalsGridCell
 
 @interface FLEXGlobalsGridCell ()
 @property (nonatomic) UIStackView *stackView;
@@ -89,7 +93,6 @@ static UIColor *FLEXGridColorForName(NSString *name) {
                onItemTapped:(void(^)(NSInteger))onItemTapped {
     self.onItemTapped = onItemTapped;
 
-    // Clear existing arranged subviews
     for (UIView *view in self.stackView.arrangedSubviews) {
         [self.stackView removeArrangedSubview:view];
         [view removeFromSuperview];
@@ -97,9 +100,9 @@ static UIColor *FLEXGridColorForName(NSString *name) {
 
     for (NSInteger i = 0; i < itemsPerRow; i++) {
         if (i < (NSInteger)entries.count) {
-            [self.stackView addArrangedSubview:[self itemViewForEntry:entries[i] index:i]];
+            FLEXGlobalsGridItemView *item = [self itemViewForEntry:entries[i] index:i];
+            [self.stackView addArrangedSubview:item];
         } else {
-            // Empty placeholder to preserve equal column widths on partial rows
             [self.stackView addArrangedSubview:[UIView new]];
         }
     }
@@ -107,72 +110,40 @@ static UIColor *FLEXGridColorForName(NSString *name) {
 
 #pragma mark - Private
 
-- (UIView *)itemViewForEntry:(FLEXGlobalsEntry *)entry index:(NSInteger)index {
+- (FLEXGlobalsGridItemView *)itemViewForEntry:(FLEXGlobalsEntry *)entry index:(NSInteger)index {
     NSString *name = entry.entryNameFuture();
 
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    btn.tag = index;
-    btn.translatesAutoresizingMaskIntoConstraints = NO;
-    [btn addTarget:self action:@selector(itemTapped:)
-          forControlEvents:UIControlEventTouchUpInside];
-    [btn addTarget:self action:@selector(itemTouchDown:)
-          forControlEvents:UIControlEventTouchDown | UIControlEventTouchDragEnter];
-    [btn addTarget:self action:@selector(itemTouchUp:)
-          forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside
-                         | UIControlEventTouchCancel | UIControlEventTouchDragExit];
+    FLEXGlobalsGridItemView *item = [FLEXGlobalsGridItemView new];
+    item.tag = index;
+    item.iconView.backgroundColor = FLEXGridColorForName(name);
+    item.titleLabel.text = name;
 
-    // Colored rounded square icon
-    UIView *iconView = [UIView new];
-    iconView.backgroundColor = FLEXGridColorForName(name);
-    iconView.layer.cornerRadius = 13;
-    iconView.layer.cornerCurve = kCACornerCurveContinuous;
-    iconView.userInteractionEnabled = NO;
-    iconView.translatesAutoresizingMaskIntoConstraints = NO;
-    [btn addSubview:iconView];
+    [item addTarget:self action:@selector(itemTapped:)
+           forControlEvents:UIControlEventTouchUpInside];
+    [item addTarget:self action:@selector(itemTouchDown:)
+           forControlEvents:UIControlEventTouchDown | UIControlEventTouchDragEnter];
+    [item addTarget:self action:@selector(itemTouchUp:)
+           forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside
+                          | UIControlEventTouchCancel | UIControlEventTouchDragExit];
 
-    // Title label below icon
-    UILabel *label = [UILabel new];
-    label.text = name;
-    label.textAlignment = NSTextAlignmentCenter;
-    label.font = [UIFont systemFontOfSize:11 weight:UIFontWeightMedium];
-    label.numberOfLines = 2;
-    label.textColor = UIColor.labelColor;
-    label.userInteractionEnabled = NO;
-    label.translatesAutoresizingMaskIntoConstraints = NO;
-    [btn addSubview:label];
-
-    [NSLayoutConstraint activateConstraints:@[
-        // Icon: fixed 52×52, centered horizontally, pinned to top
-        [iconView.centerXAnchor constraintEqualToAnchor:btn.centerXAnchor],
-        [iconView.topAnchor constraintEqualToAnchor:btn.topAnchor constant:8],
-        [iconView.widthAnchor constraintEqualToConstant:52],
-        [iconView.heightAnchor constraintEqualToConstant:52],
-
-        // Label: below icon, leading/trailing inset, pinned to bottom
-        [label.topAnchor constraintEqualToAnchor:iconView.bottomAnchor constant:6],
-        [label.leadingAnchor constraintEqualToAnchor:btn.leadingAnchor constant:4],
-        [label.trailingAnchor constraintEqualToAnchor:btn.trailingAnchor constant:-4],
-        [label.bottomAnchor constraintEqualToAnchor:btn.bottomAnchor constant:-8],
-    ]];
-
-    return btn;
+    return item;
 }
 
-#pragma mark - Button actions
+#pragma mark - Item actions
 
-- (void)itemTapped:(UIButton *)sender {
+- (void)itemTapped:(FLEXGlobalsGridItemView *)sender {
     if (self.onItemTapped) {
         self.onItemTapped(sender.tag);
     }
 }
 
-- (void)itemTouchDown:(UIButton *)sender {
+- (void)itemTouchDown:(FLEXGlobalsGridItemView *)sender {
     [UIView animateWithDuration:0.1 animations:^{
         sender.alpha = 0.55;
     }];
 }
 
-- (void)itemTouchUp:(UIButton *)sender {
+- (void)itemTouchUp:(FLEXGlobalsGridItemView *)sender {
     [UIView animateWithDuration:0.15 animations:^{
         sender.alpha = 1.0;
     }];

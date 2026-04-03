@@ -191,11 +191,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.navigationController.navigationBar.prefersLargeTitles = YES;
-    self.title = @"💪 FLEX";
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceInstant;
     self.navigationItem.backBarButtonItem = [UIBarButtonItem flex_backItemWithTitle:@"Back"];
+
+    if (@available(iOS 26.0, *)) {
+        // Add the FLEX logo as a bold custom label in the top left corner.
+        // Uses less space than large titles, but also more prominent than the center one
+        UILabel *titleLabel = [UILabel new];
+        titleLabel.text = @"💪 FLEX";
+        titleLabel.font = [UIFont systemFontOfSize:30 weight:UIFontWeightBold];
+        titleLabel.textColor = UIColor.labelColor;
+        [titleLabel sizeToFit];
+        UIBarButtonItem *const barButtonItem = [[UIBarButtonItem alloc] initWithCustomView:titleLabel];
+        barButtonItem.hidesSharedBackground = YES;
+        self.navigationItem.leftBarButtonItem = barButtonItem;
+    } else {
+        self.title = @"💪 FLEX";
+    }
+
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
     _manuallyDeselectOnAppear = NSProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10;
