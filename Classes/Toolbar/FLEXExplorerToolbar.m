@@ -195,12 +195,13 @@
     ];
     FLEXExplorerToolbarItem *menuItem = self.toolbarItems.lastObject;
 
-    // All items get the same width, with right margin as dead space
-    CGFloat totalWidth = CGRectGetWidth(self.bounds) - kRightMargin;
-    CGFloat itemWidth = FLEXFloor(totalWidth / self.toolbarItems.count);
+    // All items get the same width; center the whole group horizontally
+    CGFloat itemWidth = FLEXFloor((CGRectGetWidth(self.bounds) - kRightMargin) / self.toolbarItems.count);
+    CGFloat contentWidth = itemWidth * self.toolbarItems.count + kSeparatorWidth;
+    CGFloat leftInset = FLEXFloor((CGRectGetWidth(self.bounds) - contentWidth) / 2.0);
 
     // Left items
-    CGFloat originX = 0;
+    CGFloat originX = leftInset;
     for (FLEXExplorerToolbarItem *toolbarItem in leftItems) {
         toolbarItem.currentItem.frame = CGRectMake(originX, 0, itemWidth, kToolbarItemHeight);
         originX = CGRectGetMaxX(toolbarItem.currentItem.frame);
