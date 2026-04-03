@@ -67,9 +67,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// Toolbar item for hiding the explorer.
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *closeItem;
 
-/// A view for moving the entire toolbar.
-/// Users of the toolbar can attach a pan gesture recognizer to decide how to reposition the toolbar.
+/// A view suitable for attaching drag gestures. Defaults to the toolbar itself.
 @property (nonatomic, readonly) UIView *dragHandle;
+
+/// The maximum width of the toolbar. On screens narrower than this, the toolbar shrinks to fit.
+@property (nonatomic, readonly, class) CGFloat maximumWidth;
 
 /// A color matching the overlay color on the selected view.
 @property (nonatomic) UIColor *selectedViewOverlayColor;

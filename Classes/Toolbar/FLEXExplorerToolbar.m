@@ -46,9 +46,6 @@
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *recentItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *moveItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *closeItem;
-@property (nonatomic, readwrite) UIView *dragHandle;
-
-@property (nonatomic) UIImageView *dragHandleImageView;
 
 @property (nonatomic) UIView *selectedViewDescriptionContainer;
 @property (nonatomic) UIView *selectedViewDescriptionSafeAreaContainer;
@@ -67,15 +64,9 @@
         // Background
         self.backgroundView = [UIView new];
         self.backgroundView.backgroundColor = [FLEXColor secondaryBackgroundColorWithAlpha:0.95];
+        self.backgroundView.layer.cornerRadius = 16.0;
+        self.backgroundView.clipsToBounds = YES;
         [self addSubview:self.backgroundView];
-
-        // Drag handle
-        self.dragHandle = [UIView new];
-        self.dragHandle.backgroundColor = UIColor.clearColor;
-        self.dragHandleImageView = [[UIImageView alloc] initWithImage:FLEXResources.dragHandle];
-        self.dragHandleImageView.tintColor = [FLEXColor.iconColor colorWithAlphaComponent:0.666];
-        [self.dragHandle addSubview:self.dragHandleImageView];
-        [self addSubview:self.dragHandle];
 
         // Buttons
         self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"menu" image:FLEXResources.globalsIcon];
@@ -89,6 +80,8 @@
 
         self.selectedViewDescriptionContainer = [UIView new];
         self.selectedViewDescriptionContainer.backgroundColor = [FLEXColor tertiaryBackgroundColorWithAlpha:0.95];
+        self.selectedViewDescriptionContainer.layer.cornerRadius = 16.0;
+        self.selectedViewDescriptionContainer.clipsToBounds = YES;
         self.selectedViewDescriptionContainer.hidden = YES;
         [self addSubview:self.selectedViewDescriptionContainer];
 
@@ -115,31 +108,21 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-
-    CGRect safeArea = [self safeArea];
-    // Drag Handle
     const CGFloat kToolbarItemHeight = [[self class] toolbarItemHeight];
-    self.dragHandle.frame = CGRectMake(CGRectGetMinX(safeArea), CGRectGetMinY(safeArea), [[self class] dragHandleWidth], kToolbarItemHeight);
-    CGRect dragHandleImageFrame = self.dragHandleImageView.frame;
-    dragHandleImageFrame.origin.x = FLEXFloor((self.dragHandle.frame.size.width - dragHandleImageFrame.size.width) / 2.0);
-    dragHandleImageFrame.origin.y = FLEXFloor((self.dragHandle.frame.size.height - dragHandleImageFrame.size.height) / 2.0);
-    self.dragHandleImageView.frame = dragHandleImageFrame;
 
-
-    // Toolbar Items
-    CGFloat originX = CGRectGetMaxX(self.dragHandle.frame);
-    CGFloat originY = CGRectGetMinY(safeArea);
+    // Toolbar Items — distribute evenly across full width
+    CGFloat originX = 0;
     CGFloat height = kToolbarItemHeight;
-    CGFloat width = FLEXFloor((CGRectGetWidth(safeArea) - CGRectGetWidth(self.dragHandle.frame)) / self.toolbarItems.count);
+    CGFloat width = FLEXFloor(CGRectGetWidth(self.bounds) / self.toolbarItems.count);
     for (FLEXExplorerToolbarItem *toolbarItem in self.toolbarItems) {
-        toolbarItem.currentItem.frame = CGRectMake(originX, originY, width, height);
+        toolbarItem.currentItem.frame = CGRectMake(originX, 0, width, height);
         originX = CGRectGetMaxX(toolbarItem.currentItem.frame);
     }
 
     // Make sure the last toolbar item goes to the edge to account for any accumulated rounding effects.
     UIView *lastToolbarItem = self.toolbarItems.lastObject.currentItem;
     CGRect lastToolbarItemFrame = lastToolbarItem.frame;
-    lastToolbarItemFrame.size.width = CGRectGetMaxX(safeArea) - lastToolbarItemFrame.origin.x;
+    lastToolbarItemFrame.size.width = CGRectGetWidth(self.bounds) - lastToolbarItemFrame.origin.x;
     lastToolbarItem.frame = lastToolbarItemFrame;
 
     self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), kToolbarItemHeight);
@@ -153,16 +136,11 @@
     CGRect descriptionContainerFrame = CGRectZero;
     descriptionContainerFrame.size.width = CGRectGetWidth(self.bounds);
     descriptionContainerFrame.size.height = kDescriptionContainerHeight;
-    descriptionContainerFrame.origin.x = CGRectGetMinX(self.bounds);
+    descriptionContainerFrame.origin.x = 0;
     descriptionContainerFrame.origin.y = CGRectGetMaxY(self.bounds) - kDescriptionContainerHeight;
     self.selectedViewDescriptionContainer.frame = descriptionContainerFrame;
 
-    CGRect descriptionSafeAreaContainerFrame = CGRectZero;
-    descriptionSafeAreaContainerFrame.size.width = CGRectGetWidth(safeArea);
-    descriptionSafeAreaContainerFrame.size.height = kDescriptionContainerHeight;
-    descriptionSafeAreaContainerFrame.origin.x = CGRectGetMinX(safeArea);
-    descriptionSafeAreaContainerFrame.origin.y = CGRectGetMinY(safeArea);
-    self.selectedViewDescriptionSafeAreaContainer.frame = descriptionSafeAreaContainerFrame;
+    self.selectedViewDescriptionSafeAreaContainer.frame = self.selectedViewDescriptionContainer.bounds;
 
     // Selected View Color
     CGRect selectedViewColorFrame = CGRectZero;
@@ -228,6 +206,10 @@
     }
 }
 
+- (UIView *)dragHandle {
+    return self;
+}
+
 
 #pragma mark - Sizing Convenience Methods
 
@@ -239,8 +221,8 @@
     return 44.0;
 }
 
-+ (CGFloat)dragHandleWidth {
-    return FLEXResources.dragHandle.size.width;
++ (CGFloat)maximumWidth {
+    return 375.0;
 }
 
 + (CGFloat)descriptionLabelHeight {
@@ -267,11 +249,8 @@
     CGFloat height = 0.0;
     height += [[self class] toolbarItemHeight];
     height += [[self class] descriptionContainerHeight];
-    return CGSizeMake(size.width, height);
-}
-
-- (CGRect)safeArea {
-    return UIEdgeInsetsInsetRect(self.bounds, self.safeAreaInsets);
+    CGFloat width = MIN(size.width, [[self class] maximumWidth]);
+    return CGSizeMake(width, height);
 }
 
 @end

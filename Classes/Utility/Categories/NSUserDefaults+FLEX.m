@@ -35,6 +35,7 @@
 #import "NSUserDefaults+FLEX.h"
 
 NSString * const kFLEXDefaultsToolbarTopMarginKey = @"com.flex.FLEXToolbar.topMargin";
+NSString * const kFLEXDefaultsToolbarLeftMarginKey = @"com.flex.FLEXToolbar.leftMargin";
 NSString * const kFLEXDefaultsiOSPersistentOSLogKey = @"com.flipborad.flex.enable_persistent_os_log";
 NSString * const kFLEXDefaultsHidePropertyIvarsKey = @"com.flipboard.FLEX.hide_property_ivars";
 NSString * const kFLEXDefaultsHidePropertyMethodsKey = @"com.flipboard.FLEX.hide_property_methods";
@@ -88,6 +89,18 @@ NSString * const kFLEXDefaultsRegisterJSONExplorerKey = @"com.flipboard.FLEX.vie
 
 - (void)setFlex_toolbarTopMargin:(double)margin {
     [self setDouble:margin forKey:kFLEXDefaultsToolbarTopMarginKey];
+}
+
+- (double)flex_toolbarLeftMargin {
+    if ([self objectForKey:kFLEXDefaultsToolbarLeftMarginKey]) {
+        return [self doubleForKey:kFLEXDefaultsToolbarLeftMarginKey];
+    }
+
+    return -1;
+}
+
+- (void)setFlex_toolbarLeftMargin:(double)margin {
+    [self setDouble:margin forKey:kFLEXDefaultsToolbarLeftMarginKey];
 }
 
 - (BOOL)flex_networkObserverEnabled {

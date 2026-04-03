@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     FLEXExplorerModeMove
 };
 
-@interface FLEXExplorerViewController () <FLEXHierarchyDelegate, UIAdaptivePresentationControllerDelegate>
+@interface FLEXExplorerViewController () <FLEXHierarchyDelegate, UIAdaptivePresentationControllerDelegate, UIGestureRecognizerDelegate>
 
 /// Tracks the currently active tool/mode
 @property (nonatomic) FLEXExplorerMode currentMode;
@@ -64,12 +64,16 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 /// Gesture recognizer for showing additional details on the selected view
 @property (nonatomic) UITapGestureRecognizer *detailsTapGR;
+/// Gesture recognizer for dragging the explorer toolbar.
+@property (nonatomic) UIPanGestureRecognizer *toolbarPanGR;
+/// Gesture recognizer for cycling through views under the selection point.
+@property (nonatomic) UIPanGestureRecognizer *changeSelectedViewPanGR;
 
 /// Only valid while a move pan gesture is in progress.
 @property (nonatomic) CGRect selectedViewFrameBeforeDragging;
 
-/// Only valid while a toolbar drag pan gesture is in progress.
-@property (nonatomic) CGRect toolbarFrameBeforeDragging;
+/// The touch offset from the toolbar's center when drag begins.
+@property (nonatomic) UIOffset toolbarDragOffset;
 
 /// Only valid while a selected view pan gesture is in progress.
 @property (nonatomic) CGFloat selectedViewLastPanX;
@@ -101,6 +105,8 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 @implementation FLEXExplorerViewController
 
+static const CGFloat kToolbarSafeAreaPadding = 4.0;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -121,19 +127,26 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     // Toolbar
     _explorerToolbar = [FLEXExplorerToolbar new];
 
-    // Start the toolbar off below any bars that may be at the top of the view.
-    const CGFloat toolbarOriginY = NSUserDefaults.standardUserDefaults.flex_toolbarTopMargin;
-
     const CGRect safeArea = [self viewSafeArea];
     const CGSize toolbarSize = [self.explorerToolbar sizeThatFits:CGSizeMake(
-        CGRectGetWidth(self.view.bounds), CGRectGetHeight(safeArea)
+        CGRectGetWidth(safeArea), CGRectGetHeight(safeArea)
     )];
+
+    // Restore persisted position, or center horizontally on first launch
+    CGFloat toolbarOriginY = NSUserDefaults.standardUserDefaults.flex_toolbarTopMargin;
+    CGFloat toolbarOriginX = NSUserDefaults.standardUserDefaults.flex_toolbarLeftMargin;
+    if (toolbarOriginX < 0) {
+        toolbarOriginX = CGRectGetMinX(safeArea) +
+            FLEXFloor((CGRectGetWidth(safeArea) - toolbarSize.width) / 2.0);
+    }
+
     [self updateToolbarPositionWithUnconstrainedFrame:CGRectMake(
-        CGRectGetMinX(safeArea), toolbarOriginY, toolbarSize.width, toolbarSize.height
+        toolbarOriginX, toolbarOriginY, toolbarSize.width, toolbarSize.height
     )];
-    self.explorerToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth |
-                                            UIViewAutoresizingFlexibleBottomMargin |
-                                            UIViewAutoresizingFlexibleTopMargin;
+    self.explorerToolbar.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin |
+                                            UIViewAutoresizingFlexibleTopMargin |
+                                            UIViewAutoresizingFlexibleLeftMargin |
+                                            UIViewAutoresizingFlexibleRightMargin;
     [self.view addSubview:self.explorerToolbar];
     [self setupToolbarActions];
     [self setupToolbarGestures];
@@ -496,15 +509,12 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 - (void)setupToolbarGestures {
     FLEXExplorerToolbar *toolbar = self.explorerToolbar;
 
-    // Pan gesture for dragging.
-    [toolbar.dragHandle addGestureRecognizer:[[UIPanGestureRecognizer alloc]
+    // Pan gesture for dragging the toolbar with UIKit Dynamics.
+    self.toolbarPanGR = [[UIPanGestureRecognizer alloc]
         initWithTarget:self action:@selector(handleToolbarPanGesture:)
-    ]];
-
-    // Tap gesture for hinting.
-    [toolbar.dragHandle addGestureRecognizer:[[UITapGestureRecognizer alloc]
-        initWithTarget:self action:@selector(handleToolbarHintTapGesture:)
-    ]];
+    ];
+    self.toolbarPanGR.delegate = self;
+    [toolbar.dragHandle addGestureRecognizer:self.toolbarPanGR];
 
     // Tap gesture for showing additional details
     self.detailsTapGR = [[UITapGestureRecognizer alloc]
@@ -513,10 +523,11 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     [toolbar.selectedViewDescriptionContainer addGestureRecognizer:self.detailsTapGR];
 
     // Swipe gestures for selecting deeper / higher views at a point
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc]
+    self.changeSelectedViewPanGR = [[UIPanGestureRecognizer alloc]
         initWithTarget:self action:@selector(handleChangeViewAtPointGesture:)
     ];
-    [toolbar.selectedViewDescriptionContainer addGestureRecognizer:panGesture];
+    self.changeSelectedViewPanGR.delegate = self;
+    [toolbar.selectedViewDescriptionContainer addGestureRecognizer:self.changeSelectedViewPanGR];
 
     // Long press gesture to present tabs manager
     [toolbar.globalsItem addGestureRecognizer:[[UILongPressGestureRecognizer alloc]
@@ -535,15 +546,26 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 }
 
 - (void)handleToolbarPanGesture:(UIPanGestureRecognizer *)panGR {
-    switch (panGR.state) {
-        case UIGestureRecognizerStateBegan:
-            self.toolbarFrameBeforeDragging = self.explorerToolbar.frame;
-            [self updateToolbarPositionWithDragGesture:panGR];
-            break;
+    CGPoint touchLocation = [panGR locationInView:self.view];
 
-        case UIGestureRecognizerStateChanged:
+    switch (panGR.state) {
+        case UIGestureRecognizerStateBegan: {
+            CGPoint toolbarCenter = self.explorerToolbar.center;
+            self.toolbarDragOffset = UIOffsetMake(
+                touchLocation.x - toolbarCenter.x,
+                touchLocation.y - toolbarCenter.y
+            );
+            break;
+        }
+
+        case UIGestureRecognizerStateChanged: {
+            [self updateToolbarPositionWithUnconstrainedFrame:[self toolbarFrameForTouchLocation:touchLocation]];
+            break;
+        }
+
         case UIGestureRecognizerStateEnded:
-            [self updateToolbarPositionWithDragGesture:panGR];
+        case UIGestureRecognizerStateCancelled:
+            [self updateToolbarPositionWithUnconstrainedFrame:[self toolbarFrameForTouchLocation:touchLocation]];
             break;
 
         default:
@@ -551,47 +573,86 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     }
 }
 
-- (void)updateToolbarPositionWithDragGesture:(UIPanGestureRecognizer *)panGR {
-    const CGPoint translation = [panGR translationInView:self.view];
-    CGRect newToolbarFrame = self.toolbarFrameBeforeDragging;
-    newToolbarFrame.origin.y += translation.y;
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer == self.changeSelectedViewPanGR) {
+        CGPoint velocity = [(UIPanGestureRecognizer *)gestureRecognizer velocityInView:self.view];
+        return fabs(velocity.x) > fabs(velocity.y);
+    }
 
-    [self updateToolbarPositionWithUnconstrainedFrame:newToolbarFrame];
+    if (gestureRecognizer == self.toolbarPanGR) {
+        CGPoint velocity = [(UIPanGestureRecognizer *)gestureRecognizer velocityInView:self.view];
+        if ([self toolbarPanTouchesSelectedViewDescription:gestureRecognizer]) {
+            return fabs(velocity.y) >= fabs(velocity.x);
+        }
+
+        return YES;
+    }
+
+    return YES;
+}
+
+- (BOOL)toolbarPanTouchesSelectedViewDescription:(UIGestureRecognizer *)gestureRecognizer {
+    CGPoint location = [gestureRecognizer locationInView:self.explorerToolbar];
+    UIView *touchedView = [self.explorerToolbar hitTest:location withEvent:nil];
+    return touchedView == self.explorerToolbar.selectedViewDescriptionContainer ||
+        [touchedView isDescendantOfView:self.explorerToolbar.selectedViewDescriptionContainer];
+}
+
+- (CGRect)toolbarFrameForTouchLocation:(CGPoint)touchLocation {
+    CGPoint targetCenter = CGPointMake(
+        touchLocation.x - self.toolbarDragOffset.horizontal,
+        touchLocation.y - self.toolbarDragOffset.vertical
+    );
+    CGRect frame = self.explorerToolbar.frame;
+    frame.origin.x = FLEXFloor(targetCenter.x - frame.size.width / 2.0);
+    frame.origin.y = FLEXFloor(targetCenter.y - frame.size.height / 2.0);
+    return frame;
 }
 
 - (void)updateToolbarPositionWithUnconstrainedFrame:(CGRect)unconstrainedFrame {
+    self.explorerToolbar.frame = [self constrainedToolbarFrame:unconstrainedFrame];
+    [self persistToolbarPosition];
+}
+
+- (void)persistToolbarPosition {
+    CGRect frame = self.explorerToolbar.frame;
+    NSUserDefaults.standardUserDefaults.flex_toolbarTopMargin = frame.origin.y;
+    NSUserDefaults.standardUserDefaults.flex_toolbarLeftMargin = frame.origin.x;
+}
+
+- (CGRect)constrainedToolbarFrame:(CGRect)unconstrainedFrame {
     CGRect safeArea = [self viewSafeArea];
-    // We only constrain the Y-axis because we want the toolbar
-    // to handle the X-axis safeArea layout by itself
-    const CGFloat minY = CGRectGetMinY(safeArea);
-    const CGFloat maxY = CGRectGetMaxY(safeArea) - unconstrainedFrame.size.height;
-    if (unconstrainedFrame.origin.y < minY) {
+
+    unconstrainedFrame.size.width = MIN(
+        unconstrainedFrame.size.width,
+        MAX(0, CGRectGetWidth(safeArea) - kToolbarSafeAreaPadding * 2.0)
+    );
+    unconstrainedFrame.size.height = MIN(
+        unconstrainedFrame.size.height,
+        MAX(0, CGRectGetHeight(safeArea) - kToolbarSafeAreaPadding * 2.0)
+    );
+
+    const CGFloat minY = CGRectGetMinY(safeArea) + kToolbarSafeAreaPadding;
+    const CGFloat maxY = CGRectGetMaxY(safeArea) - unconstrainedFrame.size.height - kToolbarSafeAreaPadding;
+    if (maxY < minY) {
+        unconstrainedFrame.origin.y = FLEXFloor(CGRectGetMidY(safeArea) - unconstrainedFrame.size.height / 2.0);
+    } else if (unconstrainedFrame.origin.y < minY) {
         unconstrainedFrame.origin.y = minY;
     } else if (unconstrainedFrame.origin.y > maxY) {
         unconstrainedFrame.origin.y = maxY;
     }
 
-    self.explorerToolbar.frame = unconstrainedFrame;
-    NSUserDefaults.standardUserDefaults.flex_toolbarTopMargin = unconstrainedFrame.origin.y;
-}
-
-- (void)handleToolbarHintTapGesture:(UITapGestureRecognizer *)tapGR {
-    // Bounce the toolbar to indicate that it is draggable.
-    // TODO: make it bouncier.
-    if (tapGR.state == UIGestureRecognizerStateRecognized) {
-        CGRect originalToolbarFrame = self.explorerToolbar.frame;
-        const NSTimeInterval kHalfwayDuration = 0.2;
-        const CGFloat kVerticalOffset = 30.0;
-        [UIView animateWithDuration:kHalfwayDuration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-            CGRect newToolbarFrame = self.explorerToolbar.frame;
-            newToolbarFrame.origin.y += kVerticalOffset;
-            self.explorerToolbar.frame = newToolbarFrame;
-        } completion:^(BOOL finished) {
-            [UIView animateWithDuration:kHalfwayDuration delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-                self.explorerToolbar.frame = originalToolbarFrame;
-            } completion:nil];
-        }];
+    const CGFloat minX = CGRectGetMinX(safeArea) + kToolbarSafeAreaPadding;
+    const CGFloat maxX = CGRectGetMaxX(safeArea) - unconstrainedFrame.size.width - kToolbarSafeAreaPadding;
+    if (maxX < minX) {
+        unconstrainedFrame.origin.x = FLEXFloor(CGRectGetMidX(safeArea) - unconstrainedFrame.size.width / 2.0);
+    } else if (unconstrainedFrame.origin.x < minX) {
+        unconstrainedFrame.origin.x = minX;
+    } else if (unconstrainedFrame.origin.x > maxX) {
+        unconstrainedFrame.origin.x = maxX;
     }
+
+    return unconstrainedFrame;
 }
 
 - (void)handleToolbarDetailsTapGesture:(UITapGestureRecognizer *)tapGR {
@@ -837,7 +898,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
     CGRect safeArea = [self viewSafeArea];
     CGSize toolbarSize = [self.explorerToolbar sizeThatFits:CGSizeMake(
-        CGRectGetWidth(self.view.bounds), CGRectGetHeight(safeArea)
+        CGRectGetWidth(safeArea), CGRectGetHeight(safeArea)
     )];
     [self updateToolbarPositionWithUnconstrainedFrame:CGRectMake(
         CGRectGetMinX(self.explorerToolbar.frame),

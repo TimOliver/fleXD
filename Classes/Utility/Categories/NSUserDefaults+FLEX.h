@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Raw keys, for use when the typed accessors are insufficient.
 extern NSString * const kFLEXDefaultsToolbarTopMarginKey;
+extern NSString * const kFLEXDefaultsToolbarLeftMarginKey;
 extern NSString * const kFLEXDefaultsiOSPersistentOSLogKey;
 extern NSString * const kFLEXDefaultsHidePropertyIvarsKey;
 extern NSString * const kFLEXDefaultsHidePropertyMethodsKey;
@@ -58,6 +59,10 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
 /// The vertical offset of the FLEX explorer toolbar from the top of the screen.
 @property (nonatomic) double flex_toolbarTopMargin;
+
+/// The horizontal offset of the FLEX explorer toolbar from the left of the screen.
+/// A value of -1 indicates the toolbar has not been positioned yet and should be centered.
+@property (nonatomic) double flex_toolbarLeftMargin;
 
 /// Whether network request observation is enabled.
 @property (nonatomic) BOOL flex_networkObserverEnabled;
