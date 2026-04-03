@@ -224,7 +224,7 @@
     // Close button — visual circle is centered within the 44x44 hit area
     // Position so the visual 20x20 circle sits over the top-right corner
     CGFloat hitSize = self.closeButton.bounds.size.width;
-    CGFloat visualOffset = 20.0 / 3.0; // offset of the visual circle from the corner
+    CGFloat visualOffset = 20.0 / 3.0 - 1.0; // offset of the visual circle from the corner, inset 1pt
     CGFloat hitOffset = (hitSize - 20.0) / 2.0; // offset from visual center to hit area edge
     self.closeButton.frame = CGRectMake(
         CGRectGetWidth(self.bounds) - 20.0 + visualOffset - hitOffset,
