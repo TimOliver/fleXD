@@ -167,7 +167,7 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
         case FLEXGlobalsRowURLCache:
             return @"NSURLCache";
         case FLEXGlobalsRowNotificationCenter:
-            return @"NSNotificationCenter";
+            return @"Notification Center";
         case FLEXGlobalsRowFileManager:
             return @"Default File Manager";
         case FLEXGlobalsRowTimeZone:

@@ -34,13 +34,11 @@
 
 #import "FLEXGlobalsGridItemView.h"
 
-static const CGFloat kFLEXGridIconSize      = 62;
-static const CGFloat kFLEXGridIconRadius    = 14;
-static const CGFloat kFLEXGridTopPadding    = 3;
-static const CGFloat kFLEXGridIconLabelGap  = 2;
-static const CGFloat kFLEXGridLabelInset    = 4;
-static const CGFloat kFLEXGridBottomPadding = 3;
-static const CGFloat kFLEXGridLabelHeight   = 20;
+static const CGFloat kFLEXGridIconSize       = 64;
+static const CGFloat kFLEXGridIconRadius     = 16;
+static const CGFloat kFLEXGridIconLabelGap   = 6;
+static const CGFloat kFLEXGridLabelInset     = 4;
+static const CGFloat kFLEXGridMaxLabelHeight = 28;
 
 @implementation FLEXGlobalsGridItemView
 
@@ -64,6 +62,7 @@ static const CGFloat kFLEXGridLabelHeight   = 20;
         _titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
         _titleLabel.numberOfLines = 2;
         _titleLabel.textColor = UIColor.labelColor;
+        _titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
         _titleLabel.userInteractionEnabled = NO;
         [self addSubview:_titleLabel];
     }
@@ -84,7 +83,7 @@ static const CGFloat kFLEXGridLabelHeight   = 20;
     CGFloat width = self.bounds.size.width;
 
     CGFloat iconX = floor((width - kFLEXGridIconSize) / 2.0);
-    self.iconView.frame = CGRectMake(iconX, kFLEXGridTopPadding, kFLEXGridIconSize, kFLEXGridIconSize);
+    self.iconView.frame = CGRectMake(iconX, 0.0, kFLEXGridIconSize, kFLEXGridIconSize);
 
     // Symbol image view centered inside the icon square
     CGFloat symbolSize = 44;
@@ -92,18 +91,18 @@ static const CGFloat kFLEXGridLabelHeight   = 20;
     self.symbolImageView.frame = CGRectMake(symbolOrigin, symbolOrigin, symbolSize, symbolSize);
 
     CGFloat labelY = CGRectGetMaxY(self.iconView.frame) + kFLEXGridIconLabelGap;
+    CGSize maxLabelSize = (CGSize){width - kFLEXGridLabelInset * 2, kFLEXGridMaxLabelHeight};
+    CGFloat labelHeight = [self.titleLabel sizeThatFits:maxLabelSize].height;
     self.titleLabel.frame = CGRectMake(
         kFLEXGridLabelInset,
         labelY,
         width - kFLEXGridLabelInset * 2,
-        kFLEXGridLabelHeight
+        labelHeight
     );
 }
 
 - (CGSize)intrinsicContentSize {
-    CGFloat height = kFLEXGridTopPadding + kFLEXGridIconSize
-                   + kFLEXGridIconLabelGap + kFLEXGridLabelHeight
-                   + kFLEXGridBottomPadding;
+    CGFloat height = kFLEXGridIconSize + kFLEXGridIconLabelGap + kFLEXGridMaxLabelHeight;
     return CGSizeMake(UIViewNoIntrinsicMetric, height);
 }
 

@@ -191,8 +191,8 @@
         case FLEXGlobalsRowBrowseRuntime:       return @"books.vertical.fill";
         case FLEXGlobalsRowAppKeychainItems:    return @"key.fill";
         case FLEXGlobalsRowPushNotifications:   return @"bell.fill";
-        case FLEXGlobalsRowBrowseBundle:        return @"folder.fill";
-        case FLEXGlobalsRowBrowseContainer:     return @"internaldrive.fill";
+        case FLEXGlobalsRowBrowseBundle:        return @"internaldrive.fill";
+        case FLEXGlobalsRowBrowseContainer:     return @"folder.fill";
         case FLEXGlobalsRowMainBundle:          return @"shippingbox.fill";
         case FLEXGlobalsRowUserDefaults:        return @"slider.horizontal.3";
         case FLEXGlobalsRowApplication:         return @"iphone";

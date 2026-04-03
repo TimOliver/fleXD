@@ -159,8 +159,8 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row {
     switch (row) {
-        case FLEXGlobalsRowBrowseBundle: return @"App Bundle Dir";
-        case FLEXGlobalsRowBrowseContainer: return @"Sandbox Dir";
+        case FLEXGlobalsRowBrowseBundle: return @"App Bundle Directory";
+        case FLEXGlobalsRowBrowseContainer: return @"App Sandbox Directory";
         default: return nil;
     }
 }
