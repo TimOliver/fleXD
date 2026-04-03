@@ -64,8 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Toolbar item for presenting a screen with various tools for inspecting the app.
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *globalsItem;
 
-/// Toolbar item for hiding the explorer.
-@property (nonatomic, readonly) FLEXExplorerToolbarItem *closeItem;
+/// A floating circular close button positioned over the top-right corner of the toolbar.
+@property (nonatomic, readonly) UIButton *closeButton;
 
 /// A view suitable for attaching drag gestures. Defaults to the toolbar itself.
 @property (nonatomic, readonly) UIView *dragHandle;

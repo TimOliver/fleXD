@@ -447,12 +447,13 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         NSStringFromSelector(@selector(recentButtonTapped:)):        toolbar.recentItem,
         NSStringFromSelector(@selector(moveButtonTapped:)):          toolbar.moveItem,
         NSStringFromSelector(@selector(globalsButtonTapped:)):       toolbar.globalsItem,
-        NSStringFromSelector(@selector(closeButtonTapped:)):         toolbar.closeItem,
     };
 
     [actionsToItems enumerateKeysAndObjectsUsingBlock:^(NSString *sel, FLEXExplorerToolbarItem *item, BOOL *stop) {
         [item addTarget:self action:NSSelectorFromString(sel) forControlEvents:UIControlEventTouchUpInside];
     }];
+
+    [toolbar.closeButton addTarget:self action:@selector(closeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)selectButtonTapped:(FLEXExplorerToolbarItem *)sender {
@@ -480,7 +481,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     [self toggleMenuTool];
 }
 
-- (void)closeButtonTapped:(FLEXExplorerToolbarItem *)sender {
+- (void)closeButtonTapped:(UIButton *)sender {
     self.currentMode = FLEXExplorerModeDefault;
     [self.delegate explorerViewControllerDidFinish:self];
 }
@@ -934,8 +935,9 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         return YES;
     }
 
-    // Always if it's on the toolbar
-    if (CGRectContainsPoint(self.explorerToolbar.frame, pointInLocalCoordinates)) {
+    // Always if it's on the toolbar (use pointInside: to include the overhanging close button)
+    CGPoint pointInToolbar = [self.explorerToolbar convertPoint:pointInLocalCoordinates fromView:self.view];
+    if ([self.explorerToolbar pointInside:pointInToolbar withEvent:nil]) {
         return YES;
     }
 

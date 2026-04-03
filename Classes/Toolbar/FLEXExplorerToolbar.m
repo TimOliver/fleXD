@@ -45,7 +45,8 @@
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *selectItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *recentItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *moveItem;
-@property (nonatomic, readwrite) FLEXExplorerToolbarItem *closeItem;
+@property (nonatomic, readwrite) UIButton *closeButton;
+@property (nonatomic) UIVisualEffectView *closeCircle;
 @property (nonatomic) UIView *selectedViewDescriptionContainer;
 @property (nonatomic) UIView *selectedViewDescriptionSafeAreaContainer;
 @property (nonatomic) UIView *selectedViewColorIndicator;
@@ -60,6 +61,8 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
+        self.clipsToBounds = NO;
+
         // Background
         UIVisualEffect *effect;
         if (@available(iOS 26.0, *)) {
@@ -67,7 +70,7 @@
             glassEffect.tintColor = [[UIColor secondarySystemBackgroundColor] colorWithAlphaComponent:0.5f];
             effect = glassEffect;
         } else {
-            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterial];
+            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial];
         }
         UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
         effectView.layer.cornerRadius = 16.0;
@@ -90,8 +93,33 @@
         self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:
             [UIImage systemImageNamed:@"arrow.up.and.down.and.arrow.left.and.right" withConfiguration:symbolConfig]
             sibling:self.recentItem];
-        self.closeItem     = [FLEXExplorerToolbarItem itemWithTitle:@"Close" image:
-            [UIImage systemImageNamed:@"xmark" withConfiguration:symbolConfig]];
+        // Close button — floating circle over the top-right corner
+        // The visual circle is 20x20, but the tap target is 44x44
+        const CGFloat kCloseVisualSize = 20.0;
+        const CGFloat kCloseHitSize = 44.0;
+        UIImageSymbolConfiguration *closeConfig = [UIImageSymbolConfiguration
+            configurationWithPointSize:9 weight:UIImageSymbolWeightBold
+        ];
+        UIImage *closeImage = [UIImage systemImageNamed:@"xmark" withConfiguration:closeConfig];
+        self.closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.closeButton.frame = CGRectMake(0, 0, kCloseHitSize, kCloseHitSize);
+        self.closeButton.tintColor = UIColor.labelColor;
+        [self.closeButton setImage:closeImage forState:UIControlStateNormal];
+
+        self.closeCircle = [[UIVisualEffectView alloc] initWithEffect:effect];
+        self.closeCircle.layer.cornerRadius = kCloseVisualSize / 2.0;
+        self.closeCircle.clipsToBounds = YES;
+        self.closeCircle.layer.borderWidth = 0.5;
+        self.closeCircle.layer.borderColor = [UIColor.separatorColor CGColor];
+        self.closeCircle.userInteractionEnabled = NO;
+        self.closeCircle.frame = CGRectMake(
+            (kCloseHitSize - kCloseVisualSize) / 2.0,
+            (kCloseHitSize - kCloseVisualSize) / 2.0,
+            kCloseVisualSize, kCloseVisualSize
+        );
+        [self.closeButton insertSubview:self.closeCircle belowSubview:self.closeButton.imageView];
+
+        [self addSubview:self.closeButton];
 
         // Selected view box //
 
@@ -116,10 +144,26 @@
         [self.selectedViewDescriptionSafeAreaContainer addSubview:self.selectedViewDescriptionLabel];
 
         // toolbarItems
-        self.toolbarItems = @[_globalsItem, _hierarchyItem, _selectItem, _moveItem, _closeItem];
+        self.toolbarItems = @[_globalsItem, _hierarchyItem, _selectItem, _moveItem];
     }
 
     return self;
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    if ([super pointInside:point withEvent:event]) {
+        return YES;
+    }
+    // Allow touches on the close button even though it overhangs our bounds
+    CGPoint closePoint = [self convertPoint:point toView:self.closeButton];
+    return [self.closeButton pointInside:closePoint withEvent:event];
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+        self.closeCircle.layer.borderColor = [UIColor.separatorColor CGColor];
+    }
 }
 
 - (void)layoutSubviews {
@@ -143,6 +187,17 @@
     lastToolbarItem.frame = lastToolbarItemFrame;
 
     self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), kToolbarItemHeight);
+
+    // Close button — visual circle is centered within the 44x44 hit area
+    // Position so the visual 20x20 circle sits over the top-right corner
+    CGFloat hitSize = self.closeButton.bounds.size.width;
+    CGFloat visualOffset = 20.0 / 3.0; // offset of the visual circle from the corner
+    CGFloat hitOffset = (hitSize - 20.0) / 2.0; // offset from visual center to hit area edge
+    self.closeButton.frame = CGRectMake(
+        CGRectGetWidth(self.bounds) - 20.0 + visualOffset - hitOffset,
+        -visualOffset - hitOffset,
+        hitSize, hitSize
+    );
 
     const CGFloat kSelectedViewColorDiameter = [[self class] selectedViewColorIndicatorDiameter];
     const CGFloat kDescriptionLabelHeight = [[self class] descriptionLabelHeight];
