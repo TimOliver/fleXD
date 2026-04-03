@@ -64,10 +64,10 @@
         UIVisualEffect *effect;
         if (@available(iOS 26.0, *)) {
             UIGlassEffect *const glassEffect = [UIGlassEffect effectWithStyle:UIGlassEffectStyleRegular];
-            glassEffect.tintColor = [UIColor secondarySystemBackgroundColor];
+            glassEffect.tintColor = [[UIColor secondarySystemBackgroundColor] colorWithAlphaComponent:0.5f];
             effect = glassEffect;
         } else {
-            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
+            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemThinMaterial];
         }
         UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
         effectView.layer.cornerRadius = 16.0;
@@ -77,7 +77,7 @@
 
         // Buttons
         UIImageSymbolConfiguration *symbolConfig = [UIImageSymbolConfiguration
-            configurationWithPointSize:17 weight:UIImageSymbolWeightMedium
+            configurationWithPointSize:22 weight:UIImageSymbolWeightMedium
         ];
         self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"Menu" image:
             [UIImage systemImageNamed:@"switch.2" withConfiguration:symbolConfig]];
@@ -235,7 +235,7 @@
 }
 
 + (CGFloat)toolbarItemHeight {
-    return 44.0;
+    return 56.0;
 }
 
 + (CGFloat)maximumWidth {

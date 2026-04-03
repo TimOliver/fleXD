@@ -158,7 +158,9 @@
 
     CGRect contentRect = self.bounds;
 
-    // Title: bottom aligned and centered
+    // Title: near the bottom, centered horizontally
+    const CGFloat kBottomPadding = 4.0;
+    const CGFloat kIconTextGap = 2.0;
     NSDictionary *attrs = [[self class] titleAttributes];
     CGSize titleSize = [self.title boundingRectWithSize:contentRect.size
                                                options:0
@@ -167,14 +169,13 @@
     titleSize = CGSizeMake(ceil(titleSize.width), ceil(titleSize.height));
     CGRect titleRect = CGRectZero;
     titleRect.size = titleSize;
-    titleRect.origin.y = contentRect.origin.y + CGRectGetMaxY(contentRect) - titleSize.height;
-    titleRect.origin.x = contentRect.origin.x + FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
+    titleRect.origin.y = CGRectGetMaxY(contentRect) - titleSize.height - kBottomPadding;
+    titleRect.origin.x = FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
     self.titleLabel.frame = titleRect;
 
-    // Image: vertically centered in space above the title
+    // Image: just above the title with a small gap
     CGSize imageSize = self.image.size;
-    CGFloat availableHeight = contentRect.size.height - titleSize.height - [[self class] topMargin];
-    CGFloat originY = [[self class] topMargin] + FLEXFloor((availableHeight - imageSize.height) / 2.0);
+    CGFloat originY = titleRect.origin.y - imageSize.height - kIconTextGap;
     CGFloat originX = FLEXFloor((contentRect.size.width - imageSize.width) / 2.0);
     self.imageView.frame = CGRectMake(originX, originY, imageSize.width, imageSize.height);
 }
