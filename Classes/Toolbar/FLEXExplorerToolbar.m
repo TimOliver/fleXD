@@ -46,7 +46,6 @@
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *recentItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *moveItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *closeItem;
-
 @property (nonatomic) UIView *selectedViewDescriptionContainer;
 @property (nonatomic) UIView *selectedViewDescriptionSafeAreaContainer;
 @property (nonatomic) UIView *selectedViewColorIndicator;
@@ -62,32 +61,40 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Background
-        self.backgroundView = [UIView new];
-        self.backgroundView.backgroundColor = [FLEXColor secondaryBackgroundColorWithAlpha:0.95];
-        self.backgroundView.layer.cornerRadius = 16.0;
-        self.backgroundView.clipsToBounds = YES;
+        UIVisualEffect *effect;
+        if (@available(iOS 26.0, *)) {
+            UIGlassEffect *const glassEffect = [UIGlassEffect effectWithStyle:UIGlassEffectStyleRegular];
+            glassEffect.tintColor = [UIColor secondarySystemBackgroundColor];
+            effect = glassEffect;
+        } else {
+            effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial];
+        }
+        UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        effectView.layer.cornerRadius = 16.0;
+        effectView.clipsToBounds = YES;
+        self.backgroundView = effectView;
         [self addSubview:self.backgroundView];
 
         // Buttons
-        self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"menu" image:FLEXResources.globalsIcon];
-        self.hierarchyItem = [FLEXExplorerToolbarItem itemWithTitle:@"views" image:FLEXResources.hierarchyIcon];
-        self.selectItem    = [FLEXExplorerToolbarItem itemWithTitle:@"select" image:FLEXResources.selectIcon];
-        self.recentItem    = [FLEXExplorerToolbarItem itemWithTitle:@"recent" image:FLEXResources.recentIcon];
-        self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"move" image:FLEXResources.moveIcon sibling:self.recentItem];
-        self.closeItem     = [FLEXExplorerToolbarItem itemWithTitle:@"close" image:FLEXResources.closeIcon];
+        self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"Menu" image:FLEXResources.globalsIcon];
+        self.hierarchyItem = [FLEXExplorerToolbarItem itemWithTitle:@"Views" image:FLEXResources.hierarchyIcon];
+        self.selectItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Select" image:FLEXResources.selectIcon];
+        self.recentItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Recent" image:FLEXResources.recentIcon];
+        self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:FLEXResources.moveIcon sibling:self.recentItem];
+        self.closeItem     = [FLEXExplorerToolbarItem itemWithTitle:@"Close" image:FLEXResources.closeIcon];
 
         // Selected view box //
 
-        self.selectedViewDescriptionContainer = [UIView new];
-        self.selectedViewDescriptionContainer.backgroundColor = [FLEXColor tertiaryBackgroundColorWithAlpha:0.95];
-        self.selectedViewDescriptionContainer.layer.cornerRadius = 16.0;
-        self.selectedViewDescriptionContainer.clipsToBounds = YES;
-        self.selectedViewDescriptionContainer.hidden = YES;
+        UIVisualEffectView *descriptionEffectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+        descriptionEffectView.layer.cornerRadius = 16.0;
+        descriptionEffectView.clipsToBounds = YES;
+        descriptionEffectView.hidden = YES;
+        self.selectedViewDescriptionContainer = descriptionEffectView;
         [self addSubview:self.selectedViewDescriptionContainer];
 
         self.selectedViewDescriptionSafeAreaContainer = [UIView new];
         self.selectedViewDescriptionSafeAreaContainer.backgroundColor = UIColor.clearColor;
-        [self.selectedViewDescriptionContainer addSubview:self.selectedViewDescriptionSafeAreaContainer];
+        [descriptionEffectView.contentView addSubview:self.selectedViewDescriptionSafeAreaContainer];
 
         self.selectedViewColorIndicator = [UIView new];
         self.selectedViewColorIndicator.backgroundColor = UIColor.redColor;
