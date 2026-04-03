@@ -297,7 +297,6 @@
         self.title = @"💪 FLEX";
     }
 
-
     _manuallyDeselectOnAppear = NSProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10;
 }
 

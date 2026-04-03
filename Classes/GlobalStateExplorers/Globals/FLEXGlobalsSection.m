@@ -103,6 +103,7 @@
     NSInteger end = MIN(start + self.itemsPerRow, (NSInteger)self.rows.count);
     NSArray<FLEXGlobalsEntry *> *entries = [self.rows subarrayWithRange:NSMakeRange(start, end - start)];
 
+    ((FLEXGlobalsGridCell *)cell).topPadding = (row == 0) ? 20 : 12;
     ((FLEXGlobalsGridCell *)cell).bottomPadding = (row == self.numberOfRows - 1) ? 12 : 0;
 
     __weak typeof(self) weakSelf = self;

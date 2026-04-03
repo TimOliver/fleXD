@@ -62,6 +62,7 @@ static UIColor *FLEXGridColorForName(NSString *name) {
 
 @interface FLEXGlobalsGridCell ()
 @property (nonatomic) UIStackView *stackView;
+@property (nonatomic) NSLayoutConstraint *topConstraint;
 @property (nonatomic) NSLayoutConstraint *bottomConstraint;
 @property (nonatomic, copy) void(^onItemTapped)(NSInteger itemIndex);
 @end
@@ -79,15 +80,21 @@ static UIColor *FLEXGridColorForName(NSString *name) {
         _stackView.translatesAutoresizingMaskIntoConstraints = NO;
         [self.contentView addSubview:_stackView];
 
+        _topConstraint = [_stackView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12];
         _bottomConstraint = [_stackView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor];
         [NSLayoutConstraint activateConstraints:@[
-            [_stackView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12],
+            _topConstraint,
             _bottomConstraint,
-            [_stackView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor],
-            [_stackView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor],
+            [_stackView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor constant:4],
+            [_stackView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor constant:-4],
         ]];
     }
     return self;
+}
+
+- (void)setTopPadding:(CGFloat)topPadding {
+    _topPadding = topPadding;
+    self.topConstraint.constant = topPadding;
 }
 
 - (void)setBottomPadding:(CGFloat)bottomPadding {

@@ -44,8 +44,12 @@ extern NSString * const kFLEXGlobalsGridCellIdentifier;
 /// FLEXGlobalsSection to pack multiple globals entries into a single row.
 @interface FLEXGlobalsGridCell : UITableViewCell
 
-/// Extra space added below the stack view. Set to 24pt on the last row of a
-/// section to provide visual breathing room before the section footer/next section.
+/// Extra space above the stack view. Set to a larger value on the first row of
+/// a section to add breathing room below the section header.
+@property (nonatomic) CGFloat topPadding;
+
+/// Extra space added below the stack view. Set on the last row of a section
+/// to provide visual breathing room before the next section header.
 @property (nonatomic) CGFloat bottomPadding;
 
 /// Populate the cell with up to itemsPerRow entries. Entries fewer than
