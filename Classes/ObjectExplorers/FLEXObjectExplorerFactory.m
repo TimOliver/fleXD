@@ -143,45 +143,45 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row  {
     switch (row) {
         case FLEXGlobalsRowAppDelegate:
-            return @"🎟  App Delegate";
+            return @"App Delegate";
         case FLEXGlobalsRowKeyWindow:
-            return @"🔑  Key Window";
+            return @"Key Window";
         case FLEXGlobalsRowRootViewController:
-            return @"🌴  Root View Controller";
+            return @"Root VC";
         case FLEXGlobalsRowProcessInfo:
-            return @"🚦  NSProcessInfo.processInfo";
+            return @"Process Info";
         case FLEXGlobalsRowUserDefaults:
-            return @"💾  Preferences";
+            return @"User Defaults";
         case FLEXGlobalsRowMainBundle:
-            return @"📦  NSBundle.mainBundle";
+            return @"Main Bundle";
         case FLEXGlobalsRowApplication:
-            return @"🚀  UIApplication.sharedApplication";
+            return @"UIApplication";
         case FLEXGlobalsRowMainScreen:
-            return @"💻  UIScreen.mainScreen";
+            return @"UIScreen";
         case FLEXGlobalsRowCurrentDevice:
-            return @"📱  UIDevice.currentDevice";
+            return @"UIDevice";
         case FLEXGlobalsRowPasteboard:
-            return @"📋  UIPasteboard.generalPasteboard";
+            return @"UIPasteboard";
         case FLEXGlobalsRowURLSession:
-            return @"📡  NSURLSession.sharedSession";
+            return @"NSURLSession";
         case FLEXGlobalsRowURLCache:
-            return @"⏳  NSURLCache.sharedURLCache";
+            return @"NSURLCache";
         case FLEXGlobalsRowNotificationCenter:
-            return @"🔔  NSNotificationCenter.defaultCenter";
+            return @"NSNotificationCenter";
         case FLEXGlobalsRowFileManager:
-            return @"🗄  NSFileManager.defaultManager";
+            return @"Default File Manager";
         case FLEXGlobalsRowTimeZone:
-            return @"🌎  NSTimeZone.systemTimeZone";
+            return @"System Time Zone";
         case FLEXGlobalsRowLocale:
-            return @"🗣  NSLocale.currentLocale";
+            return @"Current Locale";
         case FLEXGlobalsRowCalendar:
-            return @"📅  NSCalendar.currentCalendar";
+            return @"Current Calendar";
         case FLEXGlobalsRowMainRunLoop:
-            return @"🏃🏻‍♂️  NSRunLoop.mainRunLoop";
+            return @"Main Run Loop";
         case FLEXGlobalsRowMainThread:
-            return @"🧵  NSThread.mainThread";
+            return @"Main Thread";
         case FLEXGlobalsRowOperationQueue:
-            return @"📚  NSOperationQueue.mainQueue";
+            return @"Main Queue";
         default: return nil;
     }
 }

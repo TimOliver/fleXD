@@ -100,7 +100,7 @@
 #pragma mark - FLEXGlobalsEntry
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row {
-    return @"🍪  Cookies";
+    return @"Cookies";
 }
 
 + (UIViewController *)globalsEntryViewController:(FLEXGlobalsRow)row {

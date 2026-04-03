@@ -381,7 +381,7 @@ static NSError *_apnsRegistrationError = nil;
 #pragma mark - FLEXGlobalsEntry
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row {
-    return @"📌  Push Notifications";
+    return @"Push Notifications";
 }
 
 + (UIViewController *)globalsEntryViewController:(FLEXGlobalsRow)row {

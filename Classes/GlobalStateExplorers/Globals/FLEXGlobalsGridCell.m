@@ -62,6 +62,7 @@ static UIColor *FLEXGridColorForName(NSString *name) {
 
 @interface FLEXGlobalsGridCell ()
 @property (nonatomic) UIStackView *stackView;
+@property (nonatomic) NSLayoutConstraint *bottomConstraint;
 @property (nonatomic, copy) void(^onItemTapped)(NSInteger itemIndex);
 @end
 
@@ -78,14 +79,20 @@ static UIColor *FLEXGridColorForName(NSString *name) {
         _stackView.translatesAutoresizingMaskIntoConstraints = NO;
         [self.contentView addSubview:_stackView];
 
+        _bottomConstraint = [_stackView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor];
         [NSLayoutConstraint activateConstraints:@[
             [_stackView.topAnchor constraintEqualToAnchor:self.contentView.topAnchor constant:12],
-            [_stackView.bottomAnchor constraintEqualToAnchor:self.contentView.bottomAnchor constant:-12],
+            _bottomConstraint,
             [_stackView.leadingAnchor constraintEqualToAnchor:self.contentView.leadingAnchor],
             [_stackView.trailingAnchor constraintEqualToAnchor:self.contentView.trailingAnchor],
         ]];
     }
     return self;
+}
+
+- (void)setBottomPadding:(CGFloat)bottomPadding {
+    _bottomPadding = bottomPadding;
+    self.bottomConstraint.constant = -bottomPadding;
 }
 
 - (void)configureWithEntries:(NSArray<FLEXGlobalsEntry *> *)entries
@@ -116,6 +123,7 @@ static UIColor *FLEXGridColorForName(NSString *name) {
     FLEXGlobalsGridItemView *item = [FLEXGlobalsGridItemView new];
     item.tag = index;
     item.iconView.backgroundColor = FLEXGridColorForName(name);
+    item.symbolName = entry.symbolName;
     item.titleLabel.text = name;
 
     [item addTarget:self action:@selector(itemTapped:)

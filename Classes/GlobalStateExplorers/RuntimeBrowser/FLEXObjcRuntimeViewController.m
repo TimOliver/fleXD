@@ -197,7 +197,7 @@
 #pragma mark - FLEXGlobalsEntry
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row {
-    return @"📚  Runtime Browser";
+    return @"Runtime Browser";
 }
 
 + (UIViewController *)globalsEntryViewController:(FLEXGlobalsRow)row {

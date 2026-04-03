@@ -41,7 +41,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLEXGlobalsGridItemView : UIControl
 
 @property (nonatomic) UIView *iconView;
+@property (nonatomic) UIImageView *symbolImageView;
 @property (nonatomic) UILabel *titleLabel;
+/// SF Symbol name rendered in white inside the icon square. Nil hides the image view.
+@property (nonatomic, nullable, copy) NSString *symbolName;
 
 @end
 

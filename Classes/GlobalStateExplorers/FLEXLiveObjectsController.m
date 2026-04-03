@@ -166,7 +166,7 @@ static const NSInteger kFLEXLiveObjectsSortBySizeIndex = 2;
 #pragma mark - FLEXGlobalsEntry
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row {
-    return @"💩  Heap Objects";
+    return @"Heap Objects";
 }
 
 + (UIViewController *)globalsEntryViewController:(FLEXGlobalsRow)row {

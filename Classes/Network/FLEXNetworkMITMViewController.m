@@ -337,7 +337,7 @@ typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
 #pragma mark - FLEXGlobalsEntry
 
 + (NSString *)globalsEntryTitle:(FLEXGlobalsRow)row {
-    return @"📡  Network History";
+    return @"Network History";
 }
 
 + (FLEXGlobalsEntryRowAction)globalsEntryRowAction:(FLEXGlobalsRow)row {

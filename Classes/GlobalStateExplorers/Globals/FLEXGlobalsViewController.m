@@ -81,26 +81,27 @@
 }
 
 + (FLEXGlobalsEntry *)globalsEntryForRow:(FLEXGlobalsRow)row {
+    FLEXGlobalsEntry *entry;
     switch (row) {
         case FLEXGlobalsRowAppKeychainItems:
-            return [FLEXKeychainViewController flex_concreteGlobalsEntry:row];
+            entry = [FLEXKeychainViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowPushNotifications:
-            return [FLEXAPNSViewController flex_concreteGlobalsEntry:row];
+            entry = [FLEXAPNSViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowAddressInspector:
-            return [FLEXAddressExplorerCoordinator flex_concreteGlobalsEntry:row];
+            entry = [FLEXAddressExplorerCoordinator flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowBrowseRuntime:
-            return [FLEXObjcRuntimeViewController flex_concreteGlobalsEntry:row];
+            entry = [FLEXObjcRuntimeViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowLiveObjects:
-            return [FLEXLiveObjectsController flex_concreteGlobalsEntry:row];
+            entry = [FLEXLiveObjectsController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowCookies:
-            return [FLEXCookiesViewController flex_concreteGlobalsEntry:row];
+            entry = [FLEXCookiesViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowBrowseBundle:
         case FLEXGlobalsRowBrowseContainer:
-            return [FLEXFileBrowserController flex_concreteGlobalsEntry:row];
+            entry = [FLEXFileBrowserController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowSystemLog:
-            return [FLEXSystemLogViewController flex_concreteGlobalsEntry:row];
+            entry = [FLEXSystemLogViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowNetworkHistory:
-            return [FLEXNetworkMITMViewController flex_concreteGlobalsEntry:row];
+            entry = [FLEXNetworkMITMViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowKeyWindow:
         case FLEXGlobalsRowRootViewController:
         case FLEXGlobalsRowProcessInfo:
@@ -121,15 +122,57 @@
         case FLEXGlobalsRowMainRunLoop:
         case FLEXGlobalsRowMainThread:
         case FLEXGlobalsRowOperationQueue:
-            return [FLEXObjectExplorerFactory flex_concreteGlobalsEntry:row];
+            entry = [FLEXObjectExplorerFactory flex_concreteGlobalsEntry:row]; break;
 
         case FLEXGlobalsRowCount: break;
     }
 
-    @throw [NSException
-        exceptionWithName:NSInternalInconsistencyException
-        reason:@"Missing globals case in switch" userInfo:nil
-    ];
+    if (!entry) {
+        @throw [NSException
+            exceptionWithName:NSInternalInconsistencyException
+            reason:@"Missing globals case in switch" userInfo:nil
+        ];
+    }
+
+    entry.symbolName = [self symbolNameForRow:row];
+    return entry;
+}
+
++ (NSString *)symbolNameForRow:(FLEXGlobalsRow)row {
+    switch (row) {
+        case FLEXGlobalsRowNetworkHistory:      return @"network";
+        case FLEXGlobalsRowSystemLog:           return @"doc.text.magnifyingglass";
+        case FLEXGlobalsRowProcessInfo:         return @"cpu";
+        case FLEXGlobalsRowLiveObjects:         return @"memorychip";
+        case FLEXGlobalsRowAddressInspector:    return @"mappin.and.ellipse";
+        case FLEXGlobalsRowBrowseRuntime:       return @"books.vertical.fill";
+        case FLEXGlobalsRowAppKeychainItems:    return @"key.fill";
+        case FLEXGlobalsRowPushNotifications:   return @"bell.fill";
+        case FLEXGlobalsRowBrowseBundle:        return @"folder.fill";
+        case FLEXGlobalsRowBrowseContainer:     return @"internaldrive.fill";
+        case FLEXGlobalsRowMainBundle:          return @"shippingbox.fill";
+        case FLEXGlobalsRowUserDefaults:        return @"slider.horizontal.3";
+        case FLEXGlobalsRowApplication:         return @"iphone";
+        case FLEXGlobalsRowAppDelegate:         return @"bolt.fill";
+        case FLEXGlobalsRowKeyWindow:           return @"macwindow";
+        case FLEXGlobalsRowRootViewController:  return @"rectangle.stack.fill";
+        case FLEXGlobalsRowCookies:             return @"lock.shield.fill";
+        case FLEXGlobalsRowPasteboard:          return @"doc.on.clipboard.fill";
+        case FLEXGlobalsRowMainScreen:          return @"display";
+        case FLEXGlobalsRowCurrentDevice:       return @"ipad.landscape";
+        case FLEXGlobalsRowURLSession:          return @"globe";
+        case FLEXGlobalsRowURLCache:            return @"arrow.triangle.2.circlepath";
+        case FLEXGlobalsRowNotificationCenter:  return @"bell.badge.fill";
+        case FLEXGlobalsRowFileManager:         return @"folder.badge.gearshape";
+        case FLEXGlobalsRowTimeZone:            return @"clock.fill";
+        case FLEXGlobalsRowLocale:              return @"globe.americas.fill";
+        case FLEXGlobalsRowCalendar:            return @"calendar";
+        case FLEXGlobalsRowMainRunLoop:         return @"arrow.clockwise";
+        case FLEXGlobalsRowMainThread:          return @"arrow.left.arrow.right";
+        case FLEXGlobalsRowOperationQueue:      return @"list.number";
+        case FLEXGlobalsRowCount:               return nil;
+    }
+    return nil;
 }
 
 + (NSArray<FLEXGlobalsSection *> *)defaultGlobalSections {
@@ -194,6 +237,7 @@
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceInstant;
     self.navigationItem.backBarButtonItem = [UIBarButtonItem flex_backItemWithTitle:@"Back"];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
     if (@available(iOS 26.0, *)) {
         // Add the FLEX logo as a bold custom label in the top left corner.
@@ -210,7 +254,6 @@
         self.title = @"💪 FLEX";
     }
 
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
     _manuallyDeselectOnAppear = NSProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10;
 }

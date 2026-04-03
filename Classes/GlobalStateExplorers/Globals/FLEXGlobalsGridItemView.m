@@ -34,13 +34,13 @@
 
 #import "FLEXGlobalsGridItemView.h"
 
-static const CGFloat kFLEXGridIconSize      = 72;
-static const CGFloat kFLEXGridIconRadius    = 16;
-static const CGFloat kFLEXGridTopPadding    = 8;
-static const CGFloat kFLEXGridIconLabelGap  = 6;
+static const CGFloat kFLEXGridIconSize      = 62;
+static const CGFloat kFLEXGridIconRadius    = 14;
+static const CGFloat kFLEXGridTopPadding    = 3;
+static const CGFloat kFLEXGridIconLabelGap  = 2;
 static const CGFloat kFLEXGridLabelInset    = 4;
-static const CGFloat kFLEXGridBottomPadding = 8;
-static const CGFloat kFLEXGridLabelHeight   = 26; // 2 lines at 11pt
+static const CGFloat kFLEXGridBottomPadding = 3;
+static const CGFloat kFLEXGridLabelHeight   = 20;
 
 @implementation FLEXGlobalsGridItemView
 
@@ -53,6 +53,12 @@ static const CGFloat kFLEXGridLabelHeight   = 26; // 2 lines at 11pt
         _iconView.userInteractionEnabled = NO;
         [self addSubview:_iconView];
 
+        _symbolImageView = [UIImageView new];
+        _symbolImageView.contentMode = UIViewContentModeScaleAspectFit;
+        _symbolImageView.tintColor = UIColor.whiteColor;
+        _symbolImageView.userInteractionEnabled = NO;
+        [_iconView addSubview:_symbolImageView];
+
         _titleLabel = [UILabel new];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
         _titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
@@ -64,12 +70,26 @@ static const CGFloat kFLEXGridLabelHeight   = 26; // 2 lines at 11pt
     return self;
 }
 
+- (void)setSymbolName:(NSString *)symbolName {
+    _symbolName = symbolName.copy;
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration
+        configurationWithPointSize:44 weight:UIImageSymbolWeightMedium];
+    _symbolImageView.image = symbolName
+        ? [UIImage systemImageNamed:symbolName withConfiguration:config]
+        : nil;
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGFloat width = self.bounds.size.width;
 
     CGFloat iconX = floor((width - kFLEXGridIconSize) / 2.0);
     self.iconView.frame = CGRectMake(iconX, kFLEXGridTopPadding, kFLEXGridIconSize, kFLEXGridIconSize);
+
+    // Symbol image view centered inside the icon square
+    CGFloat symbolSize = 44;
+    CGFloat symbolOrigin = floor((kFLEXGridIconSize - symbolSize) / 2.0);
+    self.symbolImageView.frame = CGRectMake(symbolOrigin, symbolOrigin, symbolSize, symbolSize);
 
     CGFloat labelY = CGRectGetMaxY(self.iconView.frame) + kFLEXGridIconLabelGap;
     self.titleLabel.frame = CGRectMake(
