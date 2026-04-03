@@ -152,16 +152,22 @@
         return;
     }
 
+    // Use the 'Cancel' item on iOS 26 since it's less overpowering
+    UIBarButtonSystemItem doneItem = UIBarButtonSystemItemDone;
+    if (@available(iOS 26.0, *)) {
+        doneItem = UIBarButtonSystemItemCancel;
+    }
+    
     // Check if a done item already exists
     for (UIBarButtonItem *item in navigationItem.rightBarButtonItems) {
-        if (item.style == UIBarButtonItemStyleDone) {
+        if (item.style == doneItem) {
             return;
         }
     }
-
+    
     // Give root view controllers a Done button if it does not already have one
     UIBarButtonItem *done = [[UIBarButtonItem alloc]
-        initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+        initWithBarButtonSystemItem:doneItem
         target:self
         action:@selector(dismissAnimated)
     ];
