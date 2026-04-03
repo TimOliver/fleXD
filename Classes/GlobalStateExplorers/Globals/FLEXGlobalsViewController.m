@@ -224,7 +224,45 @@
 
     [sections addObjectsFromArray:[self.class defaultGlobalSections]];
 
+    NSInteger itemsPerRow = [self itemsPerRowForCurrentWidth];
+    for (FLEXGlobalsSection *section in sections) {
+        section.hostViewController = self;
+        section.itemsPerRow = itemsPerRow;
+    }
+
     return sections;
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
+    NSInteger newItemsPerRow = [self itemsPerRowForCurrentWidth];
+
+    BOOL changed = NO;
+    for (FLEXTableViewSection *section in self.allSections) {
+        if ([section isKindOfClass:FLEXGlobalsSection.class]) {
+            FLEXGlobalsSection *gs = (FLEXGlobalsSection *)section;
+            if (gs.itemsPerRow != newItemsPerRow) {
+                gs.itemsPerRow = newItemsPerRow;
+                changed = YES;
+            }
+        }
+    }
+
+    if (changed) {
+        [self.tableView reloadData];
+    }
+}
+
+- (NSInteger)itemsPerRowForCurrentWidth {
+    CGFloat available = self.tableView.bounds.size.width
+        - self.tableView.layoutMargins.left
+        - self.tableView.layoutMargins.right;
+    if (available < 100) {
+        // View not yet laid out; use a sensible default
+        return 3;
+    }
+    return MAX(2, (NSInteger)floor(available / 80.0));
 }
 
 @end

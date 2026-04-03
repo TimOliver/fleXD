@@ -1,7 +1,7 @@
 //
-//  FLEXGlobalsSection.h
+//  FLEXGlobalsGridCell.h
 //
-//  Copyright (c) Flipboard (2014-2016); FLEX Team (2020-2026).
+//  Copyright (c) FLEX Team (2020-2026).
 //  All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification,
@@ -32,22 +32,23 @@
 //  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#import "FLEXTableViewSection.h"
-#import "FLEXGlobalsEntry.h"
+#import <UIKit/UIKit.h>
+@class FLEXGlobalsEntry;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FLEXGlobalsSection : FLEXTableViewSection
+extern NSString * const kFLEXGlobalsGridCellIdentifier;
 
-+ (instancetype)title:(NSString *)title rows:(NSArray<FLEXGlobalsEntry *> *)rows;
+/// A table view cell that displays a row of grid items, each consisting of
+/// a colored rounded square icon and a title label below. Used by
+/// FLEXGlobalsSection to pack multiple globals entries into a single row.
+@interface FLEXGlobalsGridCell : UITableViewCell
 
-/// Number of entries to display per table row. Defaults to 3.
-/// Update this and reload the table view when the available width changes.
-@property (nonatomic) NSInteger itemsPerRow;
-
-/// The view controller that hosts this section, used to perform navigation
-/// when a grid item is tapped. Set this to the presenting view controller.
-@property (nonatomic, weak, nullable) UIViewController *hostViewController;
+/// Populate the cell with up to itemsPerRow entries. Entries fewer than
+/// itemsPerRow produce empty placeholder slots to maintain uniform widths.
+- (void)configureWithEntries:(NSArray<FLEXGlobalsEntry *> *)entries
+                 itemsPerRow:(NSInteger)itemsPerRow
+               onItemTapped:(void(^)(NSInteger itemIndex))onItemTapped;
 
 @end
 

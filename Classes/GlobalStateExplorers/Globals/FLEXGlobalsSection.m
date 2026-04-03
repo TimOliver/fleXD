@@ -33,6 +33,7 @@
 //  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import "FLEXGlobalsSection.h"
+#import "FLEXGlobalsGridCell.h"
 #import "NSArray+FLEX.h"
 #import "UIFont+FLEX.h"
 
@@ -49,6 +50,7 @@
 + (instancetype)title:(NSString *)title rows:(NSArray<FLEXGlobalsEntry *> *)rows {
     FLEXGlobalsSection *s = [self new];
     s->_title = title;
+    s->_itemsPerRow = 3;
     s.allRows = rows;
 
     return s;
@@ -62,7 +64,8 @@
 #pragma mark - Overrides
 
 - (NSInteger)numberOfRows {
-    return self.rows.count;
+    if (self.rows.count == 0) return 0;
+    return (NSInteger)ceil((double)self.rows.count / self.itemsPerRow);
 }
 
 - (void)setFilterText:(NSString *)filterText {
@@ -82,22 +85,41 @@
     }
 }
 
+- (NSDictionary<NSString *, Class> *)cellRegistrationMapping {
+    return @{ kFLEXGlobalsGridCellIdentifier: FLEXGlobalsGridCell.class };
+}
+
+- (NSString *)reuseIdentifierForRow:(NSInteger)row {
+    return kFLEXGlobalsGridCellIdentifier;
+}
+
 - (BOOL)canSelectRow:(NSInteger)row {
-    return YES;
-}
-
-- (void (^)(__kindof UIViewController *))didSelectRowAction:(NSInteger)row {
-    return (id)self.rows[row].rowAction;
-}
-
-- (UIViewController *)viewControllerToPushForRow:(NSInteger)row {
-    return self.rows[row].viewControllerFuture ? self.rows[row].viewControllerFuture() : nil;
+    // Taps are handled by buttons inside the grid cell.
+    return NO;
 }
 
 - (void)configureCell:(__kindof UITableViewCell *)cell forRow:(NSInteger)row {
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.textLabel.font = UIFont.flex_defaultTableCellFont;
-    cell.textLabel.text = self.rows[row].entryNameFuture();
+    NSInteger start = row * self.itemsPerRow;
+    NSInteger end = MIN(start + self.itemsPerRow, (NSInteger)self.rows.count);
+    NSArray<FLEXGlobalsEntry *> *entries = [self.rows subarrayWithRange:NSMakeRange(start, end - start)];
+
+    __weak typeof(self) weakSelf = self;
+    [(FLEXGlobalsGridCell *)cell configureWithEntries:entries
+                                          itemsPerRow:self.itemsPerRow
+                                        onItemTapped:^(NSInteger itemIndex) {
+        FLEXGlobalsEntry *entry = entries[itemIndex];
+        UIViewController *host = weakSelf.hostViewController;
+        if (!host) return;
+
+        if (entry.rowAction) {
+            entry.rowAction((__kindof UITableViewController *)host);
+        } else if (entry.viewControllerFuture) {
+            UIViewController *vc = entry.viewControllerFuture();
+            if (vc) {
+                [host.navigationController pushViewController:vc animated:YES];
+            }
+        }
+    }];
 }
 
 @end
