@@ -283,6 +283,11 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
     if (@available(iOS 26.0, *)) {
+        // The iOS 26 nav bar leaves a large gap before the first section. Pull the content up.
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(-26, 0, 0, 0);
+    }
+
+    if (@available(iOS 26.0, *)) {
         // Add the FLEX logo as a bold custom label in the top left corner.
         // Uses less space than large titles, but also more prominent than the center one
         UILabel *titleLabel = [UILabel new];
