@@ -81,7 +81,7 @@
 
         // Buttons
         UIImageSymbolConfiguration *symbolConfig = [UIImageSymbolConfiguration
-            configurationWithPointSize:22 weight:UIImageSymbolWeightMedium
+            configurationWithPointSize:21 weight:UIImageSymbolWeightMedium
         ];
         self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"Menu" image:
             [UIImage systemImageNamed:@"switch.2" withConfiguration:symbolConfig]];
@@ -195,29 +195,27 @@
     ];
     FLEXExplorerToolbarItem *menuItem = self.toolbarItems.lastObject;
 
-    // Menu button on the far right (with right margin)
-    CGFloat menuWidth = FLEXFloor((CGRectGetWidth(self.bounds) - kRightMargin) / self.toolbarItems.count);
-    CGFloat menuOriginX = CGRectGetWidth(self.bounds) - menuWidth - kRightMargin;
-    menuItem.currentItem.frame = CGRectMake(menuOriginX, 0, menuWidth + kRightMargin, kToolbarItemHeight);
+    // All items get the same width, with right margin as dead space
+    CGFloat totalWidth = CGRectGetWidth(self.bounds) - kRightMargin;
+    CGFloat itemWidth = FLEXFloor(totalWidth / self.toolbarItems.count);
 
-    // Left items — distribute evenly in the space before the separator
-    CGFloat leftWidth = menuOriginX - kSeparatorWidth;
-    CGFloat itemWidth = FLEXFloor(leftWidth / leftItems.count);
+    // Left items
     CGFloat originX = 0;
     for (FLEXExplorerToolbarItem *toolbarItem in leftItems) {
         toolbarItem.currentItem.frame = CGRectMake(originX, 0, itemWidth, kToolbarItemHeight);
         originX = CGRectGetMaxX(toolbarItem.currentItem.frame);
     }
-    // Stretch last left item to fill any rounding gap
-    FLEXExplorerToolbarItem *lastLeftItem = leftItems.lastObject;
-    CGRect lastLeftFrame = lastLeftItem.currentItem.frame;
-    lastLeftFrame.size.width = menuOriginX - kSeparatorWidth - lastLeftFrame.origin.x;
-    lastLeftItem.currentItem.frame = lastLeftFrame;
+
+    // Separator
+    CGFloat separatorX = originX;
+
+    // Menu button — same width as the others
+    menuItem.currentItem.frame = CGRectMake(separatorX + kSeparatorWidth, 0, itemWidth, kToolbarItemHeight);
 
     // Separator between left items and menu button
     CGFloat separatorHeight = kToolbarItemHeight * 0.7f;
     CGFloat separatorY = FLEXFloor((kToolbarItemHeight - separatorHeight) / 2.0);
-    self.separatorView.frame = CGRectMake(menuOriginX - kSeparatorWidth, separatorY, kSeparatorWidth, separatorHeight);
+    self.separatorView.frame = CGRectMake(separatorX, separatorY, kSeparatorWidth, separatorHeight);
 
     self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), kToolbarItemHeight);
 
@@ -323,11 +321,11 @@
 }
 
 + (CGFloat)toolbarItemHeight {
-    return 64.0;
+    return 61.0;
 }
 
 + (CGFloat)maximumWidth {
-    return 320.0;
+    return 300.0;
 }
 
 + (CGFloat)descriptionLabelHeight {

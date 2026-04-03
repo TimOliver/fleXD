@@ -65,7 +65,7 @@
     toolbarItem.image = image;
     toolbarItem.tintColor = FLEXColor.iconColor;
     toolbarItem.backgroundColor = self.defaultBackgroundColor;
-    toolbarItem.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
+    toolbarItem.titleLabel.font = [UIFont boldSystemFontOfSize:11.0];
     [toolbarItem setTitle:title forState:UIControlStateNormal];
     [toolbarItem setImage:image forState:UIControlStateNormal];
     [toolbarItem setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
@@ -85,7 +85,7 @@
 #pragma mark - Display Defaults
 
 + (NSDictionary<NSString *, id> *)titleAttributes {
-    return @{ NSFontAttributeName : [UIFont boldSystemFontOfSize:12.0] };
+    return @{ NSFontAttributeName : [UIFont boldSystemFontOfSize:11.0] };
 }
 
 + (UIColor *)highlightedBackgroundColor {
