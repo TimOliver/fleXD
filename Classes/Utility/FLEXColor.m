@@ -90,6 +90,20 @@
     return [[self secondaryGroupedBackgroundColor] colorWithAlphaComponent:alpha];
 }
 
+#pragma mark - Fill colors
+
++ (UIColor *)primaryFillColor {
+    return FLEXDynamicColor(systemFillColor, grayColor);
+}
+
++ (UIColor *)secondaryFillColor {
+    return FLEXDynamicColor(secondarySystemFillColor, grayColor);
+}
+
++ (UIColor *)tertiaryFillColor {
+    return FLEXDynamicColor(tertiarySystemFillColor, grayColor);
+}
+
 #pragma mark - Text colors
 
 + (UIColor *)primaryTextColor {

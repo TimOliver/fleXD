@@ -56,7 +56,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = FLEXColor.primaryBackgroundColor;
+        self.backgroundColor = UIColor.clearColor;
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
         self.translatesAutoresizingMaskIntoConstraints = YES;
         _dynamicTypeHandlers = [NSMutableArray new];
@@ -67,7 +67,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
         UICollectionViewFlowLayout *layout = ({
             UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
             layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-            layout.sectionInset = UIEdgeInsetsMake(0, 16, 0, 16);
+            layout.sectionInset = UIEdgeInsetsMake(0, 20, 0, 20);
             layout.minimumLineSpacing = kCarouselItemSpacing;
             layout.minimumInteritemSpacing = 0;
             layout.itemSize = itemSize;

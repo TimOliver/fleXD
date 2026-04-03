@@ -76,11 +76,15 @@ static const CGFloat kSeparatorSpacing = 6;
 
 - (void)updateAppearance {
     if (self.selected) {
-        self.pillBackgroundView.backgroundColor = FLEXColor.primaryTextColor;
+        if (@available(iOS 26.0, *)) {
+            self.pillBackgroundView.backgroundColor = FLEXColor.primaryTextColor;
+        } else {
+            self.pillBackgroundView.backgroundColor = self.tintColor;
+        }
         self.titleLabel.textColor = FLEXColor.primaryBackgroundColor;
     } else {
-        self.pillBackgroundView.backgroundColor = FLEXColor.secondaryBackgroundColor;
-        self.titleLabel.textColor = FLEXColor.deemphasizedTextColor;
+        self.pillBackgroundView.backgroundColor = FLEXColor.secondaryFillColor;
+        self.titleLabel.textColor = FLEXColor.primaryTextColor;
     }
 }
 
@@ -116,7 +120,7 @@ static const CGFloat kSeparatorSpacing = 6;
 
     self.titleLabel.frame = CGRectMake(kPillInsetH, kPillInsetV, labelSize.width, labelSize.height);
 
-    self.separatorIcon.frame = CGRectMake(pillWidth + 1.0, 0, bounds.size.width - pillWidth, pillHeight);
+    self.separatorIcon.frame = CGRectMake(pillWidth, 0, bounds.size.width - pillWidth, pillHeight);
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {

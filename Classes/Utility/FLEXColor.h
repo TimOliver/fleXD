@@ -54,6 +54,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, class) UIColor *secondaryGroupedBackgroundColor;
 + (UIColor *)secondaryGroupedBackgroundColorWithAlpha:(CGFloat)alpha;
 
+// Fill colors
+@property (readonly, class) UIColor *primaryFillColor;
+@property (readonly, class) UIColor *secondaryFillColor;
+@property (readonly, class) UIColor *tertiaryFillColor;
+
 // Text colors
 @property (readonly, class) UIColor *primaryTextColor;
 @property (readonly, class) UIColor *deemphasizedTextColor;
