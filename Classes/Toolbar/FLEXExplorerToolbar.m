@@ -327,7 +327,7 @@
 }
 
 + (CGFloat)maximumWidth {
-    return 375.0;
+    return 320.0;
 }
 
 + (CGFloat)descriptionLabelHeight {
