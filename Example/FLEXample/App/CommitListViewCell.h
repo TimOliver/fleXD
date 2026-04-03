@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A custom cell subclass to display all of the important information
+/// around a single git commit from GitHub.
 @interface CommitListViewCell : UITableViewCell
 
 @property (nonatomic, readonly) UIImageView *avatarImageView;

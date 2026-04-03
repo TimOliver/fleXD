@@ -23,10 +23,9 @@ static const CGFloat kColumnGap = 4.0;
         _avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
         _avatarImageView.clipsToBounds = YES;
         _avatarImageView.layer.cornerRadius = kAvatarSize / 2.0f;
-        [self.contentView addSubview:_avatarImageView];
 
         _nameLabel = [UILabel new];
-        _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightSemibold];
+        _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
 
         _loginLabel = [UILabel new];
         _loginLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
@@ -38,13 +37,12 @@ static const CGFloat kColumnGap = 4.0;
         _hashLabel.textAlignment = NSTextAlignmentRight;
 
         _messageLabel = [UILabel new];
-        _messageLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightRegular];
+        _messageLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightRegular];
         _messageLabel.numberOfLines = 3;
         _messageLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 
-        for (UILabel *label in @[_nameLabel, _loginLabel, _hashLabel, _messageLabel]) {
-            [self.contentView addSubview:label];
-        }
+        NSArray *const views = @[_avatarImageView, _nameLabel, _loginLabel, _hashLabel, _messageLabel];
+        for (UIView *view in views) { [self.contentView addSubview:view]; }
     }
     return self;
 }
@@ -52,20 +50,22 @@ static const CGFloat kColumnGap = 4.0;
 - (void)layoutSubviews {
     [super layoutSubviews];
 
+    // We'll add readable insetting on large screens, like iPad.
     CGRect readable = self.contentView.readableContentGuide.layoutFrame;
     CGFloat left = CGRectGetMinX(readable);
     CGFloat top = self.contentView.layoutMargins.top;
     CGFloat contentWidth = CGRectGetWidth(readable);
 
+    // Ensure the separator is edge to edge on iPhone, but clipped to the text margin on iPad.
     BOOL isCompact = self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
     CGFloat rightInset = isCompact ? 0 : CGRectGetWidth(self.bounds) - CGRectGetMaxX(readable);
     self.separatorInset = UIEdgeInsetsMake(0, left + kAvatarSize + kAvatarGap, 0, rightInset);
 
-    // Avatar on the left
+    // Avatar aligned to the top left hand corner of the cell
     CGFloat textLeft = left + kAvatarSize + kAvatarGap;
     CGFloat textWidth = contentWidth - kAvatarSize - kAvatarGap;
 
-    // Row 1: [name] ... [hash]
+    // Top Row: Author name in the top left, commit hash value in top right
     CGSize hashSize = [_hashLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
     CGFloat nameWidth = textWidth - hashSize.width - kColumnGap;
     CGSize nameSize = [_nameLabel sizeThatFits:CGSizeMake(nameWidth, CGFLOAT_MAX)];
@@ -74,12 +74,12 @@ static const CGFloat kColumnGap = 4.0;
     CGFloat hashY = top + nameSize.height - hashSize.height;
     _hashLabel.frame = CGRectMake(textLeft + textWidth - hashSize.width, hashY, hashSize.width, hashSize.height);
 
-    // Row 2: [login+date]
+    // Row 2: The user's account name with the commit date appended
     CGFloat row2Top = CGRectGetMaxY(_nameLabel.frame) + kRowSpacing;
     CGSize loginSize = [_loginLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
     _loginLabel.frame = CGRectMake(textLeft, row2Top, textWidth, loginSize.height);
 
-    // Row 3: message (full width of text area)
+    // Row 3: The commit message, truncated to only 2 or 3 lines.
     CGFloat row3Top = CGRectGetMaxY(_loginLabel.frame) + kMessageTopSpacing;
     CGSize messageSize = [_messageLabel sizeThatFits:CGSizeMake(textWidth, CGFLOAT_MAX)];
     _messageLabel.frame = CGRectMake(textLeft, row3Top, textWidth, messageSize.height);
@@ -91,6 +91,8 @@ static const CGFloat kColumnGap = 4.0;
 - (CGSize)systemLayoutSizeFittingSize:(CGSize)targetSize
         withHorizontalFittingPriority:(UILayoutPriority)horizontalFittingPriority
               verticalFittingPriority:(UILayoutPriority)verticalFittingPriority {
+    // `sizeThatFits` potentially doesn't get called on its own when there aren't any
+    // active Auto Layout constraints. Call this method and pass it along to capture all sizing calls.
     return [self sizeThatFits:targetSize];
 }
 
