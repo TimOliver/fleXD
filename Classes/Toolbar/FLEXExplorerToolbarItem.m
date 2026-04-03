@@ -158,8 +158,8 @@
 
     CGRect contentRect = self.bounds;
 
-    // Title: near the bottom, centered horizontally
-    const CGFloat kBottomPadding = 4.0;
+    // Title: fixed distance from the bottom, so all labels align across buttons
+    const CGFloat kBottomPadding = 8.0;
     const CGFloat kIconTextGap = 2.0;
     NSDictionary *attrs = [[self class] titleAttributes];
     CGSize titleSize = [self.title boundingRectWithSize:contentRect.size
@@ -167,17 +167,15 @@
                                             attributes:attrs
                                                context:nil].size;
     titleSize = CGSizeMake(ceil(titleSize.width), ceil(titleSize.height));
-    CGRect titleRect = CGRectZero;
-    titleRect.size = titleSize;
-    titleRect.origin.y = CGRectGetMaxY(contentRect) - titleSize.height - kBottomPadding;
-    titleRect.origin.x = FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
-    self.titleLabel.frame = titleRect;
+    CGFloat titleY = CGRectGetMaxY(contentRect) - titleSize.height - kBottomPadding;
+    CGFloat titleX = FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
+    self.titleLabel.frame = CGRectMake(titleX, titleY, titleSize.width, titleSize.height);
 
-    // Image: just above the title with a small gap
+    // Image: directly above the title
     CGSize imageSize = self.image.size;
-    CGFloat originY = titleRect.origin.y - imageSize.height - kIconTextGap;
-    CGFloat originX = FLEXFloor((contentRect.size.width - imageSize.width) / 2.0);
-    self.imageView.frame = CGRectMake(originX, originY, imageSize.width, imageSize.height);
+    CGFloat imageY = titleY - imageSize.height - kIconTextGap;
+    CGFloat imageX = FLEXFloor((contentRect.size.width - imageSize.width) / 2.0);
+    self.imageView.frame = CGRectMake(imageX, imageY, imageSize.width, imageSize.height);
 }
 
 @end

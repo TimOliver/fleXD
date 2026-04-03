@@ -47,6 +47,7 @@
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *moveItem;
 @property (nonatomic, readwrite) UIButton *closeButton;
 @property (nonatomic) UIVisualEffectView *closeCircle;
+@property (nonatomic) UIView *separatorView;
 @property (nonatomic) UIView *selectedViewDescriptionContainer;
 @property (nonatomic) UIView *selectedViewDescriptionSafeAreaContainer;
 @property (nonatomic) UIView *selectedViewColorIndicator;
@@ -73,7 +74,7 @@
             effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial];
         }
         UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        effectView.layer.cornerRadius = 16.0;
+        effectView.layer.cornerRadius = 24.0;
         effectView.clipsToBounds = YES;
         self.backgroundView = effectView;
         [self addSubview:self.backgroundView];
@@ -144,7 +145,12 @@
         [self.selectedViewDescriptionSafeAreaContainer addSubview:self.selectedViewDescriptionLabel];
 
         // toolbarItems
-        self.toolbarItems = @[_globalsItem, _hierarchyItem, _selectItem, _moveItem];
+        self.toolbarItems = @[_hierarchyItem, _selectItem, _moveItem, _globalsItem];
+
+        // Separator line between action buttons and the menu button
+        _separatorView = [UIView new];
+        _separatorView.backgroundColor = UIColor.separatorColor;
+        [self addSubview:_separatorView];
     }
 
     return self;
@@ -163,28 +169,55 @@
     [super traitCollectionDidChange:previousTraitCollection];
     if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
         self.closeCircle.layer.borderColor = [UIColor.separatorColor CGColor];
+        self.separatorView.backgroundColor = UIColor.separatorColor;
     }
+}
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    // Prioritize the close button over everything else
+    CGPoint closePoint = [self.closeButton convertPoint:point fromView:self];
+    if ([self.closeButton pointInside:closePoint withEvent:event]) {
+        return self.closeButton;
+    }
+    return [super hitTest:point withEvent:event];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
 
     const CGFloat kToolbarItemHeight = [[self class] toolbarItemHeight];
+    const CGFloat kRightMargin = 10.0;
+    const CGFloat kSeparatorWidth = 1.0;
 
-    // Toolbar Items — distribute evenly across full width
+    // The last item is the menu button, separated from the rest
+    NSArray<FLEXExplorerToolbarItem *> *leftItems = [self.toolbarItems subarrayWithRange:
+        NSMakeRange(0, self.toolbarItems.count - 1)
+    ];
+    FLEXExplorerToolbarItem *menuItem = self.toolbarItems.lastObject;
+
+    // Menu button on the far right (with right margin)
+    CGFloat menuWidth = FLEXFloor((CGRectGetWidth(self.bounds) - kRightMargin) / self.toolbarItems.count);
+    CGFloat menuOriginX = CGRectGetWidth(self.bounds) - menuWidth - kRightMargin;
+    menuItem.currentItem.frame = CGRectMake(menuOriginX, 0, menuWidth + kRightMargin, kToolbarItemHeight);
+
+    // Left items — distribute evenly in the space before the separator
+    CGFloat leftWidth = menuOriginX - kSeparatorWidth;
+    CGFloat itemWidth = FLEXFloor(leftWidth / leftItems.count);
     CGFloat originX = 0;
-    CGFloat height = kToolbarItemHeight;
-    CGFloat width = FLEXFloor(CGRectGetWidth(self.bounds) / self.toolbarItems.count);
-    for (FLEXExplorerToolbarItem *toolbarItem in self.toolbarItems) {
-        toolbarItem.currentItem.frame = CGRectMake(originX, 0, width, height);
+    for (FLEXExplorerToolbarItem *toolbarItem in leftItems) {
+        toolbarItem.currentItem.frame = CGRectMake(originX, 0, itemWidth, kToolbarItemHeight);
         originX = CGRectGetMaxX(toolbarItem.currentItem.frame);
     }
+    // Stretch last left item to fill any rounding gap
+    FLEXExplorerToolbarItem *lastLeftItem = leftItems.lastObject;
+    CGRect lastLeftFrame = lastLeftItem.currentItem.frame;
+    lastLeftFrame.size.width = menuOriginX - kSeparatorWidth - lastLeftFrame.origin.x;
+    lastLeftItem.currentItem.frame = lastLeftFrame;
 
-    // Make sure the last toolbar item goes to the edge to account for any accumulated rounding effects.
-    UIView *lastToolbarItem = self.toolbarItems.lastObject.currentItem;
-    CGRect lastToolbarItemFrame = lastToolbarItem.frame;
-    lastToolbarItemFrame.size.width = CGRectGetWidth(self.bounds) - lastToolbarItemFrame.origin.x;
-    lastToolbarItem.frame = lastToolbarItemFrame;
+    // Separator between left items and menu button
+    CGFloat separatorHeight = kToolbarItemHeight * 0.7f;
+    CGFloat separatorY = FLEXFloor((kToolbarItemHeight - separatorHeight) / 2.0);
+    self.separatorView.frame = CGRectMake(menuOriginX - kSeparatorWidth, separatorY, kSeparatorWidth, separatorHeight);
 
     self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), kToolbarItemHeight);
 
@@ -290,7 +323,7 @@
 }
 
 + (CGFloat)toolbarItemHeight {
-    return 56.0;
+    return 64.0;
 }
 
 + (CGFloat)maximumWidth {
