@@ -67,7 +67,6 @@ static UIColor *FLEXGridColorForName(NSString *name) {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = UIColor.clearColor;
 
         _stackView = [[UIStackView alloc] init];
         _stackView.axis = UILayoutConstraintAxisHorizontal;

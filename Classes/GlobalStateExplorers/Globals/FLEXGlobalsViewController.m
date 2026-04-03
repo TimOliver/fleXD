@@ -196,6 +196,7 @@
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceInstant;
     self.navigationItem.backBarButtonItem = [UIBarButtonItem flex_backItemWithTitle:@"Back"];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
     _manuallyDeselectOnAppear = NSProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10;
 }
@@ -262,7 +263,7 @@
         // View not yet laid out; use a sensible default
         return 3;
     }
-    return MAX(2, (NSInteger)floor(available / 80.0));
+    return MAX(2, (NSInteger)floor(available / 110.0));
 }
 
 @end
