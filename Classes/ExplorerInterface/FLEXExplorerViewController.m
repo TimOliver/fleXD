@@ -75,6 +75,9 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 /// The touch offset from the toolbar's center when drag begins.
 @property (nonatomic) UIOffset toolbarDragOffset;
 
+/// UIKit Dynamics animator for toolbar momentum after release.
+@property (nonatomic) UIDynamicAnimator *toolbarAnimator;
+
 /// Only valid while a selected view pan gesture is in progress.
 @property (nonatomic) CGFloat selectedViewLastPanX;
 
@@ -150,6 +153,9 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     [self.view addSubview:self.explorerToolbar];
     [self setupToolbarActions];
     [self setupToolbarGestures];
+
+    // Dynamics for toolbar momentum on release
+    self.toolbarAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
 
     // View selection
     UITapGestureRecognizer *selectionTapGR = [[UITapGestureRecognizer alloc]
@@ -234,6 +240,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 - (void)viewWillTransitionToSize:(CGSize)size
        withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    [self.toolbarAnimator removeAllBehaviors];
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
         for (UIView *outlineView in self.outlineViewsForVisibleViews.allValues) {
             outlineView.hidden = YES;
@@ -422,6 +429,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 }
 
 - (void)keyboardShown:(NSNotification *)notif {
+    [self.toolbarAnimator removeAllBehaviors];
     CGRect keyboardFrame = [notif.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect toolbarFrame = self.explorerToolbar.frame;
 
@@ -551,6 +559,8 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 
     switch (panGR.state) {
         case UIGestureRecognizerStateBegan: {
+            [self.toolbarAnimator removeAllBehaviors];
+
             CGPoint toolbarCenter = self.explorerToolbar.center;
             self.toolbarDragOffset = UIOffsetMake(
                 touchLocation.x - toolbarCenter.x,
@@ -567,6 +577,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
             [self updateToolbarPositionWithUnconstrainedFrame:[self toolbarFrameForTouchLocation:touchLocation]];
+            [self applyToolbarMomentumWithVelocity:[panGR velocityInView:self.view]];
             break;
 
         default:
@@ -608,6 +619,40 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     frame.origin.x = FLEXFloor(targetCenter.x - frame.size.width / 2.0);
     frame.origin.y = FLEXFloor(targetCenter.y - frame.size.height / 2.0);
     return frame;
+}
+
+- (void)applyToolbarMomentumWithVelocity:(CGPoint)velocity {
+    CGFloat speed = hypot(velocity.x, velocity.y);
+    if (speed <= 100) return;
+
+    UIDynamicItemBehavior *momentum = [[UIDynamicItemBehavior alloc]
+        initWithItems:@[self.explorerToolbar]
+    ];
+    [momentum addLinearVelocity:velocity forItem:self.explorerToolbar];
+    momentum.resistance = 6.0;
+    momentum.elasticity = 0.3;
+    momentum.allowsRotation = NO;
+
+    UICollisionBehavior *collision = [[UICollisionBehavior alloc]
+        initWithItems:@[self.explorerToolbar]
+    ];
+    CGRect boundary = CGRectInset([self viewSafeArea], kToolbarSafeAreaPadding, kToolbarSafeAreaPadding);
+    [collision addBoundaryWithIdentifier:@"safeArea"
+        forPath:[UIBezierPath bezierPathWithRect:boundary]];
+
+    UIDynamicItemBehavior *noRotation = [[UIDynamicItemBehavior alloc]
+        initWithItems:@[self.explorerToolbar]
+    ];
+    noRotation.allowsRotation = NO;
+
+    __weak typeof(self) weakSelf = self;
+    momentum.action = ^{
+        [weakSelf persistToolbarPosition];
+    };
+
+    [self.toolbarAnimator addBehavior:momentum];
+    [self.toolbarAnimator addBehavior:collision];
+    [self.toolbarAnimator addBehavior:noRotation];
 }
 
 - (void)updateToolbarPositionWithUnconstrainedFrame:(CGRect)unconstrainedFrame {
@@ -896,6 +941,7 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 
 - (void)viewSafeAreaInsetsDidChange {
     [super viewSafeAreaInsetsDidChange];
+    [self.toolbarAnimator removeAllBehaviors];
 
     CGRect safeArea = [self viewSafeArea];
     CGSize toolbarSize = [self.explorerToolbar sizeThatFits:CGSizeMake(
