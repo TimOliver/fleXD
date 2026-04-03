@@ -76,12 +76,22 @@
         [self addSubview:self.backgroundView];
 
         // Buttons
-        self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"Menu" image:FLEXResources.globalsIcon];
-        self.hierarchyItem = [FLEXExplorerToolbarItem itemWithTitle:@"Views" image:FLEXResources.hierarchyIcon];
-        self.selectItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Select" image:FLEXResources.selectIcon];
-        self.recentItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Recent" image:FLEXResources.recentIcon];
-        self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:FLEXResources.moveIcon sibling:self.recentItem];
-        self.closeItem     = [FLEXExplorerToolbarItem itemWithTitle:@"Close" image:FLEXResources.closeIcon];
+        UIImageSymbolConfiguration *symbolConfig = [UIImageSymbolConfiguration
+            configurationWithPointSize:17 weight:UIImageSymbolWeightMedium
+        ];
+        self.globalsItem   = [FLEXExplorerToolbarItem itemWithTitle:@"Menu" image:
+            [UIImage systemImageNamed:@"switch.2" withConfiguration:symbolConfig]];
+        self.hierarchyItem = [FLEXExplorerToolbarItem itemWithTitle:@"Views" image:
+            [UIImage systemImageNamed:@"square.stack.3d.up.fill" withConfiguration:symbolConfig]];
+        self.selectItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Select" image:
+            [UIImage systemImageNamed:@"hand.rays.fill" withConfiguration:symbolConfig]];
+        self.recentItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Recent" image:
+            [UIImage systemImageNamed:@"clock.arrow.circlepath" withConfiguration:symbolConfig]];
+        self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:
+            [UIImage systemImageNamed:@"arrow.up.and.down.and.arrow.left.and.right" withConfiguration:symbolConfig]
+            sibling:self.recentItem];
+        self.closeItem     = [FLEXExplorerToolbarItem itemWithTitle:@"Close" image:
+            [UIImage systemImageNamed:@"xmark" withConfiguration:symbolConfig]];
 
         // Selected view box //
 
