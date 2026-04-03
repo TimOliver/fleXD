@@ -76,6 +76,11 @@ FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell = @"kFLEXCodeFontCell";
 - (id)initWithFrame:(CGRect)frame style:(UITableViewStyle)style {
     self = [super initWithFrame:frame style:style];
     if (self) {
+        // Deliver touches to subviews immediately with no delay.
+        // touchesShouldCancelInContentView: returning YES for UIControl ensures
+        // that a drag can still cancel an in-flight control touch and scroll normally.
+        self.delaysContentTouches = NO;
+
         [self registerCells:@{
             kFLEXDefaultCell : [FLEXTableViewCell class],
             kFLEXDetailCell : [FLEXSubtitleTableViewCell class],
@@ -91,6 +96,15 @@ FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell = @"kFLEXCodeFontCell";
 
 
 #pragma mark - Public
+
+- (BOOL)touchesShouldCancelInContentView:(UIView *)view {
+    // Allow scrolling to cancel touches on controls (e.g. grid item buttons),
+    // so a tap-then-drag gesture correctly transitions into a scroll.
+    if ([view isKindOfClass:UIControl.class]) {
+        return YES;
+    }
+    return [super touchesShouldCancelInContentView:view];
+}
 
 - (void)registerCells:(NSDictionary<NSString*, Class> *)registrationMapping {
     [registrationMapping enumerateKeysAndObjectsUsingBlock:^(NSString *identifier, Class cellClass, BOOL *stop) {
