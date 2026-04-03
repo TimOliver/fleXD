@@ -365,9 +365,9 @@
         - self.tableView.layoutMargins.right;
     if (available < 100) {
         // View not yet laid out; use a sensible default
-        return 3;
+        return 4;
     }
-    return MAX(2, (NSInteger)floor(available / 110.0));
+    return MAX(2, (NSInteger)floor(available / 88.0));
 }
 
 @end

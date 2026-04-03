@@ -50,7 +50,7 @@
 + (instancetype)title:(NSString *)title rows:(NSArray<FLEXGlobalsEntry *> *)rows {
     FLEXGlobalsSection *s = [self new];
     s->_title = title;
-    s->_itemsPerRow = 3;
+    s->_itemsPerRow = 4;
     s.allRows = rows;
 
     return s;
