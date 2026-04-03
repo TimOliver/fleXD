@@ -110,6 +110,8 @@ typedef void (^FLEXGlobalsEntryRowAction)(__kindof UITableViewController * _Nonn
 @property (nonatomic, readonly, nullable) FLEXGlobalsEntryRowAction rowAction;
 /// SF Symbol name to display inside the grid icon. Nil for custom entries.
 @property (nonatomic, nullable, copy) NSString *symbolName;
+/// Background color for the grid icon square. Nil falls back to a hash-derived color.
+@property (nonatomic, nullable) UIColor *iconColor;
 
 + (instancetype)entryWithEntry:(Class<FLEXGlobalsEntry>)entry row:(FLEXGlobalsRow)row;
 

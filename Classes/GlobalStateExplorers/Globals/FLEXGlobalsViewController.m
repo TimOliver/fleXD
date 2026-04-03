@@ -135,7 +135,50 @@
     }
 
     entry.symbolName = [self symbolNameForRow:row];
+    entry.iconColor = [self colorForRow:row];
     return entry;
+}
+
++ (UIColor *)colorForRow:(FLEXGlobalsRow)row {
+    switch (row) {
+        // Process and Events — row 1: Blue/Orange/Purple, row 2: Green/Teal/Indigo
+        case FLEXGlobalsRowNetworkHistory:      return UIColor.systemBlueColor;
+        case FLEXGlobalsRowSystemLog:           return UIColor.systemOrangeColor;
+        case FLEXGlobalsRowProcessInfo:         return UIColor.systemPurpleColor;
+        case FLEXGlobalsRowLiveObjects:         return UIColor.systemGreenColor;
+        case FLEXGlobalsRowAddressInspector:    return UIColor.systemTealColor;
+        case FLEXGlobalsRowBrowseRuntime:       return UIColor.systemIndigoColor;
+        // App Shortcuts — row1: Orange/Blue/Green, row2: Purple/Indigo/Red,
+        //                 row3: Blue/Orange/Teal, row4: Green/Pink
+        case FLEXGlobalsRowBrowseBundle:        return UIColor.systemOrangeColor;
+        case FLEXGlobalsRowBrowseContainer:     return UIColor.systemBlueColor;
+        case FLEXGlobalsRowMainBundle:          return UIColor.systemGreenColor;
+        case FLEXGlobalsRowUserDefaults:        return UIColor.systemPurpleColor;
+        case FLEXGlobalsRowAppKeychainItems:    return UIColor.systemIndigoColor;
+        case FLEXGlobalsRowPushNotifications:   return UIColor.systemRedColor;
+        case FLEXGlobalsRowApplication:         return UIColor.systemBlueColor;
+        case FLEXGlobalsRowAppDelegate:         return UIColor.systemOrangeColor;
+        case FLEXGlobalsRowKeyWindow:           return UIColor.systemTealColor;
+        case FLEXGlobalsRowRootViewController:  return UIColor.systemGreenColor;
+        case FLEXGlobalsRowCookies:             return UIColor.systemPinkColor;
+        // Misc — row1: Orange/Teal/Blue, row2: Green/Purple/Red,
+        //        row3: Pink/Orange/Green, row4: Teal/Purple/Blue, row5: Indigo
+        case FLEXGlobalsRowPasteboard:          return UIColor.systemOrangeColor;
+        case FLEXGlobalsRowMainScreen:          return UIColor.systemTealColor;
+        case FLEXGlobalsRowCurrentDevice:       return UIColor.systemBlueColor;
+        case FLEXGlobalsRowURLSession:          return UIColor.systemGreenColor;
+        case FLEXGlobalsRowURLCache:            return UIColor.systemPurpleColor;
+        case FLEXGlobalsRowNotificationCenter:  return UIColor.systemRedColor;
+        case FLEXGlobalsRowFileManager:         return UIColor.systemPinkColor;
+        case FLEXGlobalsRowTimeZone:            return UIColor.systemOrangeColor;
+        case FLEXGlobalsRowLocale:              return UIColor.systemGreenColor;
+        case FLEXGlobalsRowCalendar:            return UIColor.systemTealColor;
+        case FLEXGlobalsRowMainRunLoop:         return UIColor.systemPurpleColor;
+        case FLEXGlobalsRowMainThread:          return UIColor.systemBlueColor;
+        case FLEXGlobalsRowOperationQueue:      return UIColor.systemIndigoColor;
+        case FLEXGlobalsRowCount:               return nil;
+    }
+    return nil;
 }
 
 + (NSString *)symbolNameForRow:(FLEXGlobalsRow)row {

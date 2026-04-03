@@ -122,7 +122,7 @@ static UIColor *FLEXGridColorForName(NSString *name) {
 
     FLEXGlobalsGridItemView *item = [FLEXGlobalsGridItemView new];
     item.tag = index;
-    item.iconView.backgroundColor = FLEXGridColorForName(name);
+    item.iconView.backgroundColor = entry.iconColor ?: FLEXGridColorForName(name);
     item.symbolName = entry.symbolName;
     item.titleLabel.text = name;
 
