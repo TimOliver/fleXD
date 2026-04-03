@@ -37,13 +37,13 @@
 
 typedef NS_ENUM(NSUInteger, FLEXGlobalsSectionKind) {
     FLEXGlobalsSectionCustom,
-    /// NSProcessInfo, Network history, system log,
-    /// heap, address explorer, libraries, app classes
-    FLEXGlobalsSectionProcessAndEvents,
     /// Browse container, browse bundle, NSBundle.main,
     /// NSUserDefaults.standard, UIApplication,
     /// app delegate, key window, root VC, cookies
     FLEXGlobalsSectionAppShortcuts,
+    /// NSProcessInfo, Network history, system log,
+    /// heap, address explorer, libraries, app classes
+    FLEXGlobalsSectionProcessAndEvents,
     /// UIPasteBoard.general, UIScreen, UIDevice
     FLEXGlobalsSectionMisc,
     FLEXGlobalsSectionCount
