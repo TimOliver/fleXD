@@ -67,8 +67,9 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
         UICollectionViewFlowLayout *layout = ({
             UICollectionViewFlowLayout *layout = [UICollectionViewFlowLayout new];
             layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-            layout.sectionInset = UIEdgeInsetsZero;
+            layout.sectionInset = UIEdgeInsetsMake(0, 16, 0, 16);
             layout.minimumLineSpacing = kCarouselItemSpacing;
+            layout.minimumInteritemSpacing = 0;
             layout.itemSize = itemSize;
             layout.estimatedItemSize = itemSize;
             layout;
@@ -120,19 +121,6 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 
 #pragma mark - Overrides
 
-- (void)drawRect:(CGRect)rect {
-    [super drawRect:rect];
-
-    CGFloat width = 1.f / self.traitCollection.displayScale;
-
-    // Draw hairline
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetStrokeColorWithColor(context, FLEXColor.hairlineColor.CGColor);
-    CGContextSetLineWidth(context, width);
-    CGContextMoveToPoint(context, 0, rect.size.height - width);
-    CGContextAddLineToPoint(context, rect.size.width, rect.size.height - width);
-    CGContextStrokePath(context);
-}
 
 + (BOOL)requiresConstraintBasedLayout {
     return YES;
@@ -152,7 +140,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 - (CGSize)intrinsicContentSize {
     return CGSizeMake(
         UIViewNoIntrinsicMetric,
-        [self.sizingCell systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height
+        [self.sizingCell sizeThatFits:UILayoutFittingCompressedSize].height
     );
 }
 
@@ -191,7 +179,8 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 //    }
 
     self.sizingCell.title = self.items[indexPath.item];
-    return [self.sizingCell systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
+    self.sizingCell.showSeparator = indexPath.item < (NSInteger)self.items.count - 1;
+    return [self.sizingCell sizeThatFits:UILayoutFittingCompressedSize];
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -203,6 +192,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
     FLEXCarouselCell *cell = (id)[collectionView dequeueReusableCellWithReuseIdentifier:kCarouselCellReuseIdentifier
                                                                            forIndexPath:indexPath];
     cell.title = self.items[indexPath.row];
+    cell.showSeparator = indexPath.item < (NSInteger)self.items.count - 1;
     return cell;
 }
 

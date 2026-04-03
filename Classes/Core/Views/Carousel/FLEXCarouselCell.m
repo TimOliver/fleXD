@@ -34,30 +34,39 @@
 
 #import "FLEXCarouselCell.h"
 #import "FLEXColor.h"
-#import "UIView+FLEX_Layout.h"
 
 @interface FLEXCarouselCell ()
 @property (nonatomic, readonly) UILabel *titleLabel;
-@property (nonatomic, readonly) UIView *selectionIndicatorStripe;
+@property (nonatomic, readonly) UIView *pillBackgroundView;
+@property (nonatomic, readonly) UIImageView *separatorIcon;
 @property (nonatomic) BOOL constraintsInstalled;
 @end
 
 @implementation FLEXCarouselCell
 
+static const CGFloat kPillInsetH = 14;
+static const CGFloat kPillInsetV = 8;
+static const CGFloat kSeparatorSpacing = 6;
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        _titleLabel = [UILabel new];
-        _selectionIndicatorStripe = [UIView new];
+        _pillBackgroundView = [UIView new];
+        _pillBackgroundView.clipsToBounds = YES;
 
+        _titleLabel = [UILabel new];
         self.titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-        self.selectionIndicatorStripe.backgroundColor = self.tintColor;
         self.titleLabel.adjustsFontForContentSizeCategory = YES;
 
-        [self.contentView addSubview:self.titleLabel];
-        [self.contentView addSubview:self.selectionIndicatorStripe];
+        UIImageConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightSemibold];
+        _separatorIcon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"chevron.left" withConfiguration:config]];
+        _separatorIcon.contentMode = UIViewContentModeCenter;
+        _separatorIcon.tintColor = FLEXColor.deemphasizedTextColor;
+        _separatorIcon.hidden = YES;
 
-        [self installConstraints];
+        [self.contentView addSubview:self.pillBackgroundView];
+        [self.contentView addSubview:self.titleLabel];
+        [self.contentView addSubview:self.separatorIcon];
 
         [self updateAppearance];
     }
@@ -66,11 +75,11 @@
 }
 
 - (void)updateAppearance {
-    self.selectionIndicatorStripe.hidden = !self.selected;
-
     if (self.selected) {
-        self.titleLabel.textColor = self.tintColor;
+        self.pillBackgroundView.backgroundColor = FLEXColor.primaryTextColor;
+        self.titleLabel.textColor = FLEXColor.primaryBackgroundColor;
     } else {
+        self.pillBackgroundView.backgroundColor = FLEXColor.secondaryBackgroundColor;
         self.titleLabel.textColor = FLEXColor.deemphasizedTextColor;
     }
 }
@@ -94,19 +103,40 @@
     [self updateAppearance];
 }
 
-- (void)installConstraints {
-    CGFloat stripeHeight = 2;
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    CGRect bounds = self.contentView.bounds;
+    CGSize separatorSize = [self.separatorIcon sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+    CGSize labelSize = [self.titleLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
 
-    self.titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    self.selectionIndicatorStripe.translatesAutoresizingMaskIntoConstraints = NO;
+    CGFloat pillWidth = ceil(labelSize.width) + kPillInsetH * 2;
+    CGFloat pillHeight = bounds.size.height;
+    self.pillBackgroundView.frame = CGRectMake(0, 0, pillWidth, pillHeight);
+    self.pillBackgroundView.layer.cornerRadius = pillHeight / 2.0;
 
-    UIView *superview = self.contentView;
-    [self.titleLabel flex_pinEdgesToSuperviewWithInsets:UIEdgeInsetsMake(10, 15, 8 + stripeHeight, 15)];
+    self.titleLabel.frame = CGRectMake(kPillInsetH, kPillInsetV, labelSize.width, labelSize.height);
 
-    [self.selectionIndicatorStripe.leadingAnchor constraintEqualToAnchor:superview.leadingAnchor].active = YES;
-    [self.selectionIndicatorStripe.bottomAnchor constraintEqualToAnchor:superview.bottomAnchor].active = YES;
-    [self.selectionIndicatorStripe.trailingAnchor constraintEqualToAnchor:superview.trailingAnchor].active = YES;
-    [self.selectionIndicatorStripe.heightAnchor constraintEqualToConstant:stripeHeight].active = YES;
+    self.separatorIcon.frame = CGRectMake(pillWidth + 1.0, 0, bounds.size.width - pillWidth, pillHeight);
+}
+
+- (CGSize)sizeThatFits:(CGSize)size {
+    CGSize labelSize = [self.titleLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+    CGFloat width = ceil(labelSize.width) + kPillInsetH * 2;
+    if (!self.separatorIcon.hidden) {
+        CGSize separatorSize = [self.separatorIcon sizeThatFits:CGSizeMake(CGFLOAT_MAX, CGFLOAT_MAX)];
+        width += kSeparatorSpacing + ceil(separatorSize.width) + kSeparatorSpacing;
+    }
+    return CGSizeMake(width, ceil(labelSize.height) + kPillInsetV * 2);
+}
+
+- (void)setShowSeparator:(BOOL)showSeparator {
+    self.separatorIcon.hidden = !showSeparator;
+    [self setNeedsLayout];
+    [self invalidateIntrinsicContentSize];
+}
+
+- (BOOL)showSeparator {
+    return !self.separatorIcon.hidden;
 }
 
 - (void)setSelected:(BOOL)selected {
