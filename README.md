@@ -75,7 +75,7 @@ Include the dependency in the `dependencies` value of your `Package.swift`
 
 ``` swift
 dependencies: [
-    .package(url: "https://github.com/TimOliver/fleXD.git", .upToNextMajor(from: "4.3.0"))
+    .package(url: "https://github.com/TimOliver/fleXD.git", .upToNextMajor(from: "6.0.0"))
 ]
 ```
 
