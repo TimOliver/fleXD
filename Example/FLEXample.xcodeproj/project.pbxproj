@@ -11,7 +11,6 @@
 		223145852F6941C1003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145842F6941C1003FE94F /* FLEX */; };
 		223145882F6A513C003FE94F /* FLEX in Frameworks */ = {isa = PBXBuildFile; productRef = 223145872F6A513C003FE94F /* FLEX */; };
 		2286A6C72F7E9AAB00FE01E8 /* CommitListViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2286A6C62F7E9AAB00FE01E8 /* CommitListViewCell.m */; };
-		2286A6CA2F80BA2100FE01E8 /* Reflex in Frameworks */ = {isa = PBXBuildFile; productRef = 2286A6C92F80BA2100FE01E8 /* Reflex */; };
 		C386D6D02419975A00699085 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6CF2419975A00699085 /* AppDelegate.swift */; };
 		C386D6D22419975A00699085 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C386D6D12419975A00699085 /* SceneDelegate.swift */; };
 		C386D6D62419975B00699085 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C386D6D52419975B00699085 /* Assets.xcassets */; };
@@ -68,7 +67,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2286A6CA2F80BA2100FE01E8 /* Reflex in Frameworks */,
 				2231457F2F694153003FE94F /* FLEX in Frameworks */,
 				223145852F6941C1003FE94F /* FLEX in Frameworks */,
 				223145882F6A513C003FE94F /* FLEX in Frameworks */,
@@ -197,7 +195,6 @@
 				2231457E2F694153003FE94F /* FLEX */,
 				223145842F6941C1003FE94F /* FLEX */,
 				223145872F6A513C003FE94F /* FLEX */,
-				2286A6C92F80BA2100FE01E8 /* Reflex */,
 			);
 			productName = FLEXample;
 			productReference = C386D6CC2419975A00699085 /* FLEXample.app */;
@@ -231,7 +228,6 @@
 			mainGroup = C386D6C32419975A00699085;
 			packageReferences = (
 				223145862F6A513C003FE94F /* XCLocalSwiftPackageReference "../../FLEXD" */,
-				2286A6C82F80BA2100FE01E8 /* XCRemoteSwiftPackageReference "reflex" */,
 			);
 			productRefGroup = C386D6CD2419975A00699085 /* Products */;
 			projectDirPath = "";
@@ -491,17 +487,6 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		2286A6C82F80BA2100FE01E8 /* XCRemoteSwiftPackageReference "reflex" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/timoliver/reflex.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
 		2231457E2F694153003FE94F /* FLEX */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -514,11 +499,6 @@
 		223145872F6A513C003FE94F /* FLEX */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FLEX;
-		};
-		2286A6C92F80BA2100FE01E8 /* Reflex */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2286A6C82F80BA2100FE01E8 /* XCRemoteSwiftPackageReference "reflex" */;
-			productName = Reflex;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
