@@ -68,7 +68,10 @@
         UIVisualEffect *effect;
         if (@available(iOS 26.0, *)) {
             UIGlassEffect *const glassEffect = [UIGlassEffect effectWithStyle:UIGlassEffectStyleRegular];
-            glassEffect.tintColor = [[UIColor secondarySystemBackgroundColor] colorWithAlphaComponent:0.5f];
+            glassEffect.tintColor = [UIColor colorWithDynamicProvider:^UIColor *(UITraitCollection *traitCollection) {
+                const BOOL isDark = traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark;
+                return [UIColor colorWithWhite:isDark ? 1.0f : 0.0f alpha:0.1f];
+            }];
             effect = glassEffect;
         } else {
             effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial];
