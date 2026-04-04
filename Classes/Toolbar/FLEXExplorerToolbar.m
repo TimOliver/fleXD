@@ -90,8 +90,11 @@
             [UIImage systemImageNamed:@"switch.2" withConfiguration:symbolConfig]];
         self.hierarchyItem = [FLEXExplorerToolbarItem itemWithTitle:@"Views" image:
             [UIImage systemImageNamed:@"square.stack.3d.up.fill" withConfiguration:symbolConfig]];
+        UIImageSymbolConfiguration *selectConfig = [UIImageSymbolConfiguration
+            configurationWithPointSize:20 weight:UIImageSymbolWeightMedium
+        ];
         self.selectItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Select" image:
-            [UIImage systemImageNamed:@"hand.rays.fill" withConfiguration:symbolConfig]];
+            [UIImage systemImageNamed:@"hand.rays.fill" withConfiguration:selectConfig]];
         self.recentItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Recent" image:
             [UIImage systemImageNamed:@"clock.arrow.circlepath" withConfiguration:symbolConfig]];
         self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:

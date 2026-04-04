@@ -169,7 +169,7 @@
     CGRect contentRect = self.bounds;
 
     // Title: fixed distance from the bottom, so all labels align across buttons
-    const CGFloat kBottomPadding = 2.0;
+    const CGFloat kBottomPadding = 3.0;
     const CGFloat kIconTextGap = 1.0;
     NSDictionary *attrs = [[self class] titleAttributes];
     CGSize titleSize = [self.title boundingRectWithSize:contentRect.size
