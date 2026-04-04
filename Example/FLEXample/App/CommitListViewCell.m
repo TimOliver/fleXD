@@ -23,6 +23,8 @@ static const CGFloat kColumnGap = 4.0;
         _avatarImageView.contentMode = UIViewContentModeScaleAspectFill;
         _avatarImageView.clipsToBounds = YES;
         _avatarImageView.layer.cornerRadius = kAvatarSize / 2.0f;
+        _avatarImageView.layer.borderWidth = 1.0f;
+        _avatarImageView.layer.borderColor = [UIColor separatorColor].CGColor;
 
         _nameLabel = [UILabel new];
         _nameLabel.font = [UIFont systemFontOfSize:18 weight:UIFontWeightBold];
@@ -45,6 +47,13 @@ static const CGFloat kColumnGap = 4.0;
         for (UIView *view in views) { [self.contentView addSubview:view]; }
     }
     return self;
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if ([previousTraitCollection hasDifferentColorAppearanceComparedToTraitCollection:self.traitCollection]) {
+        _avatarImageView.layer.borderColor = [UIColor separatorColor].CGColor;
+    }
 }
 
 - (void)layoutSubviews {
