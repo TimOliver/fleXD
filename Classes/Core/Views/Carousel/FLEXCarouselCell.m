@@ -120,7 +120,7 @@ static const CGFloat kSeparatorSpacing = 6;
 
     self.titleLabel.frame = CGRectMake(kPillInsetH, kPillInsetV, labelSize.width, labelSize.height);
 
-    self.separatorIcon.frame = CGRectMake(pillWidth, 0, bounds.size.width - pillWidth, pillHeight);
+    self.separatorIcon.frame = CGRectMake(pillWidth + 1, 0, bounds.size.width - pillWidth, pillHeight);
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
