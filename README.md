@@ -67,7 +67,28 @@ More complete version:
 
 ## Installation
 
-FLEXD requires an app that targets iOS 15 or higher. To run the Example project, simply open the Xcode project in the Example folder. The project will import the local copy of FLEX automatically via Swift Pacakage Manager.
+fleXD requires an app that targets iOS 15 or higher. To run the Example project, simply open the Xcode project in the Example folder. The project will import the local copy of FLEX automatically via Swift Pacakage Manager.
+
+### Swift Package Manager
+
+Include the dependency in the `dependencies` value of your `Package.swift`
+
+``` swift
+dependencies: [
+    .package(url: "https://github.com/TimOliver/fleXD.git", .upToNextMajor(from: "4.3.0"))
+]
+```
+
+Next, include the library in your target:
+
+```js
+.target(
+    name: "YourDependency",
+    dependencies: [
+        .product(name: "FLEX", package: "fleXD")
+    ]
+)
+```
 
 ### Manual
 
