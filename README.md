@@ -65,68 +65,6 @@ More complete version:
 }
 ```
 
-
-## Feature Examples
-### Modify Views
-Once a view is selected, you can tap on the info bar below the toolbar to present more details about the view. From there, you can modify properties and call methods.
-
-<img alt="Modify Views" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271816-c5c2b480-176c-11ea-8bf4-2c5a755bc392.gif>
-
-### Network History
-When enabled, network debugging allows you to view all requests made using NSURLConnection or NSURLSession. Settings allow you to adjust what kind of response bodies get cached and the maximum size limit of the response cache. You can choose to have network debugging enabled automatically on app launch. This setting is persisted across launches.
-
-<img alt="Network History" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271876-e5f27380-176c-11ea-98ef-24170205b706.gif>
-
-### All Objects on the Heap
-FLEX queries malloc for all the live allocated memory blocks and searches for ones that look like objects. You can see everything from here.
-
-<img alt="Heap/Live Objects Explorer" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271850-d83cee00-176c-11ea-9750-ee3a479c6769.gif>
-
-### Explore-at-address
-
-If you get your hands on an arbitrary address, you can try explore the object at that address, and FLEX will open it if it can verify the address points to a valid object. If FLEX isn't sure, it'll warn you and refuse to dereference the pointer. If you know better, however, you can choose to explore it anyway by choosing "Unsafe Explore"
-
-<img alt="Address Explorer" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271798-bb081f80-176c-11ea-806d-9d74ac293641.gif>
-
-### Simulator Keyboard Shortcuts
-Default keyboard shortcuts allow you to activate the FLEX tools, scroll with the arrow keys, and close modals using the escape key. You can also add custom keyboard shortcuts via `-[FLEXManager registerSimulatorShortcutWithKey:modifiers:action:description]`
-
-<img alt="Simulator Keyboard Shortcuts" width=40% height=40% src="https://user-images.githubusercontent.com/8371943/70272984-d3793980-176e-11ea-89a2-66d187d71b4c.png">
-
-### File Browser
-View the file system within your app's bundle or sandbox container. FLEX shows file sizes, image previews, and pretty prints `.json` and `.plist` files. You can rename and delete files and folders. You can "share" any file if you want to inspect them outside of your app.
-
-<img alt="File Browser" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271831-d115e000-176c-11ea-8078-ada291f980f3.gif>
-
-### SQLite Browser
-SQLite database files (with either `.db` or `.sqlite` extensions), or [Realm](https://realm.io) database files can be explored using FLEX. The database browser lets you view all tables, and individual tables can be sorted by tapping column headers.
-
-<img alt="SQLite Browser" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271881-ea1e9100-176c-11ea-9a42-01618311c869.gif>
-
-### 3D Touch in the Simulator
-Using a combination of the command, control, and shift keys, you can simulate different levels of 3D touch pressure in the simulator. Each key contributes 1/3 of maximum possible force. Note that you need to move the touch slightly to get pressure updates.
-
-<img alt="Simulator 3D Touch" width=36% height=36% src=https://cloud.githubusercontent.com/assets/1422245/11786615/5d4ef96c-a23c-11e5-975e-67275341e439.gif>
-
-### Explore Loaded Libraries
-Go digging for all things public and private. To learn more about a class, you can create an instance of it and explore its default state. You can also type in a class name to jump to that class directly if you know which class you're looking for.
-
-<img alt="Loaded Libraries Exploration" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271868-dffc9280-176c-11ea-8704-a0c05b75cc5f.gif>
-
-### NSUserDefaults Editing
-FLEX allows you to edit defaults that are any combination of strings, numbers, arrays, and dictionaries. The input is parsed as `JSON`. If other kinds of objects are set for a defaults key (i.e. `NSDate`), you can view them but not edit them.
-
-<img alt="NSUserDefaults Editing" width=36% height=36% src=https://user-images.githubusercontent.com/8371943/70271889-edb21800-176c-11ea-92b4-71e07d2b6ce7.gif>
-
-### Learning from Other Apps
-The code injection is left as an exercise for the reader. :innocent:
-
-<p float="left">
-    <img alt="Springboard Lock Screen" width=25% height=25% src= https://engineering.flipboard.com/assets/flex/flex-readme-reverse-1.png>
-    <img alt="Springboard Home Screen" width=25% height=25% src= https://engineering.flipboard.com/assets/flex/flex-readme-reverse-2.png>
-</p>
-
-
 ## Installation
 
 FLEXD requires an app that targets iOS 15 or higher. To run the Example project, simply open the Xcode project in the Example folder. The project will import the local copy of FLEX automatically via Swift Pacakage Manager.
