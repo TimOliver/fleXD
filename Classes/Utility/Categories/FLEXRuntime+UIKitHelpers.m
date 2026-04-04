@@ -44,6 +44,7 @@
 #import "FLEXUtility.h"
 #import "NSArray+FLEX.h"
 #import "NSString+FLEX.h"
+#import "FLEXSwiftInternal.h"
 
 #define FLEXObjectExplorerDefaultsImpl \
 - (FLEXObjectExplorerDefaults *)defaults { \
@@ -628,7 +629,7 @@ FLEXObjectExplorerDefaultsImpl
 
     FLEXStaticMetadata_Class *metadata = [self new];
     metadata.metadata = cls;
-    metadata->_name = NSStringFromClass(cls);
+    metadata->_name = FLEXClassNameForClass(cls);
     metadata.reuse = kFLEXDefaultCell;
     return metadata;
 }

@@ -97,6 +97,7 @@
         self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:
             [UIImage systemImageNamed:@"arrow.up.and.down.and.arrow.left.and.right" withConfiguration:symbolConfig]
             sibling:self.recentItem];
+        
         // Close button — floating circle over the top-right corner
         // The visual circle is 20x20, but the tap target is 44x44
         const CGFloat kCloseVisualSize = 20.0;
@@ -127,16 +128,14 @@
 
         // Selected view box //
 
-        UIVisualEffectView *descriptionEffectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        descriptionEffectView.layer.cornerRadius = 16.0;
-        descriptionEffectView.clipsToBounds = YES;
-        descriptionEffectView.hidden = YES;
-        self.selectedViewDescriptionContainer = descriptionEffectView;
+        self.selectedViewDescriptionContainer = [UIView new];
+        self.selectedViewDescriptionContainer.backgroundColor = UIColor.systemFillColor;
+        self.selectedViewDescriptionContainer.hidden = YES;
         [self addSubview:self.selectedViewDescriptionContainer];
 
         self.selectedViewDescriptionSafeAreaContainer = [UIView new];
         self.selectedViewDescriptionSafeAreaContainer.backgroundColor = UIColor.clearColor;
-        [descriptionEffectView.contentView addSubview:self.selectedViewDescriptionSafeAreaContainer];
+        [self.selectedViewDescriptionContainer addSubview:self.selectedViewDescriptionSafeAreaContainer];
 
         self.selectedViewColorIndicator = [UIView new];
         self.selectedViewColorIndicator.backgroundColor = UIColor.redColor;
@@ -221,7 +220,11 @@
     CGFloat separatorY = FLEXFloor((kToolbarItemHeight - separatorHeight) / 2.0);
     self.separatorView.frame = CGRectMake(separatorX, separatorY, kSeparatorWidth, separatorHeight);
 
-    self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), kToolbarItemHeight);
+    BOOL showingDescription = !self.selectedViewDescriptionContainer.hidden;
+    CGFloat totalHeight = showingDescription
+        ? kToolbarItemHeight + [[self class] descriptionContainerHeight]
+        : kToolbarItemHeight;
+    self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), totalHeight);
 
     // Close button — visual circle is centered within the 44x44 hit area
     // Position so the visual 20x20 circle sits over the top-right corner
@@ -244,7 +247,7 @@
     descriptionContainerFrame.size.width = CGRectGetWidth(self.bounds);
     descriptionContainerFrame.size.height = kDescriptionContainerHeight;
     descriptionContainerFrame.origin.x = 0;
-    descriptionContainerFrame.origin.y = CGRectGetMaxY(self.bounds) - kDescriptionContainerHeight;
+    descriptionContainerFrame.origin.y = kToolbarItemHeight;
     self.selectedViewDescriptionContainer.frame = descriptionContainerFrame;
 
     self.selectedViewDescriptionSafeAreaContainer.frame = self.selectedViewDescriptionContainer.bounds;
@@ -310,6 +313,13 @@
         self.selectedViewDescriptionLabel.text = selectedViewDescription;
         BOOL showDescription = selectedViewDescription.length > 0;
         self.selectedViewDescriptionContainer.hidden = !showDescription;
+
+        // Resize the toolbar to include/exclude the description area
+        CGSize newSize = [self sizeThatFits:CGSizeMake(self.bounds.size.width, CGFLOAT_MAX)];
+        CGRect frame = self.frame;
+        frame.size.height = newSize.height;
+        self.frame = frame;
+        [self setNeedsLayout];
     }
 }
 
@@ -353,9 +363,10 @@
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-    CGFloat height = 0.0;
-    height += [[self class] toolbarItemHeight];
-    height += [[self class] descriptionContainerHeight];
+    CGFloat height = [[self class] toolbarItemHeight];
+    if (!self.selectedViewDescriptionContainer.hidden) {
+        height += [[self class] descriptionContainerHeight];
+    }
     CGFloat width = MIN(size.width, [[self class] maximumWidth]);
     return CGSizeMake(width, height);
 }

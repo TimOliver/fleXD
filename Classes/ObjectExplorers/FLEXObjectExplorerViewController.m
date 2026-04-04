@@ -51,6 +51,7 @@
 #import "FLEXSingleRowSection.h"
 #import "FLEXShortcutsSection.h"
 #import "NSUserDefaults+FLEX.h"
+#import "FLEXSwiftInternal.h"
 #import <objc/runtime.h>
 
 #pragma mark - Private properties
@@ -128,7 +129,7 @@
     // Carousel scope bar
     [self.explorer reloadClassHierarchy];
     self.carousel.items = [self.explorer.classHierarchyClasses flex_mapped:^id(Class cls, NSUInteger idx) {
-        return NSStringFromClass(cls);
+        return FLEXClassNameForClass(cls);
     }];
 
     // ... button for extra options

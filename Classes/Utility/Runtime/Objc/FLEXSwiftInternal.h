@@ -43,6 +43,9 @@ extern "C" {
 /// @return `YES` if the given object or class is a Swift object or class, `NO` otherwise.
 BOOL FLEXIsSwiftObjectOrClass(id objOrClass);
 
+/// Returns the demangled Swift class name for the given class, or the ObjC class name if not a Swift class.
+NSString *FLEXClassNameForClass(Class cls);
+
 #ifdef __cplusplus
 }
 #endif

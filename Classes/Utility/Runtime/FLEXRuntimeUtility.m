@@ -39,6 +39,7 @@
 #import "NSObject+FLEX_Reflection.h"
 #import "FLEXTypeEncodingParser.h"
 #import "FLEXMethod.h"
+#import "FLEXSwiftInternal.h"
 
 NSString * const FLEXRuntimeUtilityErrorDomain = @"FLEXRuntimeUtilityErrorDomain";
 
@@ -129,10 +130,10 @@ NSString * const FLEXRuntimeUtilityErrorDomain = @"FLEXRuntimeUtilityErrorDomain
 + (NSString *)safeClassNameForObject:(id)object {
     // Don't assume that we have an NSObject subclass
     if ([self safeObject:object respondsToSelector:@selector(class)]) {
-        return NSStringFromClass([object class]);
+        return FLEXClassNameForClass([object class]);
     }
 
-    return NSStringFromClass(object_getClass(object));
+    return FLEXClassNameForClass(object_getClass(object));
 }
 
 /// Could be nil

@@ -35,6 +35,7 @@
 #import "FLEXColor.h"
 #import "FLEXUtility.h"
 #import "FLEXResources.h"
+#import "FLEXSwiftInternal.h"
 #import "FLEXWindow.h"
 #import <ImageIO/ImageIO.h>
 #import <objc/runtime.h>
@@ -101,9 +102,9 @@ BOOL FLEXConstructorsShouldRun(void) {
 }
 
 + (NSString *)descriptionForView:(UIView *)view includingFrame:(BOOL)includeFrame {
-    NSString *description = [[view class] description];
+    NSString *description = FLEXClassNameForClass([view class]);
 
-    NSString *viewControllerDescription = [[[self viewControllerForView:view] class] description];
+    NSString *viewControllerDescription = FLEXClassNameForClass([[self viewControllerForView:view] class]);
     if (viewControllerDescription.length > 0) {
         description = [description stringByAppendingFormat:@" (%@)", viewControllerDescription];
     }

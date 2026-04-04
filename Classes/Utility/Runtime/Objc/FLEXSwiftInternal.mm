@@ -35,6 +35,12 @@
 #import "FLEXSwiftInternal.h"
 #import <objc/runtime.h>
 #include <atomic>
+#include <cstdlib>
+
+// Swift runtime demangling function
+extern "C" char *swift_demangle(const char *mangledName, size_t mangledNameLength,
+                                 char *outputBuffer, size_t *outputBufferSize,
+                                 uint32_t flags);
 
 // class is a Swift class from the pre-stable Swift ABI
 #define FAST_IS_SWIFT_LEGACY  (1UL<<0)
@@ -101,6 +107,59 @@ struct objc_class_ : objc_object_ {
     cache_t cache; // formerly cache pointer and vtable
     class_data_bits_t bits;    
 };
+
+/// Cleans up a verbose demangled Swift name into something human-readable.
+/// e.g. "UIKit.(FloatingBarHostingView in $186d42c14)<UIKit.FloatingBarContainer>"
+///   -> "UIKit.FloatingBarContainer"
+static NSString *FLEXCleanDemangledName(NSString *demangled) {
+    // If there's a generic parameter like <Module.Type>, prefer the inner type
+    NSRange openAngle = [demangled rangeOfString:@"<" options:NSBackwardsSearch];
+    NSRange closeAngle = [demangled rangeOfString:@">" options:NSBackwardsSearch];
+    if (openAngle.location != NSNotFound && closeAngle.location != NSNotFound
+        && closeAngle.location > openAngle.location) {
+        NSRange innerRange = NSMakeRange(openAngle.location + 1,
+            closeAngle.location - openAngle.location - 1);
+        demangled = [demangled substringWithRange:innerRange];
+    }
+
+    // Remove private context markers like "(TypeName in $hexaddr)"
+    NSRegularExpression *regex = [NSRegularExpression
+        regularExpressionWithPattern:@"\\([^)]+\\s+in\\s+\\$[0-9a-fA-F]+\\)"
+        options:0 error:nil
+    ];
+    demangled = [regex stringByReplacingMatchesInString:demangled
+        options:0 range:NSMakeRange(0, demangled.length)
+        withTemplate:@""];
+
+    // Clean up any leftover dots from removal (e.g. "Module..Type" -> "Module.Type")
+    while ([demangled containsString:@".."]) {
+        demangled = [demangled stringByReplacingOccurrencesOfString:@".." withString:@"."];
+    }
+
+    // Trim leading/trailing dots and whitespace
+    demangled = [demangled stringByTrimmingCharactersInSet:
+        [NSCharacterSet characterSetWithCharactersInString:@". "]
+    ];
+
+    return demangled;
+}
+
+extern "C" NSString *FLEXClassNameForClass(Class cls) {
+    if (!cls) return nil;
+
+    const char *className = class_getName(cls);
+    if (!className) return nil;
+
+    // Try Swift demangling — swift_demangle returns NULL for non-Swift names
+    char *demangled = swift_demangle(className, strlen(className), NULL, NULL, 0);
+    if (demangled) {
+        NSString *result = FLEXCleanDemangledName(@(demangled));
+        free(demangled);
+        return result;
+    }
+
+    return @(className);
+}
 
 extern "C" BOOL FLEXIsSwiftObjectOrClass(id objOrClass) {
     Class cls = objOrClass;
