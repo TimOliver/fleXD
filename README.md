@@ -1,10 +1,10 @@
-# FLEXD
+# fleXD
 
 <img alt="Screenshot" src="https://raw.githubusercontent.com/TimOliver/FLEXD/refs/heads/main/screenshot.webp">
 
 [FLEX (Flipboard Explorer)](https://github.com/FLEXTool/FLEX) is a set of in-app debugging and exploration tools for iOS development. When presented, FLEX shows a toolbar that lives in a window above your application. From this toolbar, you can view and modify nearly every piece of state in your running application.
 
-FLEXD is my own personal fork of the original FLEX framework. I'd been using FLEX heavily during my time at Instagram, and it was absolutely indispensible when working on the [Instagram for iPad](https://about.instagram.com/blog/announcements/instagram-for-ipad) project. That being said, the toolbar's edge-to-edge design felt quite strange on large iPad screens, and in general, the look of the framework has slowly started to show its age, especially now that iOS 26 has arrived.
+fleXD is my own personal fork of the original FLEX framework. I'd been using FLEX heavily during my time at Instagram, and it was absolutely indispensible when working on the [Instagram for iPad](https://about.instagram.com/blog/announcements/instagram-for-ipad) project. That being said, the toolbar's edge-to-edge design felt quite strange on large iPad screens, and in general, the look of the framework has slowly started to show its age, especially now that iOS 26 has arrived.
 
 Since I had a very different vision of how I think FLEX should look and feel in 2026, instead of barging in and submitting an absolute mountain of PRs to the original repo that might blindside *many* users, I thought I'd keep things separate for now so I can experiment at my own leisure. But I'm certainly open to submitting these changes back upstream if there's demand!
 
@@ -106,7 +106,7 @@ In Xcode, navigate to `Build Settings > Build Options > Excluded Source File Nam
 - When setting fields of type `id` or values in `NSUserDefaults`, FLEX attempts to parse the input string as `JSON`. This allows you to use a combination of strings, numbers, arrays, and dictionaries. If you want to set a string value, it must be wrapped in quotes. For ivars or properties that are explicitly typed as `NSStrings`, quotes are not required.
 - You may want to disable the exception breakpoint while using FLEX. Certain functions that FLEX uses throw exceptions when they get input they can't handle (i.e. `NSGetSizeAndAlignment()`). FLEX catches these to avoid crashing, but your breakpoint will get hit if it is active.
 
-## Why the name FLEXD?
+## Why the name fleXD?
 
 Pronounced 'Flecks-Dee'.
 
