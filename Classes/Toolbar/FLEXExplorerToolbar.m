@@ -202,18 +202,25 @@
     CGFloat contentWidth = itemWidth * self.toolbarItems.count + kSeparatorWidth;
     CGFloat leftInset = FLEXFloor((CGRectGetWidth(self.bounds) - contentWidth) / 2.0);
 
-    // Left items
+    // Left items — inset the visual button within its slot
+    const CGFloat kButtonInset = 5.0;
     CGFloat originX = leftInset;
     for (FLEXExplorerToolbarItem *toolbarItem in leftItems) {
-        toolbarItem.currentItem.frame = CGRectMake(originX, 0, itemWidth, kToolbarItemHeight);
-        originX = CGRectGetMaxX(toolbarItem.currentItem.frame);
+        toolbarItem.currentItem.frame = CGRectMake(
+            originX + kButtonInset, kButtonInset,
+            itemWidth - kButtonInset * 2, kToolbarItemHeight - kButtonInset * 2 - 1
+        );
+        originX += itemWidth;
     }
 
     // Separator
     CGFloat separatorX = originX;
 
-    // Menu button — same width as the others
-    menuItem.currentItem.frame = CGRectMake(separatorX + kSeparatorWidth, 0, itemWidth, kToolbarItemHeight);
+    // Menu button — same inset
+    menuItem.currentItem.frame = CGRectMake(
+        separatorX + kSeparatorWidth + kButtonInset, kButtonInset,
+        itemWidth - kButtonInset * 2, kToolbarItemHeight - kButtonInset * 2 - 1
+    );
 
     // Separator between left items and menu button
     CGFloat separatorHeight = kToolbarItemHeight * 0.7f;
@@ -222,7 +229,7 @@
 
     BOOL showingDescription = !self.selectedViewDescriptionContainer.hidden;
     CGFloat totalHeight = showingDescription
-        ? kToolbarItemHeight + [[self class] descriptionContainerHeight]
+        ? kToolbarItemHeight + [[self class] descriptionContainerHeight] + 3.0
         : kToolbarItemHeight;
     self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), totalHeight);
 
@@ -243,12 +250,14 @@
     const CGFloat kDescriptionVerticalPadding = [[self class] descriptionVerticalPadding];
     const CGFloat kDescriptionContainerHeight = [[self class] descriptionContainerHeight];
 
+    const CGFloat kDescriptionInsetH = 12.0;
     CGRect descriptionContainerFrame = CGRectZero;
-    descriptionContainerFrame.size.width = CGRectGetWidth(self.bounds);
+    descriptionContainerFrame.size.width = CGRectGetWidth(self.bounds) - kDescriptionInsetH * 2;
     descriptionContainerFrame.size.height = kDescriptionContainerHeight;
-    descriptionContainerFrame.origin.x = 0;
-    descriptionContainerFrame.origin.y = kToolbarItemHeight;
+    descriptionContainerFrame.origin.x = kDescriptionInsetH;
+    descriptionContainerFrame.origin.y = kToolbarItemHeight - 2.0;
     self.selectedViewDescriptionContainer.frame = descriptionContainerFrame;
+    self.selectedViewDescriptionContainer.layer.cornerRadius = kDescriptionContainerHeight / 2.0;
 
     self.selectedViewDescriptionSafeAreaContainer.frame = self.selectedViewDescriptionContainer.bounds;
 
@@ -262,12 +271,14 @@
     self.selectedViewColorIndicator.layer.cornerRadius = ceil(selectedViewColorFrame.size.height / 2.0);
 
     // Selected View Description
+    const CGFloat kDotToLabelGap = 4.0;
+    const CGFloat kLabelInset = 4.0;
     CGRect descriptionLabelFrame = CGRectZero;
-    CGFloat descriptionOriginX = CGRectGetMaxX(selectedViewColorFrame) + kHorizontalPadding;
+    CGFloat descriptionOriginX = CGRectGetMaxX(selectedViewColorFrame) + kDotToLabelGap;
     descriptionLabelFrame.size.height = kDescriptionLabelHeight;
     descriptionLabelFrame.origin.x = descriptionOriginX;
     descriptionLabelFrame.origin.y = kDescriptionVerticalPadding;
-    descriptionLabelFrame.size.width = CGRectGetMaxX(self.selectedViewDescriptionContainer.bounds) - kHorizontalPadding - descriptionOriginX;
+    descriptionLabelFrame.size.width = CGRectGetMaxX(self.selectedViewDescriptionContainer.bounds) - kLabelInset - descriptionOriginX;
     self.selectedViewDescriptionLabel.frame = descriptionLabelFrame;
 }
 
@@ -359,13 +370,13 @@
 }
 
 + (CGFloat)horizontalPadding {
-    return 11.0;
+    return 5.0;
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
     CGFloat height = [[self class] toolbarItemHeight];
     if (!self.selectedViewDescriptionContainer.hidden) {
-        height += [[self class] descriptionContainerHeight];
+        height += [[self class] descriptionContainerHeight] + 3.0;
     }
     CGFloat width = MIN(size.width, [[self class] maximumWidth]);
     return CGSizeMake(width, height);
