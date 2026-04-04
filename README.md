@@ -106,6 +106,14 @@ In Xcode, navigate to `Build Settings > Build Options > Excluded Source File Nam
 - When setting fields of type `id` or values in `NSUserDefaults`, FLEX attempts to parse the input string as `JSON`. This allows you to use a combination of strings, numbers, arrays, and dictionaries. If you want to set a string value, it must be wrapped in quotes. For ivars or properties that are explicitly typed as `NSStrings`, quotes are not required.
 - You may want to disable the exception breakpoint while using FLEX. Certain functions that FLEX uses throw exceptions when they get input they can't handle (i.e. `NSGetSizeAndAlignment()`). FLEX catches these to avoid crashing, but your breakpoint will get hit if it is active.
 
+## Why the name FLEXD?
+
+Pronounced 'Flecks-Dee'.
+
+I figured I needed some differentiator from the name FLEX, but FLEX is already such a great name that I didn't want to stray too far from it. I had noticed that a lot of the names in the library love to use puns. The sample app is called FLExample, and there is a file named FLExtensions in there as well.
+
+My favourite millienial emoji is 'XD', the sometimes cheesy cheeky grin emoji. And so, this library is named after that. XD
+
 ## Thanks & Credits
 A an absolutely massive thanks to [Ryan Olsen](https://github.com/ryanolsonk), [Tanner Bennett](https://github.com/NSExceptional) and everyone else who has been building and supporting FLEX all these years. 
 
