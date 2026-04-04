@@ -70,6 +70,7 @@
     [toolbarItem setImage:image forState:UIControlStateNormal];
     [toolbarItem setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
     [toolbarItem setTitleColor:FLEXColor.deemphasizedTextColor forState:UIControlStateDisabled];
+    toolbarItem.layer.cornerCurve = kCACornerCurveContinuous;
     return toolbarItem;
 }
 
@@ -93,7 +94,7 @@
 }
 
 + (UIColor *)selectedBackgroundColor {
-    return FLEXColor.toolbarItemSelectedColor;
+    return FLEXColor.secondaryFillColor;
 }
 
 + (UIColor *)defaultBackgroundColor {
@@ -140,13 +141,18 @@
 + (id)_selectedIndicatorImage { return nil; }
 
 - (void)updateColors {
-    // Background color
     if (self.highlighted) {
-        self.backgroundColor = self.class.highlightedBackgroundColor;
-    } else if (self.selected) {
-        self.backgroundColor = self.class.selectedBackgroundColor;
-    } else {
+        self.alpha = 0.4;
         self.backgroundColor = self.class.defaultBackgroundColor;
+    } else if (self.selected) {
+        self.alpha = 1.0;
+        self.backgroundColor = self.class.selectedBackgroundColor;
+        self.layer.cornerRadius = 12.0f;
+        self.layer.masksToBounds = YES;
+    } else {
+        self.alpha = 1.0;
+        self.backgroundColor = self.class.defaultBackgroundColor;
+        self.layer.masksToBounds = NO;
     }
 }
 
@@ -159,8 +165,8 @@
     CGRect contentRect = self.bounds;
 
     // Title: fixed distance from the bottom, so all labels align across buttons
-    const CGFloat kBottomPadding = 8.0;
-    const CGFloat kIconTextGap = 2.0;
+    const CGFloat kBottomPadding = 2.0;
+    const CGFloat kIconTextGap = 1.0;
     NSDictionary *attrs = [[self class] titleAttributes];
     CGSize titleSize = [self.title boundingRectWithSize:contentRect.size
                                                options:0
