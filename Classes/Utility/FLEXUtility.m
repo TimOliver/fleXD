@@ -269,10 +269,10 @@ BOOL FLEXConstructorsShouldRun(void) {
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"]) {
         supportedOrientationsMask |= UIInterfaceOrientationMaskPortrait;
     }
-    if ([supportedOrientations containsObject:@"UIInterfaceOrientationMaskLandscapeRight"]) {
+    if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"]) {
         supportedOrientationsMask |= UIInterfaceOrientationMaskLandscapeRight;
     }
-    if ([supportedOrientations containsObject:@"UIInterfaceOrientationMaskPortraitUpsideDown"]) {
+    if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortraitUpsideDown"]) {
         supportedOrientationsMask |= UIInterfaceOrientationMaskPortraitUpsideDown;
     }
     if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeLeft"]) {
