@@ -141,19 +141,23 @@
 + (id)_selectedIndicatorImage { return nil; }
 
 - (void)updateColors {
+
     if (self.highlighted) {
         self.alpha = 0.4;
         self.backgroundColor = self.class.defaultBackgroundColor;
-    } else if (self.selected) {
+    }
+
+    if (self.selected) {
         self.alpha = 1.0;
         self.backgroundColor = self.class.selectedBackgroundColor;
         self.layer.cornerRadius = 12.0f;
         self.layer.masksToBounds = YES;
-    } else {
-        self.alpha = 1.0;
-        self.backgroundColor = self.class.defaultBackgroundColor;
-        self.layer.masksToBounds = NO;
     }
+
+    if (self.selected || self.highlighted) { return; }
+    self.alpha = 1.0;
+    self.backgroundColor = self.class.defaultBackgroundColor;
+    self.layer.masksToBounds = NO;
 }
 
 

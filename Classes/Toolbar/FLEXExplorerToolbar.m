@@ -129,7 +129,7 @@
         // Selected view box //
 
         self.selectedViewDescriptionContainer = [UIView new];
-        self.selectedViewDescriptionContainer.backgroundColor = UIColor.systemFillColor;
+        self.selectedViewDescriptionContainer.backgroundColor = FLEXColor.tertiaryFillColor;
         self.selectedViewDescriptionContainer.hidden = YES;
         [self addSubview:self.selectedViewDescriptionContainer];
 
@@ -230,7 +230,7 @@
     BOOL showingDescription = !self.selectedViewDescriptionContainer.hidden;
     CGFloat totalHeight = showingDescription
         ? kToolbarItemHeight + [[self class] descriptionContainerHeight] + 3.0
-        : kToolbarItemHeight;
+        : kToolbarItemHeight - 1.0;
     self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), totalHeight);
 
     // Close button — visual circle is centered within the 44x44 hit area
@@ -346,7 +346,7 @@
 }
 
 + (CGFloat)toolbarItemHeight {
-    return 61.0;
+    return 60.0;
 }
 
 + (CGFloat)maximumWidth {
