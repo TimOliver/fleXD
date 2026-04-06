@@ -60,7 +60,6 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 @property (nonatomic) NSNumber *recursiveSize;
 @property (nonatomic) NSNumber *searchPathsSize;
 @property (nonatomic) NSOperationQueue *operationQueue;
-@property (nonatomic) UIDocumentInteractionController *documentController;
 @property (nonatomic) FLEXFileBrowserSortAttribute sortAttribute;
 
 @end
@@ -397,11 +396,9 @@ contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
 }
 
 - (void)openFileController:(NSString *)fullPath {
-    UIDocumentInteractionController *controller = [UIDocumentInteractionController new];
-    controller.URL = [NSURL fileURLWithPath:fullPath];
-
-    [controller presentOptionsMenuFromRect:self.view.bounds inView:self.view animated:YES];
-    self.documentController = controller;
+    NSURL *fileURL = [NSURL fileURLWithPath:fullPath];
+    UIViewController *shareSheet = [FLEXActivityViewController sharing:@[fileURL] source:self.view];
+    [self presentViewController:shareSheet animated:YES completion:nil];
 }
 
 - (void)fileBrowserRename:(UITableViewCell *)sender {

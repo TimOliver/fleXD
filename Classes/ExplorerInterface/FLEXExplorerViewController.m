@@ -963,14 +963,17 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 - (BOOL)shouldReceiveTouchAtWindowPoint:(CGPoint)pointInWindowCoordinates {
     CGPoint pointInLocalCoordinates = [self.view convertPoint:pointInWindowCoordinates fromView:nil];
 
-    // If we have a modal presented, is it in the modal?
-    if (self.presentedViewController) {
-        UIView *presentedView = self.presentedViewController.view;
-        CGPoint pipvc = [presentedView convertPoint:pointInLocalCoordinates fromView:self.view];
-        UIView *hit = [presentedView hitTest:pipvc withEvent:nil];
-        if (hit != nil) {
+    // If a modal is active anywhere in the presentation chain, check each level.
+    // We must hit-test the presentation container (not just the VC's own view) because
+    // it also holds the dimming/backdrop view — tapping that is how sheets get dismissed.
+    UIViewController *presented = self.presentedViewController;
+    while (presented) {
+        UIView *container = presented.presentationController.containerView ?: presented.view;
+        CGPoint pointInContainer = [container convertPoint:pointInWindowCoordinates fromView:nil];
+        if ([container hitTest:pointInContainer withEvent:nil]) {
             return YES;
         }
+        presented = presented.presentedViewController;
     }
 
     // Always if we're in selection mode
