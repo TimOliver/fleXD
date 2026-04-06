@@ -112,6 +112,12 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
         self.automaticallyShowsSearchBarCancelButton = YES;
 
+        // On iOS 26, opt out of Liquid Glass on the search text field so the
+        // background renders reliably during navigation transitions
+        if (@available(iOS 26.0, *)) {
+            self.searchController.searchBar.searchTextField.backgroundColor = [UIColor secondarySystemGroupedBackgroundColor];
+        }
+
         [self addSearchController:self.searchController];
     } else {
         // Search already shown and just set to NO, so remove it
