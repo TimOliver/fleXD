@@ -55,12 +55,12 @@
         return nil;
     }
 
-    NSURL *symlinkURL = [self temporarySymlinkForPath:path extension:ext];
-    if (!symlinkURL || ![QLPreviewController canPreviewItem:symlinkURL]) {
+    NSURL *copyURL = [self temporaryCopyForPath:path extension:ext];
+    if (!copyURL || ![QLPreviewController canPreviewItem:copyURL]) {
         return nil;
     }
 
-    return [self controllerWithFileURL:symlinkURL];
+    return [self controllerWithFileURL:copyURL];
 }
 
 + (instancetype)controllerWithFileURL:(NSURL *)fileURL {
@@ -114,18 +114,19 @@
     return nil;
 }
 
-/// Creates a symlink in the temp directory pointing at `path`, with `extension` appended.
-/// Returns the symlink URL, or nil on failure.
-+ (nullable NSURL *)temporarySymlinkForPath:(NSString *)path extension:(NSString *)extension {
+/// Copies the file at `path` into the temp directory with `extension` appended,
+/// so QuickLook can access it directly without following symlinks.
+/// Returns the copy's URL, or nil on failure.
++ (nullable NSURL *)temporaryCopyForPath:(NSString *)path extension:(NSString *)extension {
     NSString *filename = [path.lastPathComponent stringByAppendingPathExtension:extension];
-    NSString *symlinkPath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
+    NSString *copyPath = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
 
     NSFileManager *fm = NSFileManager.defaultManager;
-    [fm removeItemAtPath:symlinkPath error:nil]; // remove stale symlink if present
+    [fm removeItemAtPath:copyPath error:nil]; // remove stale copy if present
 
     NSError *error = nil;
-    [fm createSymbolicLinkAtPath:symlinkPath withDestinationPath:path error:&error];
-    return error ? nil : [NSURL fileURLWithPath:symlinkPath];
+    [fm copyItemAtPath:path toPath:copyPath error:&error];
+    return error ? nil : [NSURL fileURLWithPath:copyPath];
 }
 
 
