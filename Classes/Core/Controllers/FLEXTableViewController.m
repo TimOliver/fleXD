@@ -261,6 +261,11 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
+    // Allow scrolling to collapse the search bar, only if we don't want it pinned
+    if (self.showSearchBarInitially && !self.pinSearchBar && !self.didInitiallyRevealSearchBar) {
+        self.navigationItem.hidesSearchBarWhenScrolling = YES;
+    }
+
     if (self.activatesSearchBarAutomatically) {
         // Keyboard has appeared, now we call this as we soon present our search bar
         [self removeDummyTextField];
