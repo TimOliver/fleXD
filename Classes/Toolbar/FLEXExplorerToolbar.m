@@ -161,13 +161,31 @@
     return self;
 }
 
+/// The expanded tap target for the selected-view description strip.
+/// 38pt tall, starting just below the button text labels and extending
+/// beyond the bottom edge of the toolbar background.
+- (CGRect)descriptionContainerHitRect {
+    // Button text labels bottom out at kToolbarItemHeight - 5 (visual inset) - 3 (padding) = 52pt.
+    // Use 8pt back from kToolbarItemHeight as a clean approximation.
+    const CGFloat kDescriptionHitHeight = 38.0;
+    const CGFloat kDescriptionHitTop = [[self class] toolbarItemHeight] - 8.0;
+    return CGRectMake(0, kDescriptionHitTop, CGRectGetWidth(self.bounds), kDescriptionHitHeight);
+}
+
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     if ([super pointInside:point withEvent:event]) {
         return YES;
     }
     // Allow touches on the close button even though it overhangs our bounds
     CGPoint closePoint = [self convertPoint:point toView:self.closeButton];
-    return [self.closeButton pointInside:closePoint withEvent:event];
+    if ([self.closeButton pointInside:closePoint withEvent:event]) {
+        return YES;
+    }
+    // Allow touches in the expanded description strip when it's visible
+    if (!self.selectedViewDescriptionContainer.hidden) {
+        return CGRectContainsPoint([self descriptionContainerHitRect], point);
+    }
+    return NO;
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
@@ -183,6 +201,12 @@
     CGPoint closePoint = [self.closeButton convertPoint:point fromView:self];
     if ([self.closeButton pointInside:closePoint withEvent:event]) {
         return self.closeButton;
+    }
+    // Route taps in the expanded description strip to the container,
+    // so its attached gesture recognizers fire regardless of where in the strip the user taps.
+    if (!self.selectedViewDescriptionContainer.hidden &&
+        CGRectContainsPoint([self descriptionContainerHitRect], point)) {
+        return self.selectedViewDescriptionContainer;
     }
     return [super hitTest:point withEvent:event];
 }
