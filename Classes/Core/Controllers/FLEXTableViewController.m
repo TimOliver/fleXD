@@ -209,6 +209,8 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     self.tableView.delegate = self;
 
     self.tableView.estimatedRowHeight = 10;
+    self.tableView.estimatedSectionHeaderHeight = 0;
+    self.tableView.estimatedSectionFooterHeight = 0;
 
     _shareToolbarItem = FLEXBarButtonItemSystem(Action, self, @selector(shareButtonPressed:));
     _bookmarksToolbarItem = [UIBarButtonItem
