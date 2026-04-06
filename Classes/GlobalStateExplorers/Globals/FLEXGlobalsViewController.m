@@ -279,7 +279,9 @@
 
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceInstant;
-    self.navigationItem.backBarButtonItem = [UIBarButtonItem flex_backItemWithTitle:@"Back"];
+    if (@available(iOS 26.0, *)) {} else {
+        self.navigationItem.backBarButtonItem = [UIBarButtonItem flex_backItemWithTitle:@"Back"];
+    }
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 
     if (@available(iOS 26.0, *)) {
