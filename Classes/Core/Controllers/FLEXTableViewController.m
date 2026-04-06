@@ -112,12 +112,6 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
         self.automaticallyShowsSearchBarCancelButton = YES;
 
-        // On iOS 26, opt out of Liquid Glass on the search text field so the
-        // background renders reliably during navigation transitions
-        if (@available(iOS 26.0, *)) {
-            self.searchController.searchBar.searchTextField.backgroundColor = [UIColor secondarySystemGroupedBackgroundColor];
-        }
-
         [self addSearchController:self.searchController];
     } else {
         // Search already shown and just set to NO, so remove it
@@ -266,22 +260,6 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-
-    // Allow scrolling to collapse the search bar, only if we don't want it pinned
-    if (self.showSearchBarInitially && !self.pinSearchBar && !self.didInitiallyRevealSearchBar) {
-        if (@available(iOS 14.0, *)) {
-            self.navigationItem.hidesSearchBarWhenScrolling = YES;
-        } else {
-            // Workaround for iOS 13.0–13.2 bug where quickly toggling
-            // navigationItem.hidesSearchBarWhenScrolling would make the search bar
-            // transparent and float over the screen while scrolling
-            [UIView animateWithDuration:0.2 animations:^{
-                self.navigationItem.hidesSearchBarWhenScrolling = YES;
-                [self.navigationController.view setNeedsLayout];
-                [self.navigationController.view layoutIfNeeded];
-            }];
-        }
-    }
 
     if (self.activatesSearchBarAutomatically) {
         // Keyboard has appeared, now we call this as we soon present our search bar
