@@ -208,7 +208,7 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
 
-    self.tableView.estimatedRowHeight = 10;
+    self.tableView.estimatedRowHeight = 44;
     self.tableView.estimatedSectionHeaderHeight = 0;
     self.tableView.estimatedSectionFooterHeight = 0;
 
@@ -263,14 +263,18 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
     // Allow scrolling to collapse the search bar, only if we don't want it pinned
     if (self.showSearchBarInitially && !self.pinSearchBar && !self.didInitiallyRevealSearchBar) {
-        // This delay works around a bug in iOS 13.0–13.2 where quickly toggling
-        // navigationItem.hidesSearchBarWhenScrolling would make the search bar
-        // transparent and float over the screen while scrolling
-        [UIView animateWithDuration:0.2 animations:^{
+        if (@available(iOS 14.0, *)) {
             self.navigationItem.hidesSearchBarWhenScrolling = YES;
-            [self.navigationController.view setNeedsLayout];
-            [self.navigationController.view layoutIfNeeded];
-        }];
+        } else {
+            // Workaround for iOS 13.0–13.2 bug where quickly toggling
+            // navigationItem.hidesSearchBarWhenScrolling would make the search bar
+            // transparent and float over the screen while scrolling
+            [UIView animateWithDuration:0.2 animations:^{
+                self.navigationItem.hidesSearchBarWhenScrolling = YES;
+                [self.navigationController.view setNeedsLayout];
+                [self.navigationController.view layoutIfNeeded];
+            }];
+        }
     }
 
     if (self.activatesSearchBarAutomatically) {

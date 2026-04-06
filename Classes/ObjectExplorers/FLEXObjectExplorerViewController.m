@@ -126,6 +126,11 @@
     self.searchBarDebounceInterval = kFLEXDebounceInstant;
     self.showsCarousel = YES;
 
+    // hidesSearchBarWhenScrolling snap behavior is broken on iOS 26
+    if (@available(iOS 26.0, *)) {
+        self.pinSearchBar = YES;
+    }
+
     // Carousel scope bar
     [self.explorer reloadClassHierarchy];
     self.carousel.items = [self.explorer.classHierarchyClasses flex_mapped:^id(Class cls, NSUInteger idx) {

@@ -81,6 +81,10 @@ FLEXTableViewCellReuseIdentifier const kFLEXCodeFontCell = @"kFLEXCodeFontCell";
         // that a drag can still cancel an in-flight control touch and scroll normally.
         self.delaysContentTouches = NO;
 
+        if (@available(iOS 26.0, *)) {
+            self.sectionIndexColor = UIColor.labelColor;
+        }
+
         [self registerCells:@{
             kFLEXDefaultCell : [FLEXTableViewCell class],
             kFLEXDetailCell : [FLEXSubtitleTableViewCell class],
