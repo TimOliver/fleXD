@@ -90,10 +90,18 @@
     [super viewWillAppear:animated];
 
     UISheetPresentationController *presenter = self.sheetPresentationController;
-    presenter.detents = @[
-        UISheetPresentationControllerDetent.mediumDetent,
-        UISheetPresentationControllerDetent.largeDetent,
-    ];
+    UISheetPresentationControllerDetent *mediumDetent = UISheetPresentationControllerDetent.mediumDetent;
+    UISheetPresentationControllerDetent *largeDetent = UISheetPresentationControllerDetent.largeDetent;
+    if (@available(iOS 26.1, *)) {
+        UIColorEffect *groupedBackground = [UIColorEffect
+            effectWithColor:UIColor.systemGroupedBackgroundColor
+        ];
+        presenter.backgroundEffect = groupedBackground;
+        mediumDetent.backgroundEffect = groupedBackground;
+        largeDetent.backgroundEffect = groupedBackground;
+    }
+
+    presenter.detents = @[mediumDetent, largeDetent];
     presenter.prefersScrollingExpandsWhenScrolledToEdge = NO;
     presenter.selectedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
     presenter.largestUndimmedDetentIdentifier = UISheetPresentationControllerDetentIdentifierLarge;
