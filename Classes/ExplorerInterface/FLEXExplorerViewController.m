@@ -936,9 +936,9 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 #pragma mark - Safe Area Handling
 
 - (CGRect)viewSafeArea {
-    UIEdgeInsets insets = self.view.safeAreaInsets;
-    insets.bottom = 0.0f;
-    return UIEdgeInsetsInsetRect(self.view.bounds, insets);
+    const CGFloat topInset = self.view.safeAreaInsets.top;
+    const UIEdgeInsets safeAreaInsets = UIEdgeInsetsMake(topInset, 0, 0, 0);
+    return UIEdgeInsetsInsetRect(self.view.bounds, safeAreaInsets);
 }
 
 - (void)viewSafeAreaInsetsDidChange {
