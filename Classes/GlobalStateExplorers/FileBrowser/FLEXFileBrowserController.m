@@ -36,7 +36,7 @@
 #import "FLEXUtility.h"
 #import "FLEXWebViewController.h"
 #import "FLEXActivityViewController.h"
-#import "FLEXImagePreviewViewController.h"
+#import "FLEXQuickLookController.h"
 #import "FLEXTableListViewController.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXObjectExplorerViewController.h"
@@ -263,9 +263,6 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 
     BOOL isDirectory = NO;
     BOOL stillExists = [NSFileManager.defaultManager fileExistsAtPath:fullPath isDirectory:&isDirectory];
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-    UIImage *image = cell.imageView.image;
-
     if (!stillExists) {
         [FLEXAlert showAlert:@"File Not Found" message:@"The file at the specified path no longer exists." from:self];
         [self reloadDisplayedPaths];
@@ -275,8 +272,6 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
     UIViewController *drillInViewController = nil;
     if (isDirectory) {
         drillInViewController = [[[self class] alloc] initWithPath:fullPath];
-    } else if (image) {
-        drillInViewController = [FLEXImagePreviewViewController forImage:image];
     } else {
         NSData *fileData = [NSData dataWithContentsOfFile:fullPath];
         if (!fileData.length) {
@@ -335,20 +330,27 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 
         if (prettyString.length) {
             drillInViewController = [[FLEXWebViewController alloc] initWithText:prettyString];
-        } else if ([FLEXWebViewController supportsPathExtension:pathExtension]) {
-            drillInViewController = [[FLEXWebViewController alloc] initWithURL:[NSURL fileURLWithPath:fullPath]];
         } else if ([FLEXTableListViewController supportsExtension:pathExtension]) {
             drillInViewController = [[FLEXTableListViewController alloc] initWithPath:fullPath];
-        }
-        else if (!drillInViewController) {
-            NSString *fileString = [NSString stringWithUTF8String:fileData.bytes];
-            if (fileString.length) {
-                drillInViewController = [[FLEXWebViewController alloc] initWithText:fileString];
+        } else if (!drillInViewController) {
+            // QuickLook handles images, video, audio, PDFs, and many other document types
+            drillInViewController = [FLEXQuickLookController forFileAtPath:fullPath];
+
+            if (!drillInViewController) {
+                // Plain text fallback for files QuickLook cannot handle
+                NSString *fileString = [NSString stringWithUTF8String:fileData.bytes];
+                if (fileString.length) {
+                    drillInViewController = [[FLEXWebViewController alloc] initWithText:fileString];
+                }
             }
         }
     }
 
-    if (drillInViewController) {
+    if ([drillInViewController isKindOfClass:FLEXQuickLookController.class]) {
+        // Present QL full-screen so it covers the entire display, including the FLEX toolbar
+        drillInViewController.modalPresentationStyle = UIModalPresentationFullScreen;
+        [self.navigationController presentViewController:drillInViewController animated:YES completion:nil];
+    } else if (drillInViewController) {
         drillInViewController.title = subpath.lastPathComponent;
         [self.navigationController pushViewController:drillInViewController animated:YES];
     } else {

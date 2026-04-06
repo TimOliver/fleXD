@@ -38,6 +38,7 @@ let package = Package(
             cSettings: .headerSearchPaths + .warningFlags,
             linkerSettings: [
                 .linkedFramework("CoreGraphics"),
+                .linkedFramework("QuickLook"),
                 .linkedLibrary("sqlite3"),
                 .linkedLibrary("z"),
             ]
