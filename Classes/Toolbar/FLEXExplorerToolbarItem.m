@@ -46,6 +46,10 @@
 @property (nonatomic, readonly, class) UIColor *highlightedBackgroundColor;
 @property (nonatomic, readonly, class) UIColor *selectedBackgroundColor;
 
+/// Subview used to draw the inset selection/highlight background,
+/// keeping the button frame edge-to-edge for hit testing.
+@property (nonatomic) UIView *selectionView;
+
 @end
 
 @implementation FLEXExplorerToolbarItem
@@ -64,13 +68,21 @@
     toolbarItem.title = title;
     toolbarItem.image = image;
     toolbarItem.tintColor = FLEXColor.iconColor;
-    toolbarItem.backgroundColor = self.defaultBackgroundColor;
+    toolbarItem.backgroundColor = UIColor.clearColor;
     toolbarItem.titleLabel.font = [UIFont boldSystemFontOfSize:11.0];
     [toolbarItem setTitle:title forState:UIControlStateNormal];
     [toolbarItem setImage:image forState:UIControlStateNormal];
     [toolbarItem setTitleColor:FLEXColor.primaryTextColor forState:UIControlStateNormal];
     [toolbarItem setTitleColor:FLEXColor.deemphasizedTextColor forState:UIControlStateDisabled];
-    toolbarItem.layer.cornerCurve = kCACornerCurveContinuous;
+
+    // Selection/highlight background rendered in a subview so its frame can be
+    // inset independently of the button's (edge-to-edge) tap target frame.
+    UIView *selectionView = [UIView new];
+    selectionView.layer.cornerCurve = kCACornerCurveContinuous;
+    selectionView.userInteractionEnabled = NO;
+    [toolbarItem insertSubview:selectionView atIndex:0];
+    toolbarItem.selectionView = selectionView;
+
     return toolbarItem;
 }
 
@@ -141,23 +153,25 @@
 + (id)_selectedIndicatorImage { return nil; }
 
 - (void)updateColors {
-
     if (self.highlighted) {
         self.alpha = 0.4;
-        self.backgroundColor = self.class.defaultBackgroundColor;
+        self.selectionView.backgroundColor = self.class.defaultBackgroundColor;
+        self.selectionView.layer.cornerRadius = 0;
+        self.selectionView.layer.masksToBounds = NO;
     }
 
     if (self.selected) {
         self.alpha = 1.0;
-        self.backgroundColor = self.class.selectedBackgroundColor;
-        self.layer.cornerRadius = 12.0f;
-        self.layer.masksToBounds = YES;
+        self.selectionView.backgroundColor = self.class.selectedBackgroundColor;
+        self.selectionView.layer.cornerRadius = 12.0f;
+        self.selectionView.layer.masksToBounds = YES;
     }
 
     if (self.selected || self.highlighted) { return; }
     self.alpha = 1.0;
-    self.backgroundColor = self.class.defaultBackgroundColor;
-    self.layer.masksToBounds = NO;
+    self.selectionView.backgroundColor = self.class.defaultBackgroundColor;
+    self.selectionView.layer.cornerRadius = 0;
+    self.selectionView.layer.masksToBounds = NO;
 }
 
 
@@ -166,7 +180,13 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
 
-    CGRect contentRect = self.bounds;
+    // The button frame is edge-to-edge for hit testing; use an inset rect for
+    // the visual content (icon, title) and the selection background layer.
+    const CGFloat kVisualInset = 5.0;
+    CGRect contentRect = CGRectInset(self.bounds, kVisualInset, kVisualInset);
+
+    // Selection layer fills the inset visual area
+    self.selectionView.frame = contentRect;
 
     // Title: fixed distance from the bottom, so all labels align across buttons
     const CGFloat kBottomPadding = 3.0;
@@ -178,13 +198,13 @@
                                                context:nil].size;
     titleSize = CGSizeMake(ceil(titleSize.width), ceil(titleSize.height));
     CGFloat titleY = CGRectGetMaxY(contentRect) - titleSize.height - kBottomPadding;
-    CGFloat titleX = FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
+    CGFloat titleX = CGRectGetMinX(contentRect) + FLEXFloor((contentRect.size.width - titleSize.width) / 2.0);
     self.titleLabel.frame = CGRectMake(titleX, titleY, titleSize.width, titleSize.height);
 
     // Image: directly above the title
     CGSize imageSize = self.image.size;
     CGFloat imageY = titleY - imageSize.height - kIconTextGap;
-    CGFloat imageX = FLEXFloor((contentRect.size.width - imageSize.width) / 2.0);
+    CGFloat imageX = CGRectGetMinX(contentRect) + FLEXFloor((contentRect.size.width - imageSize.width) / 2.0);
     self.imageView.frame = CGRectMake(imageX, imageY, imageSize.width, imageSize.height);
 }
 

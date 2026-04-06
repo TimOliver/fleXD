@@ -205,13 +205,12 @@
     CGFloat contentWidth = itemWidth * self.toolbarItems.count + kSeparatorWidth;
     CGFloat leftInset = FLEXFloor((CGRectGetWidth(self.bounds) - contentWidth) / 2.0);
 
-    // Left items — inset the visual button within its slot
-    const CGFloat kButtonInset = 5.0;
+    // Left items — fill the full slot for edge-to-edge tap targets
     CGFloat originX = leftInset;
     for (FLEXExplorerToolbarItem *toolbarItem in leftItems) {
         toolbarItem.currentItem.frame = CGRectMake(
-            originX + kButtonInset, kButtonInset,
-            itemWidth - kButtonInset * 2, kToolbarItemHeight - kButtonInset * 2 - 1
+            originX, 0,
+            itemWidth, kToolbarItemHeight
         );
         originX += itemWidth;
     }
@@ -219,10 +218,10 @@
     // Separator
     CGFloat separatorX = originX;
 
-    // Menu button — same inset
+    // Menu button — fill its slot too
     menuItem.currentItem.frame = CGRectMake(
-        separatorX + kSeparatorWidth + kButtonInset, kButtonInset,
-        itemWidth - kButtonInset * 2, kToolbarItemHeight - kButtonInset * 2 - 1
+        separatorX + kSeparatorWidth, 0,
+        itemWidth, kToolbarItemHeight
     );
 
     // Separator between left items and menu button
