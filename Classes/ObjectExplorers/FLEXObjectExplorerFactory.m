@@ -231,14 +231,8 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
             return [FLEXObjectExplorerFactory
                 explorerViewControllerForObject:FLEXUtility.appKeyWindow
             ];
-        case FLEXGlobalsRowRootViewController: {
-            id<UIApplicationDelegate> delegate = UIApplication.sharedApplication.delegate;
-            if ([delegate respondsToSelector:@selector(window)]) {
-                return [self explorerViewControllerForObject:delegate.window.rootViewController];
-            }
-
-            return nil;
-        }
+        case FLEXGlobalsRowRootViewController:
+            return [self explorerViewControllerForObject:FLEXUtility.appKeyWindow.rootViewController];
 
         case FLEXGlobalsRowNetworkHistory:
         case FLEXGlobalsRowSystemLog:
@@ -260,18 +254,11 @@ static NSMutableDictionary<id<NSCopying>, Class> *classesToRegisteredSections = 
 + (FLEXGlobalsEntryRowAction)globalsEntryRowAction:(FLEXGlobalsRow)row {
     switch (row) {
         case FLEXGlobalsRowRootViewController: {
-            // Check if the app delegate responds to -window. If not, present an alert
             return ^(UITableViewController *host) {
-                id<UIApplicationDelegate> delegate = UIApplication.sharedApplication.delegate;
-                if ([delegate respondsToSelector:@selector(window)]) {
-                    UIViewController *explorer = [self explorerViewControllerForObject:
-                        delegate.window.rootViewController
-                    ];
-                    [host.navigationController pushViewController:explorer animated:YES];
-                } else {
-                    NSString * const msg = @"The app delegate doesn't respond to -window";
-                    [FLEXAlert showAlert:@":(" message:msg from:host];
-                }
+                UIViewController *explorer = [self explorerViewControllerForObject:
+                    FLEXUtility.appKeyWindow.rootViewController
+                ];
+                [host.navigationController pushViewController:explorer animated:YES];
             };
         }
         default: return nil;
