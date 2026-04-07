@@ -58,6 +58,11 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 @property (nonatomic) UIBarButtonItem *middleToolbarItem;
 @property (nonatomic) UIBarButtonItem *middleLeftToolbarItem;
 @property (nonatomic) UIBarButtonItem *leftmostToolbarItem;
+
+/// Wraps the carousel (and on iOS 26, the search bar) as the table header view.
+@property (nonatomic) UIView *tableHeaderContainer;
+/// Tracks the last laid-out container width to avoid redundant layout passes.
+@property (nonatomic) CGFloat tableHeaderContainerLastWidth;
 @end
 
 @implementation FLEXTableViewController
@@ -242,6 +247,19 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     }
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
+    // Re-layout the header container once the table view has its real bounds.
+    // The initial layout in addCarousel: may have used a zero or screen-width estimate.
+    if (self.tableHeaderContainer) {
+        CGFloat width = self.tableView.bounds.size.width;
+        if (width > 0 && width != self.tableHeaderContainerLastWidth) {
+            [self layoutTableHeaderIfNeeded];
+        }
+    }
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
@@ -386,31 +404,100 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 }
 
 - (void)layoutTableHeaderIfNeeded {
-    if (self.showsCarousel) {
-        self.carousel.frame = FLEXRectSetHeight(
-            self.carousel.frame, self.carousel.intrinsicContentSize.height
-        );
+    if (!self.tableHeaderContainer || !self.showsCarousel) {
+        self.tableView.tableHeaderView = self.tableView.tableHeaderView;
+        return;
     }
+
+    CGFloat width = self.tableView.bounds.size.width;
+    if (width == 0) {
+        width = UIScreen.mainScreen.bounds.size.width;
+    }
+    self.tableHeaderContainerLastWidth = width;
+
+    CGFloat yOffset = 0;
+
+    if (@available(iOS 26.0, *)) {
+        UISearchBar *searchBar = self.searchController.searchBar;
+        if (searchBar.superview == self.tableHeaderContainer) {
+            CGFloat inset = 20.0;
+            CGFloat barHeight = [searchBar sizeThatFits:CGSizeMake(width - inset * 2, CGFLOAT_MAX)].height;
+            searchBar.frame = CGRectMake(inset, 0, width - inset * 2, barHeight);
+            yOffset = barHeight;
+        }
+    }
+
+    CGFloat carouselHeight = self.carousel.intrinsicContentSize.height;
+    self.carousel.frame = CGRectMake(0, yOffset, width, carouselHeight);
+
+    CGRect containerFrame = self.tableHeaderContainer.frame;
+    containerFrame.size.height = yOffset + carouselHeight;
+    self.tableHeaderContainer.frame = containerFrame;
 
     self.tableView.tableHeaderView = self.tableView.tableHeaderView;
 }
 
 - (void)addCarousel:(FLEXScopeCarousel *)carousel {
-    self.tableView.tableHeaderView = carousel;
+    UIView *container = [UIView new];
+    container.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    self.tableHeaderContainer = container;
+
+    if (@available(iOS 26.0, *)) {
+        // If the search controller was set up before the carousel, add its bar now
+        if (self.searchController) {
+            UISearchBar *searchBar = self.searchController.searchBar;
+            [self configureEmbeddedSearchBar:searchBar];
+            [container addSubview:searchBar];
+        }
+    }
+
+    [container addSubview:carousel];
+    self.tableView.tableHeaderView = container;
     [self layoutTableHeaderIfNeeded];
 }
 
 - (void)removeCarousel:(FLEXScopeCarousel *)carousel {
-    [carousel removeFromSuperview];
+    [self.tableHeaderContainer removeFromSuperview];
+    self.tableHeaderContainer = nil;
+    self.tableHeaderContainerLastWidth = 0;
     self.tableView.tableHeaderView = nil;
 }
 
 - (void)addSearchController:(UISearchController *)controller {
-    self.navigationItem.searchController = controller;
+    if (@available(iOS 26.0, *)) {
+        // On iOS 26, embed the search bar directly in the table header container
+        // instead of the navigation item. When the search bar is in the nav item,
+        // UIKit switches between Liquid Glass (locked) and a plain style (scrollable)
+        // during the hidesSearchBarWhenScrolling transition, causing a visible flash.
+        // Embedding it in content avoids this entirely.
+        //
+        // If the container isn't set up yet (carousel added after search bar),
+        // addCarousel: will pick it up when it runs.
+        [self configureEmbeddedSearchBar:controller.searchBar];
+        if (self.tableHeaderContainer) {
+            [self.tableHeaderContainer addSubview:controller.searchBar];
+            [self layoutTableHeaderIfNeeded];
+        }
+    } else {
+        self.navigationItem.searchController = controller;
+    }
 }
 
 - (void)removeSearchController:(UISearchController *)controller {
-    self.navigationItem.searchController = nil;
+    if (@available(iOS 26.0, *)) {
+        [controller.searchBar removeFromSuperview];
+        [self layoutTableHeaderIfNeeded];
+    } else {
+        self.navigationItem.searchController = nil;
+    }
+}
+
+- (void)configureEmbeddedSearchBar:(UISearchBar *)searchBar API_AVAILABLE(ios(26.0)) {
+    // Remove the search bar's own chrome so it blends with the table background
+    searchBar.backgroundImage = [[UIImage alloc] init];
+    searchBar.backgroundColor = UIColor.systemGroupedBackgroundColor;
+    // Give the text field a solid fill matching the table's cell background
+    searchBar.searchTextField.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
 }
 
 - (void)showBookmarks {
