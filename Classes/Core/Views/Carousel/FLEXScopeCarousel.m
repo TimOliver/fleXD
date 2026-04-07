@@ -55,11 +55,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = UIColor.clearColor;
-        self.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        self.translatesAutoresizingMaskIntoConstraints = YES;
         _dynamicTypeHandlers = [NSMutableArray new];
-
-        CGSize itemSize = UICollectionViewFlowLayoutAutomaticSize;
 
         // Collection view layout
         UICollectionViewFlowLayout *layout = ({
@@ -68,8 +64,6 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
             layout.sectionInset = UIEdgeInsetsMake(0, 20, 0, 20);
             layout.minimumLineSpacing = kCarouselItemSpacing;
             layout.minimumInteritemSpacing = 0;
-            layout.itemSize = itemSize;
-            layout.estimatedItemSize = itemSize;
             layout;
         });
 
@@ -83,6 +77,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
             cv.backgroundColor = UIColor.clearColor;
             cv.delegate = self;
             cv.dataSource = self;
+            cv.alwaysBounceHorizontal = YES;
             [cv registerClass:[FLEXCarouselCell class] forCellWithReuseIdentifier:kCarouselCellReuseIdentifier];
 
             [self addSubview:cv];
@@ -120,7 +115,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    self.collectionView.frame = self.bounds;
+    self.collectionView.frame = (CGRect){CGPointZero, self.frame.size};
 }
 
 - (CGSize)intrinsicContentSize {
