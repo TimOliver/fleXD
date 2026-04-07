@@ -316,8 +316,8 @@
 
 - (BOOL)gestureRecognizerShouldBegin:(UISwipeGestureRecognizer *)gesture {
     // Don't allow swiping from the carousel
-    CGPoint location = [gesture locationInView:self.tableView];
-    if ([self.carousel hitTest:location withEvent:nil]) {
+    CGPoint location = [gesture locationInView:self.carousel];
+    if ([self.carousel pointInside:location withEvent:nil]) {
         return NO;
     }
 

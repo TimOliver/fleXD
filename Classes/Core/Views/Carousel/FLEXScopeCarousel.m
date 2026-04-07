@@ -160,10 +160,6 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 #pragma mark - UICollectionView
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-//    if (@available(iOS 10.0, *)) {
-//        return UICollectionViewFlowLayoutAutomaticSize;
-//    }
-
     self.sizingCell.title = self.items[indexPath.item];
     self.sizingCell.showSeparator = indexPath.item < (NSInteger)self.items.count - 1;
     return [self.sizingCell sizeThatFits:UILayoutFittingCompressedSize];
