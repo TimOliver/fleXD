@@ -410,9 +410,6 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     }
 
     CGFloat width = self.tableView.bounds.size.width;
-    if (width == 0) {
-        width = UIScreen.mainScreen.bounds.size.width;
-    }
     self.tableHeaderContainerLastWidth = width;
 
     CGFloat yOffset = 0;
@@ -420,9 +417,8 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     if (@available(iOS 26.0, *)) {
         UISearchBar *searchBar = self.searchController.searchBar;
         if (searchBar.superview == self.tableHeaderContainer) {
-            CGFloat inset = 12.0;
-            CGFloat barHeight = [searchBar sizeThatFits:CGSizeMake(width - inset * 2, CGFLOAT_MAX)].height;
-            searchBar.frame = CGRectMake(inset, 0, width - inset * 2, barHeight);
+            CGFloat barHeight = [searchBar sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height;
+            searchBar.frame = CGRectMake(0, 0, width, barHeight);
             yOffset = barHeight + 5.0;
         }
     }
@@ -439,7 +435,6 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
 - (void)addCarousel:(FLEXScopeCarousel *)carousel {
     UIView *container = [UIView new];
-    container.backgroundColor = UIColor.systemGroupedBackgroundColor;
     self.tableHeaderContainer = container;
 
     if (@available(iOS 26.0, *)) {
@@ -465,22 +460,24 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
 - (void)addSearchController:(UISearchController *)controller {
     if (@available(iOS 26.0, *)) {
-        // On iOS 26, embed the search bar directly in the table header container
-        // instead of the navigation item. When the search bar is in the nav item,
-        // UIKit switches between Liquid Glass (locked) and a plain style (scrollable)
-        // during the hidesSearchBarWhenScrolling transition, causing a visible flash.
-        // Embedding it in content avoids this entirely.
-        //
-        // If the container isn't set up yet (carousel added after search bar),
-        // addCarousel: will pick it up when it runs.
-        [self configureEmbeddedSearchBar:controller.searchBar];
-        if (self.tableHeaderContainer) {
-            [self.tableHeaderContainer addSubview:controller.searchBar];
-            [self layoutTableHeaderIfNeeded];
+        if (self.pinSearchBar || self.showSearchBarInitially) {
+            // On iOS 26, embed the search bar directly in the table header container
+            // instead of the navigation item. When the search bar is in the nav item,
+            // UIKit switches between Liquid Glass (locked) and a plain style (scrollable)
+            // during the hidesSearchBarWhenScrolling transition, causing a visible flash.
+            // Embedding it in content avoids this entirely.
+            //
+            // If the container isn't set up yet (carousel added after search bar),
+            // addCarousel: will pick it up when it runs.
+            [self configureEmbeddedSearchBar:controller.searchBar];
+            if (self.tableHeaderContainer) {
+                [self.tableHeaderContainer addSubview:controller.searchBar];
+                [self layoutTableHeaderIfNeeded];
+            }
+            return;
         }
-    } else {
-        self.navigationItem.searchController = controller;
     }
+    self.navigationItem.searchController = controller;
 }
 
 - (void)removeSearchController:(UISearchController *)controller {
@@ -495,9 +492,10 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 - (void)configureEmbeddedSearchBar:(UISearchBar *)searchBar API_AVAILABLE(ios(26.0)) {
     // Remove the search bar's own chrome so it blends with the table background
     searchBar.backgroundImage = [[UIImage alloc] init];
-    searchBar.backgroundColor = UIColor.systemGroupedBackgroundColor;
     // Give the text field a solid fill matching the table's cell background
     searchBar.searchTextField.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
+    // Inset the text field 20pt from each edge to match inset-grouped table content
+    searchBar.layoutMargins = UIEdgeInsetsMake(0, 20, 0, 20);
 }
 
 - (void)showBookmarks {
@@ -568,6 +566,14 @@ static UITextField *kDummyTextField = nil;
 #pragma mark UISearchControllerDelegate
 
 - (void)willPresentSearchController:(UISearchController *)searchController { }
+
+- (void)didPresentSearchController:(UISearchController *)searchController {
+    if (@available(iOS 26.0, *)) {
+        if (self.pinSearchBar || self.showSearchBarInitially) {
+            [self.tableHeaderContainer addSubview:searchController.searchBar];
+        }
+    }
+}
 
 - (void)willDismissSearchController:(UISearchController *)searchController { }
 
