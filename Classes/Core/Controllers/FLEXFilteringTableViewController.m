@@ -36,6 +36,7 @@
 #import "FLEXTableViewSection.h"
 #import "NSArray+FLEX.h"
 #import "FLEXMacros.h"
+#import "UITableViewCell+FLEX.h"
 
 @interface FLEXFilteringTableViewController ()
 
@@ -169,6 +170,7 @@
     NSString *reuse = [self.filterDelegate.sections[indexPath.section] reuseIdentifierForRow:indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuse forIndexPath:indexPath];
     [self.filterDelegate.sections[indexPath.section] configureCell:cell forRow:indexPath.row];
+    [cell flex_replaceDetailAccessoryWithSFSymbol];
     return cell;
 }
 
