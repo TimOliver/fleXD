@@ -482,8 +482,12 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
 - (void)removeSearchController:(UISearchController *)controller {
     if (@available(iOS 26.0, *)) {
-        [controller.searchBar removeFromSuperview];
-        [self layoutTableHeaderIfNeeded];
+        if (controller.searchBar.superview == self.tableHeaderContainer) {
+            [controller.searchBar removeFromSuperview];
+            [self layoutTableHeaderIfNeeded];
+        } else {
+            self.navigationItem.searchController = nil;
+        }
     } else {
         self.navigationItem.searchController = nil;
     }
@@ -571,6 +575,7 @@ static UITextField *kDummyTextField = nil;
     if (@available(iOS 26.0, *)) {
         if (self.pinSearchBar || self.showSearchBarInitially) {
             [self.tableHeaderContainer addSubview:searchController.searchBar];
+            [self layoutTableHeaderIfNeeded];
         }
     }
 }

@@ -300,15 +300,12 @@
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)g1 shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)g2 {
-    // Prioritize important pan gestures over our swipe gesture
+    // Don't block any pan gesture — they must be free to start immediately so
+    // the carousel's collection view pan can respond without waiting for the
+    // swipe to resolve. Swipe suppression on the carousel is handled instead
+    // by gestureRecognizerShouldBegin: returning NO when the touch is on the carousel.
     if ([g2 isKindOfClass:[UIPanGestureRecognizer class]]) {
-        if (g2 == self.navigationController.interactivePopGestureRecognizer) {
-            return NO;
-        }
-
-        if (g2 == self.tableView.panGestureRecognizer) {
-            return NO;
-        }
+        return NO;
     }
 
     return YES;
