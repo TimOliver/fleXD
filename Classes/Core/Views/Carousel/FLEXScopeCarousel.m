@@ -36,7 +36,6 @@
 #import "FLEXCarouselCell.h"
 #import "FLEXColor.h"
 #import "FLEXMacros.h"
-#import "UIView+FLEX_Layout.h"
 
 const CGFloat kCarouselItemSpacing = 0;
 NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
@@ -48,7 +47,6 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 @property (nonatomic, readonly) id dynamicTypeObserver;
 @property (nonatomic, readonly) NSMutableArray *dynamicTypeHandlers;
 
-@property (nonatomic) BOOL constraintsInstalled;
 @end
 
 @implementation FLEXScopeCarousel
@@ -101,8 +99,7 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
         _dynamicTypeObserver = [NSNotificationCenter.defaultCenter
             addObserverForName:UIContentSizeCategoryDidChangeNotification
             object:nil queue:nil usingBlock:^(NSNotification *note) { strongify(self)
-                [self.collectionView setNeedsLayout];
-                [self setNeedsUpdateConstraints];
+                [self setNeedsLayout];
 
                 // Notify observers
                 for (void (^block)(FLEXScopeCarousel *) in self.dynamicTypeHandlers) {
@@ -121,20 +118,9 @@ NSString * const kCarouselCellReuseIdentifier = @"kCarouselCellReuseIdentifier";
 
 #pragma mark - Overrides
 
-
-+ (BOOL)requiresConstraintBasedLayout {
-    return YES;
-}
-
-- (void)updateConstraints {
-    if (!self.constraintsInstalled) {
-        self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.collectionView flex_pinEdgesToSuperview];
-
-        self.constraintsInstalled = YES;
-    }
-
-    [super updateConstraints];
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.collectionView.frame = self.bounds;
 }
 
 - (CGSize)intrinsicContentSize {

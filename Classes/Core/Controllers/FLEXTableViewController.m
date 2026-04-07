@@ -420,10 +420,10 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     if (@available(iOS 26.0, *)) {
         UISearchBar *searchBar = self.searchController.searchBar;
         if (searchBar.superview == self.tableHeaderContainer) {
-            CGFloat inset = 20.0;
+            CGFloat inset = 12.0;
             CGFloat barHeight = [searchBar sizeThatFits:CGSizeMake(width - inset * 2, CGFLOAT_MAX)].height;
             searchBar.frame = CGRectMake(inset, 0, width - inset * 2, barHeight);
-            yOffset = barHeight;
+            yOffset = barHeight + 5.0;
         }
     }
 
