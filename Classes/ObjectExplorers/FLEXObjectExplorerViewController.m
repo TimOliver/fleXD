@@ -386,12 +386,13 @@
             attributes:@{ NSFontAttributeName : UIFont.flex_defaultTableCellFont }
         ];
 
-        return [FLEXMultilineTableViewCell
+        CGFloat height = [FLEXMultilineTableViewCell
             preferredHeightWithAttributedText:attributedText
             maxWidth:tableView.frame.size.width - tableView.separatorInset.right
             style:tableView.style
             showsAccessory:NO
         ];
+        return MAX(height, 44);
     }
 
     return UITableViewAutomaticDimension;
