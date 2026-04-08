@@ -210,6 +210,10 @@
 }
 
 - (void)handleNavigationBarTap:(UIGestureRecognizer *)sender {
+    if (@available(iOS 26.0, *)) {
+        return;
+    }
+
     // Don't reveal the toolbar if we were just tapping a button
     CGPoint location = [sender locationInView:self.navigationBar];
     UIView *hitView = [self.navigationBar hitTest:location withEvent:nil];
@@ -233,6 +237,10 @@
 }
 
 - (void)_gestureRecognizedInteractiveHide:(UIPanGestureRecognizer *)sender {
+    if (@available(iOS 26.0, *)) {
+        return;
+    }
+
     if (sender.state == UIGestureRecognizerStateRecognized) {
         BOOL show = self.canShowToolbar;
         CGFloat yTranslation = [sender translationInView:self.view].y;

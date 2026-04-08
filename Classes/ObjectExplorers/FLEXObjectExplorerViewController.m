@@ -168,7 +168,10 @@
 }
 
 - (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView {
-    [self.navigationController setToolbarHidden:NO animated:YES];
+    if (@available(iOS 26.0, *)) {
+    } else {
+        [self.navigationController setToolbarHidden:NO animated:YES];
+    }
     return YES;
 }
 

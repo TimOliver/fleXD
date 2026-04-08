@@ -237,7 +237,11 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
     // Toolbar
     self.navigationController.toolbarHidden = self.toolbarItems.count > 0;
-    self.navigationController.hidesBarsOnSwipe = YES;
+    if (@available(iOS 26.0, *)) {
+        // On iOS 26 the toolbar is compact enough that hiding it on scroll is unnecessary
+    } else {
+        self.navigationController.hidesBarsOnSwipe = YES;
+    }
 
     // The root view controller shows its search bar no matter what on iOS 13+.
     // Turning this off avoids a weird flash in the navigation bar when we
