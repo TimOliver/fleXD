@@ -314,17 +314,27 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
         return;
     }
 
-    self.toolbarItems = @[
-        self.leftmostToolbarItem,
-        UIBarButtonItem.flex_flexibleSpace,
-        self.middleLeftToolbarItem,
-        UIBarButtonItem.flex_flexibleSpace,
-        self.middleToolbarItem,
-        UIBarButtonItem.flex_flexibleSpace,
-        self.bookmarksToolbarItem,
-        UIBarButtonItem.flex_flexibleSpace,
-        self.openTabsToolbarItem,
-    ];
+    if (@available(iOS 26.0, *)) {
+        self.toolbarItems = @[
+            self.middleLeftToolbarItem,
+            UIBarButtonItem.flex_flexibleSpace,
+            self.middleToolbarItem,
+            self.bookmarksToolbarItem,
+            self.openTabsToolbarItem,
+        ];
+    } else {
+        self.toolbarItems = @[
+            self.leftmostToolbarItem,
+            UIBarButtonItem.flex_flexibleSpace,
+            self.middleLeftToolbarItem,
+            UIBarButtonItem.flex_flexibleSpace,
+            self.middleToolbarItem,
+            UIBarButtonItem.flex_flexibleSpace,
+            self.bookmarksToolbarItem,
+            UIBarButtonItem.flex_flexibleSpace,
+            self.openTabsToolbarItem,
+        ];
+    }
 
     for (UIBarButtonItem *item in self.toolbarItems) {
         [item _setWidth:60];
