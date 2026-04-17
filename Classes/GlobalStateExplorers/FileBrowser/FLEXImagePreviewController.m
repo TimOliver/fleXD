@@ -99,13 +99,11 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
-    // Re-fit only when the scroll view's size actually changes (initial layout,
-    // rotation, size class changes) — not on every layout pass, or we'd clobber
-    // the user's zoom level whenever the nav bar toggles.
-    CGSize boundsSize = self.scrollView.bounds.size;
-    if (!CGSizeEqualToSize(boundsSize, self.lastLaidOutBoundsSize)) {
-        self.lastLaidOutBoundsSize = boundsSize;
-        [self resetZoomScales];
+    // Only apply a new layout when the scroll view's size actually changes
+    // (initial layout, rotation, size class change) — otherwise nav-bar toggles
+    // would clobber the user's zoom and pan state.
+    if (!CGSizeEqualToSize(self.scrollView.bounds.size, self.lastLaidOutBoundsSize)) {
+        [self applyLayout];
     }
     [self centerImage];
 }
@@ -133,16 +131,15 @@
         dispatch_async(dispatch_get_main_queue(), ^{ strongify(self)
             if (!self || !prepared) return;
             self.imageView.image = prepared;
-            // Invalidate cached bounds so the next layout pass re-fits the new image.
-            self.lastLaidOutBoundsSize = CGSizeZero;
-            [self.view setNeedsLayout];
+            [self applyLayout];
+            [self centerImage];
         });
     });
 }
 
 #pragma mark - Layout
 
-- (void)resetZoomScales {
+- (void)applyLayout {
     UIImage *image = self.imageView.image;
     CGSize boundsSize = self.scrollView.bounds.size;
     if (!image || boundsSize.width == 0 || boundsSize.height == 0) return;
@@ -150,23 +147,76 @@
     CGSize imageSize = image.size;
     if (imageSize.width == 0 || imageSize.height == 0) return;
 
+    // Snapshot current state before we resize anything.
+    CGFloat previousZoomScale = self.scrollView.zoomScale;
+    CGPoint previousContentOffset = self.scrollView.contentOffset;
+    CGSize previousFitSize = self.imageView.frame.size;
+    CGSize previousBoundsSize = self.lastLaidOutBoundsSize;
+
     // Size the image view so that at zoomScale = 1.0 the image exactly fits
-    // the scroll view — so "fit" is the minimum zoom, consistent across images.
+    // the scroll view — "fit" is the minimum zoom, consistent across images.
     CGFloat widthScale = boundsSize.width / imageSize.width;
     CGFloat heightScale = boundsSize.height / imageSize.height;
     CGFloat fitScale = MIN(widthScale, heightScale);
-    CGSize fitSize = CGSizeMake(imageSize.width * fitScale, imageSize.height * fitScale);
-
-    self.imageView.frame = CGRectMake(0, 0, fitSize.width, fitSize.height);
-    self.scrollView.contentSize = fitSize;
+    CGSize newFitSize = CGSizeMake(imageSize.width * fitScale, imageSize.height * fitScale);
 
     // Max zoom is 3.5× the aspect-fill scale (expressed in fit-space), so the
-    // ceiling represents the same level of pixel detail for every image —
-    // long/narrow images don't end up with a tiny maximum zoom.
-    CGFloat fillOverFit = MAX(widthScale, heightScale) / fitScale;
-    self.scrollView.minimumZoomScale = 1.0;
-    self.scrollView.maximumZoomScale = fillOverFit * 3.5;
+    // ceiling represents the same level of pixel detail for every image — long
+    // narrow images don't end up with a tiny maximum zoom.
+    CGFloat newMaxZoom = (MAX(widthScale, heightScale) / fitScale) * 3.5;
+
+    // Preserve the user's visual zoom level if they'd zoomed in. zoomScale 1.0
+    // maps to a different absolute size at each bounds/image combination, so
+    // scale previousZoomScale by previousFit/newFit to keep the on-screen
+    // magnification the same. If they were at fit, just re-fit to the new size.
+    BOOL hasPreviousLayout = previousBoundsSize.width > 0 && previousFitSize.width > 0;
+    BOOL preserveZoom = hasPreviousLayout && previousZoomScale > 1.0001;
+    CGFloat newZoomScale = 1.0;
+    if (preserveZoom) {
+        newZoomScale = previousZoomScale * (previousFitSize.width / newFitSize.width);
+        newZoomScale = MAX(1.0, MIN(newZoomScale, newMaxZoom));
+    }
+
+    // Clear the transform before resizing the image view, then apply geometry.
     self.scrollView.zoomScale = 1.0;
+    self.imageView.frame = CGRectMake(0, 0, newFitSize.width, newFitSize.height);
+    self.scrollView.contentSize = newFitSize;
+    self.scrollView.minimumZoomScale = 1.0;
+    self.scrollView.maximumZoomScale = newMaxZoom;
+    self.scrollView.zoomScale = newZoomScale;
+
+    if (preserveZoom) {
+        // Keep the same image point at the visible centre by normalising the
+        // previous visible centre against the old content size and mapping it
+        // back into the new content size.
+        CGPoint previousVisibleCenter = CGPointMake(
+            previousContentOffset.x + previousBoundsSize.width / 2.0,
+            previousContentOffset.y + previousBoundsSize.height / 2.0
+        );
+        CGSize previousContentSize = CGSizeMake(
+            previousFitSize.width * previousZoomScale,
+            previousFitSize.height * previousZoomScale
+        );
+        CGPoint normalized = CGPointMake(
+            previousVisibleCenter.x / previousContentSize.width,
+            previousVisibleCenter.y / previousContentSize.height
+        );
+        CGSize newContentSize = CGSizeMake(
+            newFitSize.width * newZoomScale,
+            newFitSize.height * newZoomScale
+        );
+        CGPoint newOffset = CGPointMake(
+            normalized.x * newContentSize.width - boundsSize.width / 2.0,
+            normalized.y * newContentSize.height - boundsSize.height / 2.0
+        );
+        CGFloat maxOffsetX = MAX(0, newContentSize.width - boundsSize.width);
+        CGFloat maxOffsetY = MAX(0, newContentSize.height - boundsSize.height);
+        newOffset.x = MAX(0, MIN(newOffset.x, maxOffsetX));
+        newOffset.y = MAX(0, MIN(newOffset.y, maxOffsetY));
+        self.scrollView.contentOffset = newOffset;
+    }
+
+    self.lastLaidOutBoundsSize = boundsSize;
 }
 
 - (void)centerImage {
