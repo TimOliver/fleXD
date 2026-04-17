@@ -37,6 +37,7 @@
 #import "FLEXWebViewController.h"
 #import "FLEXActivityViewController.h"
 #import "FLEXQuickLookController.h"
+#import "FLEXImagePreviewController.h"
 #import "FLEXTableListViewController.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXObjectExplorerViewController.h"
@@ -332,8 +333,16 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         } else if ([FLEXTableListViewController supportsExtension:pathExtension]) {
             drillInViewController = [[FLEXTableListViewController alloc] initWithPath:fullPath];
         } else if (!drillInViewController) {
-            // QuickLook handles images, video, audio, PDFs, and many other document types
-            drillInViewController = [FLEXQuickLookController forFileAtPath:fullPath];
+            // Prefer our own image viewer over QuickLook: it handles images without
+            // recognisable extensions and supports zoom-transition presentation.
+            UIImage *image = [UIImage imageWithContentsOfFile:fullPath];
+            if (image) {
+                drillInViewController = [FLEXImagePreviewController
+                    forImageAtPath:fullPath placeholder:image];
+            } else {
+                // QuickLook handles video, audio, PDFs, and many other document types
+                drillInViewController = [FLEXQuickLookController forFileAtPath:fullPath];
+            }
 
             if (!drillInViewController) {
                 // Plain text fallback for files QuickLook cannot handle
@@ -349,6 +358,18 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         // Present QL full-screen so it covers the entire display, including the FLEX toolbar
         drillInViewController.modalPresentationStyle = UIModalPresentationFullScreen;
         [self.navigationController presentViewController:drillInViewController animated:YES completion:nil];
+    } else if ([drillInViewController isKindOfClass:FLEXImagePreviewController.class]) {
+        drillInViewController.title = subpath.lastPathComponent;
+        if (@available(iOS 18.0, *)) {
+            UIView *source = [tableView cellForRowAtIndexPath:indexPath].imageView;
+            drillInViewController.preferredTransition = [UIViewControllerTransition
+                zoomWithOptions:nil
+                sourceViewProvider:^UIView *(UIZoomTransitionSourceViewProviderContext *ctx) {
+                    return source;
+                }
+            ];
+        }
+        [self.navigationController pushViewController:drillInViewController animated:YES];
     } else if (drillInViewController) {
         drillInViewController.title = subpath.lastPathComponent;
         [self.navigationController pushViewController:drillInViewController animated:YES];
