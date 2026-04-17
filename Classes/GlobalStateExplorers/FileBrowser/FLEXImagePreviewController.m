@@ -41,6 +41,7 @@
 @property (nonatomic, copy) NSString *imagePath;
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIImageView *imageView;
+@property (nonatomic) CGSize lastLaidOutBoundsSize;
 
 @end
 
@@ -60,6 +61,11 @@
 
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
+        initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+        target:self
+        action:@selector(doneTapped:)
+    ];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
         initWithBarButtonSystemItem:UIBarButtonSystemItemAction
         target:self
@@ -92,7 +98,15 @@
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    [self resetZoomScales];
+
+    // Re-fit only when the scroll view's size actually changes (initial layout,
+    // rotation, size class changes) — not on every layout pass, or we'd clobber
+    // the user's zoom level whenever the nav bar toggles.
+    CGSize boundsSize = self.scrollView.bounds.size;
+    if (!CGSizeEqualToSize(boundsSize, self.lastLaidOutBoundsSize)) {
+        self.lastLaidOutBoundsSize = boundsSize;
+        [self resetZoomScales];
+    }
     [self centerImage];
 }
 
@@ -119,6 +133,8 @@
         dispatch_async(dispatch_get_main_queue(), ^{ strongify(self)
             if (!self || !prepared) return;
             self.imageView.image = prepared;
+            // Invalidate cached bounds so the next layout pass re-fits the new image.
+            self.lastLaidOutBoundsSize = CGSizeZero;
             [self.view setNeedsLayout];
         });
     });
@@ -134,17 +150,23 @@
     CGSize imageSize = image.size;
     if (imageSize.width == 0 || imageSize.height == 0) return;
 
-    // The image view hosts the image at its natural size; zoom scale does the rest.
-    self.imageView.frame = CGRectMake(0, 0, imageSize.width, imageSize.height);
-    self.scrollView.contentSize = imageSize;
+    // Size the image view so that at zoomScale = 1.0 the image exactly fits
+    // the scroll view — so "fit" is the minimum zoom, consistent across images.
+    CGFloat widthScale = boundsSize.width / imageSize.width;
+    CGFloat heightScale = boundsSize.height / imageSize.height;
+    CGFloat fitScale = MIN(widthScale, heightScale);
+    CGSize fitSize = CGSizeMake(imageSize.width * fitScale, imageSize.height * fitScale);
 
-    CGFloat fitScale = MIN(
-        boundsSize.width / imageSize.width,
-        boundsSize.height / imageSize.height
-    );
-    self.scrollView.minimumZoomScale = fitScale;
-    self.scrollView.maximumZoomScale = MAX(fitScale * 4.0, 1.0);
-    self.scrollView.zoomScale = fitScale;
+    self.imageView.frame = CGRectMake(0, 0, fitSize.width, fitSize.height);
+    self.scrollView.contentSize = fitSize;
+
+    // Max zoom is 3.5× the aspect-fill scale (expressed in fit-space), so the
+    // ceiling represents the same level of pixel detail for every image —
+    // long/narrow images don't end up with a tiny maximum zoom.
+    CGFloat fillOverFit = MAX(widthScale, heightScale) / fitScale;
+    self.scrollView.minimumZoomScale = 1.0;
+    self.scrollView.maximumZoomScale = fillOverFit * 3.5;
+    self.scrollView.zoomScale = 1.0;
 }
 
 - (void)centerImage {
@@ -194,6 +216,10 @@
 }
 
 #pragma mark - Actions
+
+- (void)doneTapped:(UIBarButtonItem *)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 - (void)shareTapped:(UIBarButtonItem *)sender {
     NSURL *fileURL = [NSURL fileURLWithPath:self.imagePath];
