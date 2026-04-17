@@ -360,16 +360,21 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         [self.navigationController presentViewController:drillInViewController animated:YES completion:nil];
     } else if ([drillInViewController isKindOfClass:FLEXImagePreviewController.class]) {
         drillInViewController.title = subpath.lastPathComponent;
+        // Wrap in a nav controller and present full-screen so the image covers the
+        // entire display — including the FLEX explorer toolbar and close button.
+        UINavigationController *nav = [[UINavigationController alloc]
+            initWithRootViewController:drillInViewController];
+        nav.modalPresentationStyle = UIModalPresentationFullScreen;
         if (@available(iOS 18.0, *)) {
             UIView *source = [tableView cellForRowAtIndexPath:indexPath].imageView;
-            drillInViewController.preferredTransition = [UIViewControllerTransition
+            nav.preferredTransition = [UIViewControllerTransition
                 zoomWithOptions:nil
                 sourceViewProvider:^UIView *(UIZoomTransitionSourceViewProviderContext *ctx) {
                     return source;
                 }
             ];
         }
-        [self.navigationController pushViewController:drillInViewController animated:YES];
+        [self.navigationController presentViewController:nav animated:YES completion:nil];
     } else if (drillInViewController) {
         drillInViewController.title = subpath.lastPathComponent;
         [self.navigationController pushViewController:drillInViewController animated:YES];
