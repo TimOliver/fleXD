@@ -42,6 +42,7 @@
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIImageView *imageView;
 @property (nonatomic) CGSize lastLaidOutBoundsSize;
+@property (nonatomic) BOOL isTransitioningSize;
 
 @end
 
@@ -75,7 +76,6 @@
     ];
 
     self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
-    self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.scrollView.delegate = self;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.showsHorizontalScrollIndicator = NO;
@@ -101,13 +101,38 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
+    // Size transitions (rotation, size class change) are handled in
+    // viewWillTransitionToSize: so the geometry updates run inside the
+    // coordinator's animation block. Running them here too would snap the
+    // layout outside that block and reintroduce the zoom flicker.
+    if (self.isTransitioningSize) return;
+
     // Only apply a new layout when the scroll view's size actually changes
-    // (initial layout, rotation, size class change) — otherwise nav-bar toggles
-    // would clobber the user's zoom and pan state.
+    // (initial layout) — otherwise nav-bar toggles would clobber the user's
+    // zoom and pan state.
+    self.scrollView.frame = self.view.bounds;
     if (!CGSizeEqualToSize(self.scrollView.bounds.size, self.lastLaidOutBoundsSize)) {
         [self applyLayout];
     }
     [self centerImage];
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size
+       withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+
+    // Run layout inside the coordinator's animation block so imageView frame,
+    // contentSize, and zoomScale changes interpolate alongside the system's
+    // rotation — rather than snapping out from under it and producing a
+    // visible zoom-in / zoom-out artifact.
+    self.isTransitioningSize = YES;
+    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> ctx) {
+        self.scrollView.frame = self.view.bounds;
+        [self applyLayout];
+        [self centerImage];
+    } completion:^(id<UIViewControllerTransitionCoordinatorContext> ctx) {
+        self.isTransitioningSize = NO;
+    }];
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -215,7 +240,7 @@
         newOffset.y = MAX(0, MIN(newOffset.y, maxOffsetY));
         self.scrollView.contentOffset = newOffset;
     }
-
+    
     self.lastLaidOutBoundsSize = boundsSize;
 }
 
