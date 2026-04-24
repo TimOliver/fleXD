@@ -48,6 +48,7 @@
 @implementation FLEXImagePreviewController
 
 + (instancetype)forImageAtPath:(NSString *)path placeholder:(UIImage *)placeholder {
+    NSParameterAssert(path.length > 0);
     FLEXImagePreviewController *controller = [self new];
     controller.imagePath = path;
     controller.imageView = [[UIImageView alloc] initWithImage:placeholder];
@@ -270,6 +271,7 @@
 }
 
 - (void)shareTapped:(UIBarButtonItem *)sender {
+    if (!self.imagePath.length) return;
     NSURL *fileURL = [NSURL fileURLWithPath:self.imagePath];
     UIViewController *shareSheet = [FLEXActivityViewController sharing:@[fileURL] source:sender];
     [self presentViewController:shareSheet animated:YES completion:nil];
