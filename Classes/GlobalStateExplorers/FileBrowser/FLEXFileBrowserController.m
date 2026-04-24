@@ -42,6 +42,7 @@
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXObjectExplorerViewController.h"
 #import <mach-o/loader.h>
+#import <ImageIO/ImageIO.h>
 #import "FLEXFileBrowserSearchOperation.h"
 
 @interface FLEXFileBrowserTableViewCell : UITableViewCell
@@ -335,10 +336,18 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         } else if (!drillInViewController) {
             // Prefer our own image viewer over QuickLook: it handles images without
             // recognisable extensions and supports zoom-transition presentation.
-            UIImage *image = [UIImage imageWithContentsOfFile:fullPath];
-            if (image) {
+            // Sniff the file via CGImageSource so large images don't stall the
+            // presentation on a synchronous main-thread decode — the preview
+            // controller decodes the full image asynchronously.
+            CGImageSourceRef source = CGImageSourceCreateWithURL(
+                (__bridge CFURLRef)[NSURL fileURLWithPath:fullPath], NULL
+            );
+            BOOL isImage = source && CGImageSourceGetType(source);
+            if (source) CFRelease(source);
+
+            if (isImage) {
                 drillInViewController = [FLEXImagePreviewController
-                    forImageAtPath:fullPath placeholder:image];
+                    forImageAtPath:fullPath placeholder:nil];
             } else {
                 // QuickLook handles video, audio, PDFs, and many other document types
                 drillInViewController = [FLEXQuickLookController forFileAtPath:fullPath];
