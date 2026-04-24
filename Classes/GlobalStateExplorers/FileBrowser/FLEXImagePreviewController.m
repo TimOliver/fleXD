@@ -60,6 +60,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
