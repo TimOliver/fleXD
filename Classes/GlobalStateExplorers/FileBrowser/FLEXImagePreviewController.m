@@ -84,8 +84,12 @@ static inline FLEXImagePreviewScrollViewState FLEXImagePreviewStateForScrollView
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
     self.title = self.imagePath.lastPathComponent;
     self.navigationItem.titleView = [[FLEXImagePreviewTitleView alloc] initWithTitle:self.title];
+    UIBarButtonSystemItem closeItem = UIBarButtonSystemItemDone;
+    if (@available(iOS 26.0, *)) {
+        closeItem = UIBarButtonSystemItemClose;
+    }
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
-        initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+        initWithBarButtonSystemItem:closeItem
         target:self
         action:@selector(doneTapped:)
     ];
