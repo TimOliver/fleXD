@@ -34,6 +34,7 @@
 
 #import "FLEXImagePreviewController.h"
 #import "FLEXActivityViewController.h"
+#import "FLEXImagePreviewTitleView.h"
 #import "FLEXUtility.h"
 
 typedef struct FLEXImagePreviewScrollViewState {
@@ -81,6 +82,8 @@ static inline FLEXImagePreviewScrollViewState FLEXImagePreviewStateForScrollView
     self.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
     self.view.backgroundColor = UIColor.systemBackgroundColor;
     self.navigationItem.largeTitleDisplayMode = UINavigationItemLargeTitleDisplayModeNever;
+    self.title = self.imagePath.lastPathComponent;
+    self.navigationItem.titleView = [[FLEXImagePreviewTitleView alloc] initWithTitle:self.title];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]
         initWithBarButtonSystemItem:UIBarButtonSystemItemDone
         target:self
@@ -100,7 +103,9 @@ static inline FLEXImagePreviewScrollViewState FLEXImagePreviewStateForScrollView
     self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     [self.view addSubview:self.scrollView];
 
-    self.scrollView.topEdgeEffect.hidden = YES;
+    if (@available(iOS 26.0, *)) {
+        self.scrollView.topEdgeEffect.hidden = YES;
+    }
     
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.scrollView addSubview:self.imageView];
