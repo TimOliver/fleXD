@@ -100,6 +100,8 @@ static inline FLEXImagePreviewScrollViewState FLEXImagePreviewStateForScrollView
     self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     [self.view addSubview:self.scrollView];
 
+    self.scrollView.topEdgeEffect.hidden = YES;
+    
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.scrollView addSubview:self.imageView];
 
@@ -276,9 +278,22 @@ static inline FLEXImagePreviewScrollViewState FLEXImagePreviewStateForScrollView
 #pragma mark - Gestures
 
 - (void)handleSingleTap:(UITapGestureRecognizer *)gesture {
-    BOOL nowHidden = !self.navigationController.navigationBarHidden;
-    [self.navigationController setNavigationBarHidden:nowHidden animated:YES];
-    [self setNeedsStatusBarAppearanceUpdate];
+    const BOOL nowHidden = !self.navigationController.navigationBarHidden;
+    
+    // Prepare the state before we animate
+    if (!nowHidden) {
+        [self.navigationController setNavigationBarHidden:NO animated:NO];
+    }
+    
+    // Play a simple crossfade
+    self.navigationController.navigationBar.alpha = nowHidden ? 1.0f : 0.0f;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.navigationController.navigationBar.alpha = nowHidden ? 0.0f : 1.0f;
+        [self setNeedsStatusBarAppearanceUpdate];
+    } completion:^(BOOL finished) {
+        [self.navigationController setNavigationBarHidden:nowHidden animated:NO];
+        self.navigationController.navigationBar.alpha = 1.0f;
+    }];
 }
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)gesture {
