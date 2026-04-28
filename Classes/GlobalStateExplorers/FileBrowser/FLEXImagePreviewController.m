@@ -36,12 +36,29 @@
 #import "FLEXActivityViewController.h"
 #import "FLEXUtility.h"
 
+typedef struct FLEXImagePreviewScrollViewState {
+    CGFloat zoomScale;
+    CGPoint offset;
+    CGSize contentSize;
+    CGPoint contentPosition;
+    CGSize frameSize;
+} FLEXImagePreviewScrollViewState;
+
+static inline FLEXImagePreviewScrollViewState FLEXImagePreviewStateForScrollView(UIScrollView *scrollView, UIView *contentView) {
+    return (FLEXImagePreviewScrollViewState) {
+        .zoomScale = scrollView.zoomScale,
+        .offset = scrollView.contentOffset,
+        .contentSize = scrollView.contentSize,
+        .contentPosition = contentView.frame.origin,
+        .frameSize = scrollView.frame.size,
+    };
+}
+
 @interface FLEXImagePreviewController () <UIScrollViewDelegate>
 
 @property (nonatomic, copy) NSString *imagePath;
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIImageView *imageView;
-@property (nonatomic) CGSize lastLaidOutBoundsSize;
 @property (nonatomic) BOOL isTransitioningSize;
 
 @end
@@ -79,6 +96,7 @@
     self.scrollView.delegate = self;
     self.scrollView.showsVerticalScrollIndicator = NO;
     self.scrollView.showsHorizontalScrollIndicator = NO;
+    self.scrollView.minimumZoomScale = 1.0;
     self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     [self.view addSubview:self.scrollView];
 
@@ -101,19 +119,15 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
 
-    // Size transitions (rotation, size class change) are handled in
-    // viewWillTransitionToSize: so the geometry updates run inside the
-    // coordinator's animation block. Running them here too would snap the
-    // layout outside that block and reintroduce the zoom flicker.
-    if (self.isTransitioningSize) return;
+    // During a rotation animation, `viewDidLayoutSubviews` can potentially be
+    // called multiple times that can break the animation. Instead, we use the official
+    // rotation API to block layout passes as we'll be manually applying it inside the animation block.
+    if (self.isTransitioningSize) { return; }
 
-    // Only apply a new layout when the scroll view's size actually changes
-    // (initial layout) — otherwise nav-bar toggles would clobber the user's
-    // zoom and pan state.
+    // Capture the original size before we update so we can work out the scroll view sizing deltas.
+    const CGSize originalSize = self.scrollView.frame.size;
     self.scrollView.frame = self.view.bounds;
-    if (!CGSizeEqualToSize(self.scrollView.bounds.size, self.lastLaidOutBoundsSize)) {
-        [self applyLayout];
-    }
+    [self applyLayoutFromSize:originalSize];
     [self centerImage];
 }
 
@@ -121,14 +135,15 @@
        withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 
-    // Run layout inside the coordinator's animation block so imageView frame,
-    // contentSize, and zoomScale changes interpolate alongside the system's
-    // rotation — rather than snapping out from under it and producing a
-    // visible zoom-in / zoom-out artifact.
+    // Capture the current size of the scroll view so we can apply it to our transform calculations
+    const CGSize originalSize = self.scrollView.frame.size;
+    
+    // Disable any system layout passes for the duration of this animation since we'll manually control'
+    // it inside the animation block.
     self.isTransitioningSize = YES;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> ctx) {
         self.scrollView.frame = self.view.bounds;
-        [self applyLayout];
+        [self applyLayoutFromSize:originalSize];
         [self centerImage];
     } completion:^(id<UIViewControllerTransitionCoordinatorContext> ctx) {
         self.isTransitioningSize = NO;
@@ -158,7 +173,8 @@
         dispatch_async(dispatch_get_main_queue(), ^{ strongify(self)
             if (!self || !prepared) return;
             self.imageView.image = prepared;
-            [self applyLayout];
+            [self applyLayoutFromSize:self.scrollView.frame.size];
+            self.imageView.frame = (CGRect){CGPointZero, self.scrollView.contentSize};
             [self centerImage];
         });
     });
@@ -166,38 +182,42 @@
 
 #pragma mark - Layout
 
-- (void)applyLayout {
+- (void)applyLayoutFromSize:(CGSize)oldSize {
+    // Don't layout if the scroll view hasn't received a size yet
+    const CGSize frameSize = self.scrollView.frame.size;
+    if (CGSizeEqualToSize(frameSize, CGSizeZero)) { return; }
+    
+    // Short-circuit if we're not actually performing a meaningful bounds change since our last pass
+    if (!CGSizeEqualToSize(self.scrollView.contentSize, CGSizeZero) && CGSizeEqualToSize(self.scrollView.frame.size, oldSize)) {
+        return;
+    }
+    
     UIImage *image = self.imageView.image;
-    CGSize boundsSize = self.scrollView.bounds.size;
-    if (!image || boundsSize.width == 0 || boundsSize.height == 0) return;
+    if (!image) return;
 
-    CGSize imageSize = image.size;
+    const CGSize imageSize = image.size;
     if (imageSize.width == 0 || imageSize.height == 0) return;
 
     // Snapshot previous state before we touch anything. Use the scroll view's
     // contentSize (not imageView.frame.size) as the source of truth for the
     // old geometry — the scroll view resizes the zoom view by its frame while
     // zooming, so imageView.frame.size is already the zoomed size.
-    CGFloat previousZoomScale = self.scrollView.zoomScale;
-    CGPoint previousOffset = self.scrollView.contentOffset;
-    CGPoint previousImagePosition = self.imageView.frame.origin;
-    CGSize previousContentSize = self.scrollView.contentSize;
-    CGSize previousBoundsSize = self.lastLaidOutBoundsSize;
-    BOOL hasPreviousLayout = previousBoundsSize.width > 0 && previousContentSize.width > 0;
+    FLEXImagePreviewScrollViewState oldState = FLEXImagePreviewStateForScrollView(self.scrollView, self.imageView);
+    oldState.frameSize = oldSize;
 
     // Size the image view so that at zoomScale = 1.0 the image exactly fits.
-    CGFloat widthScale = boundsSize.width / imageSize.width;
-    CGFloat heightScale = boundsSize.height / imageSize.height;
-    CGFloat fitScale = MIN(widthScale, heightScale);
-    CGSize newFitSize = CGSizeMake(imageSize.width * fitScale, imageSize.height * fitScale);
+    const CGFloat widthScale = frameSize.width / imageSize.width;
+    const CGFloat heightScale = frameSize.height / imageSize.height;
+    const CGFloat fitScale = MIN(widthScale, heightScale);
+    const CGSize newFitSize = CGSizeMake(imageSize.width * fitScale, imageSize.height * fitScale);
 
     // Max zoom is 3.5× the aspect-fill scale (in fit-space), so detail at max
     // is consistent regardless of aspect ratio.
-    CGFloat newMaxZoom = (MAX(widthScale, heightScale) / fitScale) * 3.5;
+    const CGFloat newMaxZoom = (MAX(widthScale, heightScale) / fitScale) * 3.5;
 
     // If the user had zoomed in, preserve their visual magnification and the
     // image point at the visible centre. Otherwise snap to the new fit.
-    BOOL preserveZoom = hasPreviousLayout && previousZoomScale > 1.0001;
+    const BOOL preserveZoom = oldState.zoomScale > 1.05;
 
     CGPoint normalizedCenter = CGPointMake(0.5, 0.5);
     CGFloat newZoomScale = 1.0;
@@ -205,55 +225,50 @@
         // Normalise the visible centre relative to the image. Subtract the
         // image view's origin so centring (when the image is smaller than the
         // bounds in either axis) is handled correctly.
-        normalizedCenter.x = (previousOffset.x + previousBoundsSize.width * 0.5 - previousImagePosition.x)
-            / previousContentSize.width;
-        normalizedCenter.y = (previousOffset.y + previousBoundsSize.height * 0.5 - previousImagePosition.y)
-            / previousContentSize.height;
+        normalizedCenter.x = (oldState.offset.x + ((oldSize.width * 0.5f) - oldState.contentPosition.x)) / oldState.contentSize.width;
+        normalizedCenter.y = (oldState.offset.y + ((oldSize.height * 0.5f) - oldState.contentPosition.y)) / oldState.contentSize.height;
 
         // previousFit = previousContentSize / previousZoomScale. Compensating
         // by previousFit/newFit keeps the on-screen magnification unchanged.
-        CGFloat previousFitWidth = previousContentSize.width / previousZoomScale;
-        newZoomScale = previousZoomScale * (previousFitWidth / newFitSize.width);
+        CGFloat previousFitWidth = oldState.contentSize.width / oldState.zoomScale;
+        newZoomScale = oldState.zoomScale * (previousFitWidth / newFitSize.width);
         newZoomScale = MAX(1.0, MIN(newZoomScale, newMaxZoom));
     }
 
     // Reset the transform before resizing, then apply new geometry.
-    self.scrollView.zoomScale = 1.0;
-    self.imageView.frame = CGRectMake(0, 0, newFitSize.width, newFitSize.height);
-    self.scrollView.contentSize = newFitSize;
-    self.scrollView.minimumZoomScale = 1.0;
     self.scrollView.maximumZoomScale = newMaxZoom;
     self.scrollView.zoomScale = newZoomScale;
+    self.scrollView.contentSize = (CGSize){newFitSize.width * newZoomScale, newFitSize.height * newZoomScale};
 
+    // Now that we've resized the content to its equivalent in the new bounds, apply the normalized offset.
     if (preserveZoom) {
-        CGSize newContentSize = CGSizeMake(
-            newFitSize.width * newZoomScale,
-            newFitSize.height * newZoomScale
-        );
-        CGPoint newOffset = CGPointMake(
-            normalizedCenter.x * newContentSize.width - boundsSize.width * 0.5,
-            normalizedCenter.y * newContentSize.height - boundsSize.height * 0.5
-        );
-        CGFloat maxOffsetX = MAX(0, newContentSize.width - boundsSize.width);
-        CGFloat maxOffsetY = MAX(0, newContentSize.height - boundsSize.height);
-        newOffset.x = MAX(0, MIN(newOffset.x, maxOffsetX));
-        newOffset.y = MAX(0, MIN(newOffset.y, maxOffsetY));
-        self.scrollView.contentOffset = newOffset;
+        CGSize contentSize = self.scrollView.contentSize;
+        CGSize boundsSize = self.scrollView.frame.size;
+        CGPoint translatedPoint = CGPointZero;
+        translatedPoint.x = (normalizedCenter.x * contentSize.width) - (boundsSize.width * 0.5f);
+        translatedPoint.y = (normalizedCenter.y * contentSize.height) - (boundsSize.height * 0.5f);
+        translatedPoint.x = MIN(translatedPoint.x, contentSize.width - boundsSize.width);
+        translatedPoint.y = MIN(translatedPoint.y, contentSize.height - boundsSize.height);
+        translatedPoint.x = MAX(translatedPoint.x, 0.0f);
+        translatedPoint.y = MAX(translatedPoint.y, 0.0f);
+        self.scrollView.contentOffset = translatedPoint;
     }
-    
-    self.lastLaidOutBoundsSize = boundsSize;
 }
 
 - (void)centerImage {
-    CGSize boundsSize = self.scrollView.bounds.size;
-    CGRect frame = self.imageView.frame;
+    CGRect frame = (CGRect){CGPointZero, self.scrollView.contentSize};
+    CGSize viewSize = self.scrollView.frame.size;
 
-    frame.origin.x = frame.size.width < boundsSize.width
-        ? (boundsSize.width - frame.size.width) / 2.0
-        : 0;
-    frame.origin.y = frame.size.height < boundsSize.height
-        ? (boundsSize.height - frame.size.height) / 2.0
-        : 0;
+    // Center the view, unless its size has out-grown the view region
+    frame.origin.x = 0.0f;
+    if (frame.size.width < viewSize.width) {
+        frame.origin.x = (viewSize.width - frame.size.width) * 0.5f;
+    }
+
+    frame.origin.y = 0.0f;
+    if (frame.size.height < viewSize.height) {
+        frame.origin.y = (viewSize.height - frame.size.height) * 0.5f;
+    }
 
     self.imageView.frame = frame;
 }
