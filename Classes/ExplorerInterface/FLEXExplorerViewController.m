@@ -593,6 +593,9 @@ static const CGFloat kToolbarStashMaxRelativeVelocity = 30.0;
 
     switch (panGR.state) {
         case UIGestureRecognizerStateBegan: {
+            // Catch an in-flight stash/restore tuck so the drag continues from
+            // wherever it had reached, instead of fighting the running spring.
+            [self interruptToolbarStashAnimator];
             [self.toolbarAnimator removeAllBehaviors];
 
             // Dragging a stashed toolbar pulls it back out. Clear the stash in
@@ -804,10 +807,26 @@ static const CGFloat kToolbarStashMaxRelativeVelocity = 30.0;
     );
 }
 
+/// Stops any in-flight stash/restore spring so a new interaction — a drag, or a
+/// new tuck — takes over cleanly instead of fighting the running animation.
+/// Safe to call when nothing is animating.
+- (void)interruptToolbarStashAnimator {
+    // The isRunning guard also keeps -stopAnimation: exception-safe: it throws
+    // only in the inactive state, and isRunning is YES only while active.
+    if (self.toolbarStashAnimator.isRunning) {
+        [self.toolbarStashAnimator stopAnimation:YES];
+    }
+    self.toolbarStashAnimator = nil;
+}
+
 /// Springs the toolbar to `target`, seeding the spring's initial velocity from
 /// the release velocity (PiP-style continuity). Retains the animator so a new
 /// touch can interrupt it, and clears + persists on completion.
 - (void)animateToolbarToFrame:(CGRect)target withVelocity:(CGPoint)velocity {
+    // Never run two tucks at once: stop any in-flight one first. (Also means a
+    // finished animator's completion can never nil a newer, running animator.)
+    [self interruptToolbarStashAnimator];
+
     const CGFloat dx = target.origin.x - self.explorerToolbar.frame.origin.x;
     const CGFloat relVx = FLEXRelativeSpringVelocity(velocity.x, dx, kToolbarStashMaxRelativeVelocity);
 
