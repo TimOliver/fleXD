@@ -864,7 +864,6 @@ static const CGFloat kToolbarStashMaxRelativeVelocity = 30.0;
     [self.explorerToolbar setStashEdge:edge animated:YES];
 
     [self animateToolbarToFrame:target withVelocity:velocity];
-    [self persistToolbarPosition];
 }
 
 - (void)restoreStashedToolbarAnimated:(BOOL)animated {
