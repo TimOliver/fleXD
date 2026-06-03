@@ -38,6 +38,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// The edge the toolbar is "stashed" against, PiP-style, leaving only a
+/// thin sliver of the pill on-screen with a chevron pointing back toward
+/// the center of the screen. Tapping or dragging the sliver restores it.
+typedef NS_ENUM(NSInteger, FLEXToolbarStashEdge) {
+    FLEXToolbarStashEdgeNone = 0,
+    FLEXToolbarStashEdgeLeft = 1,
+    FLEXToolbarStashEdgeRight = 2,
+};
+
 /// The floating toolbar displayed by the FLEX explorer.
 ///
 /// Users of the toolbar can configure the enabled state
@@ -82,6 +91,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// Area where details of the selected view are shown
 /// Users of the toolbar can attach a tap gesture recognizer to show additional details.
 @property (nonatomic, readonly) UIView *selectedViewDescriptionContainer;
+
+/// The edge the toolbar is currently stashed against, if any.
+/// While stashed, the toolbar items are hidden and a chevron is shown in the
+/// visible sliver, pointing back toward the center of the screen.
+@property (nonatomic, readonly) FLEXToolbarStashEdge stashEdge;
+
+/// Stashes the toolbar against the given edge (or restores it with
+/// \c FLEXToolbarStashEdgeNone), cross-fading between the toolbar items and the
+/// chevron. The caller is responsible for animating the toolbar's frame.
+- (void)setStashEdge:(FLEXToolbarStashEdge)stashEdge animated:(BOOL)animated;
+
+/// How much of the pill remains visible on-screen while stashed against an edge.
+@property (nonatomic, readonly, class) CGFloat stashVisibleWidth;
 
 @end
 

@@ -55,6 +55,10 @@
 
 @property (nonatomic,readwrite) UIView *backgroundView;
 
+/// Chevron shown in the visible sliver while stashed, pointing toward screen center.
+@property (nonatomic) UIImageView *stashChevronImageView;
+@property (nonatomic, readwrite) FLEXToolbarStashEdge stashEdge;
+
 @end
 
 @implementation FLEXExplorerToolbar
@@ -156,9 +160,22 @@
         _separatorView = [UIView new];
         _separatorView.backgroundColor = UIColor.separatorColor;
         [self addSubview:_separatorView];
+
+        // Chevron shown in the visible sliver while stashed against an edge.
+        // Kept at alpha 0 (rather than hidden) so it participates in layout
+        // and can cross-fade with the toolbar items.
+        _stashChevronImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
+        _stashChevronImageView.contentMode = UIViewContentModeCenter;
+        _stashChevronImageView.tintColor = UIColor.labelColor;
+        _stashChevronImageView.alpha = 0.0;
+        [self addSubview:_stashChevronImageView];
     }
 
     return self;
+}
+
++ (CGFloat)stashVisibleWidth {
+    return 25.0;
 }
 
 /// The expanded tap target for the selected-view description strip.
@@ -197,6 +214,13 @@
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    // While stashed, the whole pill is a single restore target: route every
+    // touch within our bounds to ourselves so the stash gestures fire and the
+    // (hidden) close button and items don't intercept the tap.
+    if (self.stashEdge != FLEXToolbarStashEdgeNone) {
+        return CGRectContainsPoint(self.bounds, point) ? self : nil;
+    }
+
     // Prioritize the close button over everything else
     CGPoint closePoint = [self.closeButton convertPoint:point fromView:self];
     if ([self.closeButton pointInside:closePoint withEvent:event]) {
@@ -306,6 +330,18 @@
     descriptionLabelFrame.origin.y = kDescriptionVerticalPadding;
     descriptionLabelFrame.size.width = CGRectGetMaxX(self.selectedViewDescriptionContainer.bounds) - kLabelInset - descriptionOriginX;
     self.selectedViewDescriptionLabel.frame = descriptionLabelFrame;
+
+    // Stash chevron, centered in the visible sliver at whichever edge we stash
+    // against. Falls on the right edge of the pill when stashed left, and the
+    // left edge when stashed right.
+    const CGFloat kStashVisibleWidth = [[self class] stashVisibleWidth];
+    CGFloat chevronCenterX = (self.stashEdge == FLEXToolbarStashEdgeLeft)
+        ? CGRectGetWidth(self.bounds) - kStashVisibleWidth / 2.0
+        : kStashVisibleWidth / 2.0;
+    self.stashChevronImageView.frame = CGRectMake(
+        FLEXFloor(chevronCenterX - kStashVisibleWidth / 2.0), 0,
+        kStashVisibleWidth, kToolbarItemHeight
+    );
 }
 
 
@@ -357,6 +393,51 @@
         frame.size.height = newSize.height;
         self.frame = frame;
         [self setNeedsLayout];
+    }
+}
+
+- (void)setStashEdge:(FLEXToolbarStashEdge)stashEdge animated:(BOOL)animated {
+    if (_stashEdge == stashEdge) {
+        return;
+    }
+
+    const BOOL stashed = stashEdge != FLEXToolbarStashEdgeNone;
+    _stashEdge = stashEdge;
+
+    if (stashed) {
+        // Point the chevron back toward the center of the screen: stashing
+        // against the left edge leaves the right of the pill showing (chevron
+        // points right), and vice versa.
+        NSString *symbolName = (stashEdge == FLEXToolbarStashEdgeLeft)
+            ? @"chevron.compact.right"
+            : @"chevron.compact.left";
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration
+            configurationWithPointSize:20 weight:UIImageSymbolWeightSemibold
+        ];
+        self.stashChevronImageView.image = [UIImage systemImageNamed:symbolName withConfiguration:config];
+    }
+
+    // Position the chevron for the new edge before fading it in, so it doesn't
+    // slide across the toolbar as it appears.
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+
+    void (^applyAppearance)(void) = ^{
+        for (FLEXExplorerToolbarItem *item in self.toolbarItems) {
+            item.currentItem.alpha = stashed ? 0.0 : 1.0;
+        }
+        self.separatorView.alpha = stashed ? 0.0 : 1.0;
+        self.closeButton.alpha = stashed ? 0.0 : 1.0;
+        self.stashChevronImageView.alpha = stashed ? 1.0 : 0.0;
+    };
+
+    if (animated) {
+        [UIView animateWithDuration:0.25 delay:0.0
+            options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseInOut
+            animations:applyAppearance completion:nil
+        ];
+    } else {
+        applyAppearance();
     }
 }
 

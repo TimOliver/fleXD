@@ -66,6 +66,11 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 @property (nonatomic) UITapGestureRecognizer *detailsTapGR;
 /// Gesture recognizer for dragging the explorer toolbar.
 @property (nonatomic) UIPanGestureRecognizer *toolbarPanGR;
+/// Gesture recognizer for restoring the toolbar when it's stashed against an edge.
+@property (nonatomic) UITapGestureRecognizer *toolbarUnstashTapGR;
+
+/// The edge the toolbar is currently stashed against, if any.
+@property (nonatomic) FLEXToolbarStashEdge toolbarStashEdge;
 /// Gesture recognizer for cycling through views under the selection point.
 @property (nonatomic) UIPanGestureRecognizer *changeSelectedViewPanGR;
 
@@ -113,6 +118,11 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 static const CGFloat kToolbarSafeAreaPadding = 4.0;
 
+/// Horizontal fling speed (pt/s) past which a release stashes the toolbar against that edge.
+static const CGFloat kToolbarStashFlingVelocity = 800.0;
+/// Fraction of the safe-area width near each edge within which a slow release still stashes.
+static const CGFloat kToolbarStashEdgeZoneFraction = 0.15;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
@@ -146,6 +156,8 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
             FLEXFloor((CGRectGetWidth(safeArea) - toolbarSize.width) / 2.0);
     }
 
+    // The toolbar always launches un-stashed and fully visible — a stashed
+    // toolbar can't be closed, so we deliberately don't persist that state.
     [self updateToolbarPositionWithUnconstrainedFrame:CGRectMake(
         toolbarOriginX, toolbarOriginY, toolbarSize.width, toolbarSize.height
     )];
@@ -528,6 +540,15 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     self.toolbarPanGR.delegate = self;
     [toolbar.dragHandle addGestureRecognizer:self.toolbarPanGR];
 
+    // Tap gesture for restoring the toolbar when it's stashed against an edge.
+    // Only begins while stashed (see -gestureRecognizerShouldBegin:), so it
+    // doesn't swallow taps on the toolbar's buttons during normal use.
+    self.toolbarUnstashTapGR = [[UITapGestureRecognizer alloc]
+        initWithTarget:self action:@selector(handleToolbarUnstashTapGesture:)
+    ];
+    self.toolbarUnstashTapGR.delegate = self;
+    [toolbar.dragHandle addGestureRecognizer:self.toolbarUnstashTapGR];
+
     // Tap gesture for showing additional details
     self.detailsTapGR = [[UITapGestureRecognizer alloc]
         initWithTarget:self action:@selector(handleToolbarDetailsTapGesture:)
@@ -564,6 +585,15 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         case UIGestureRecognizerStateBegan: {
             [self.toolbarAnimator removeAllBehaviors];
 
+            // Dragging a stashed toolbar pulls it back out. Clear the stash in
+            // place (without repositioning) so the drag continues smoothly from
+            // the sliver under the finger; -constrainedToolbarFrame: will keep it
+            // on-screen for the rest of the gesture.
+            if (self.toolbarStashEdge != FLEXToolbarStashEdgeNone) {
+                self.toolbarStashEdge = FLEXToolbarStashEdgeNone;
+                [self.explorerToolbar setStashEdge:FLEXToolbarStashEdgeNone animated:YES];
+            }
+
             CGPoint toolbarCenter = self.explorerToolbar.center;
             self.toolbarDragOffset = UIOffsetMake(
                 touchLocation.x - toolbarCenter.x,
@@ -578,10 +608,18 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         }
 
         case UIGestureRecognizerStateEnded:
-        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateCancelled: {
             [self updateToolbarPositionWithUnconstrainedFrame:[self toolbarFrameForTouchLocation:touchLocation]];
-            [self applyToolbarMomentumWithVelocity:[panGR velocityInView:self.view]];
+
+            CGPoint velocity = [panGR velocityInView:self.view];
+            FLEXToolbarStashEdge edge = [self stashEdgeForReleaseWithVelocity:velocity];
+            if (edge != FLEXToolbarStashEdgeNone) {
+                [self stashToolbarToEdge:edge];
+            } else {
+                [self applyToolbarMomentumWithVelocity:velocity];
+            }
             break;
+        }
 
         default:
             break;
@@ -589,6 +627,12 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer == self.toolbarUnstashTapGR) {
+        // Only intercept taps to restore the toolbar while it's stashed; otherwise
+        // let taps fall through to the toolbar's buttons.
+        return self.toolbarStashEdge != FLEXToolbarStashEdgeNone;
+    }
+
     if (gestureRecognizer == self.changeSelectedViewPanGR) {
         CGPoint velocity = [(UIPanGestureRecognizer *)gestureRecognizer velocityInView:self.view];
         return fabs(velocity.x) > fabs(velocity.y);
@@ -691,6 +735,14 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
         unconstrainedFrame.origin.y = maxY;
     }
 
+    // While stashed, the toolbar deliberately hangs off the edge with only a
+    // sliver visible, so bypass the normal on-screen horizontal clamp.
+    if (self.toolbarStashEdge != FLEXToolbarStashEdgeNone) {
+        unconstrainedFrame.origin.x = [self stashedOriginXForEdge:self.toolbarStashEdge
+                                                            width:unconstrainedFrame.size.width];
+        return unconstrainedFrame;
+    }
+
     const CGFloat minX = CGRectGetMinX(safeArea) + kToolbarSafeAreaPadding;
     const CGFloat maxX = CGRectGetMaxX(safeArea) - unconstrainedFrame.size.width - kToolbarSafeAreaPadding;
     if (maxX < minX) {
@@ -702,6 +754,120 @@ static const CGFloat kToolbarSafeAreaPadding = 4.0;
     }
 
     return unconstrainedFrame;
+}
+
+#pragma mark - Toolbar Stashing
+
+/// The off-screen origin X that leaves only the toolbar's stash sliver of a
+/// toolbar of the given width peeking out from the given edge.
+- (CGFloat)stashedOriginXForEdge:(FLEXToolbarStashEdge)edge width:(CGFloat)width {
+    const CGRect safeArea = [self viewSafeArea];
+    const CGFloat visibleWidth = FLEXExplorerToolbar.stashVisibleWidth;
+    if (edge == FLEXToolbarStashEdgeLeft) {
+        return FLEXFloor(CGRectGetMinX(safeArea) - (width - visibleWidth));
+    }
+    // FLEXToolbarStashEdgeRight
+    return FLEXFloor(CGRectGetMaxX(safeArea) - visibleWidth);
+}
+
+/// Returns the frame for the toolbar stashed against \c edge, preserving the
+/// vertical position of \c frame (the Y clamp is applied by -constrainedToolbarFrame:).
+- (CGRect)stashedToolbarFrameForEdge:(FLEXToolbarStashEdge)edge fromFrame:(CGRect)frame {
+    frame.origin.x = [self stashedOriginXForEdge:edge width:frame.size.width];
+    return frame;
+}
+
+/// Decides whether a pan release should stash the toolbar, and against which edge.
+/// Stashes on a hard horizontal fling toward an edge, or on a release while the
+/// toolbar's center already sits within the edge zone near a side.
+- (FLEXToolbarStashEdge)stashEdgeForReleaseWithVelocity:(CGPoint)velocity {
+    // A predominantly vertical gesture is never a stash.
+    if (fabs(velocity.x) < fabs(velocity.y)) {
+        return FLEXToolbarStashEdgeNone;
+    }
+
+    const CGRect safeArea = [self viewSafeArea];
+    const CGFloat centerX = CGRectGetMidX(self.explorerToolbar.frame);
+    const CGFloat edgeZone = CGRectGetWidth(safeArea) * kToolbarStashEdgeZoneFraction;
+    const CGFloat leftThreshold = CGRectGetMinX(safeArea) + edgeZone;
+    const CGFloat rightThreshold = CGRectGetMaxX(safeArea) - edgeZone;
+
+    const BOOL flingingLeft = velocity.x <= -kToolbarStashFlingVelocity;
+    const BOOL flingingRight = velocity.x >= kToolbarStashFlingVelocity;
+
+    if (flingingLeft || centerX < leftThreshold) {
+        return FLEXToolbarStashEdgeLeft;
+    }
+    if (flingingRight || centerX > rightThreshold) {
+        return FLEXToolbarStashEdgeRight;
+    }
+
+    return FLEXToolbarStashEdgeNone;
+}
+
+- (void)stashToolbarToEdge:(FLEXToolbarStashEdge)edge {
+    [self.toolbarAnimator removeAllBehaviors];
+
+    const CGRect target = [self stashedToolbarFrameForEdge:edge fromFrame:self.explorerToolbar.frame];
+
+    self.toolbarStashEdge = edge;
+    [self.explorerToolbar setStashEdge:edge animated:YES];
+
+    UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
+        initWithDuration:0.4 dampingRatio:0.8 animations:^{
+            self.explorerToolbar.frame = target;
+        }
+    ];
+    [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+        [self persistToolbarPosition];
+    }];
+    [animator startAnimation];
+
+    [self persistToolbarPosition];
+}
+
+- (void)restoreStashedToolbarAnimated:(BOOL)animated {
+    const FLEXToolbarStashEdge previousEdge = self.toolbarStashEdge;
+    if (previousEdge == FLEXToolbarStashEdgeNone) {
+        return;
+    }
+
+    self.toolbarStashEdge = FLEXToolbarStashEdgeNone;
+    [self.explorerToolbar setStashEdge:FLEXToolbarStashEdgeNone animated:animated];
+
+    // Slide the pill fully back inside the edge it came from.
+    const CGRect safeArea = [self viewSafeArea];
+    CGRect target = self.explorerToolbar.frame;
+    if (previousEdge == FLEXToolbarStashEdgeLeft) {
+        target.origin.x = CGRectGetMinX(safeArea) + kToolbarSafeAreaPadding;
+    } else {
+        target.origin.x = CGRectGetMaxX(safeArea) - target.size.width - kToolbarSafeAreaPadding;
+    }
+    target = [self constrainedToolbarFrame:target];
+
+    if (animated) {
+        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
+            initWithDuration:0.4 dampingRatio:0.8 animations:^{
+                self.explorerToolbar.frame = target;
+            }
+        ];
+        [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
+            [self persistToolbarPosition];
+        }];
+        [animator startAnimation];
+    } else {
+        self.explorerToolbar.frame = target;
+    }
+
+    [self persistToolbarPosition];
+}
+
+- (void)handleToolbarUnstashTapGesture:(UITapGestureRecognizer *)tapGR {
+    if (tapGR.state == UIGestureRecognizerStateRecognized &&
+        self.toolbarStashEdge != FLEXToolbarStashEdgeNone) {
+        [self.toolbarAnimator removeAllBehaviors];
+        [self restoreStashedToolbarAnimated:YES];
+    }
 }
 
 - (void)handleToolbarDetailsTapGesture:(UITapGestureRecognizer *)tapGR {
