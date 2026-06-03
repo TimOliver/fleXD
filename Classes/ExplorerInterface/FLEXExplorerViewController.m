@@ -868,20 +868,11 @@ static const CGFloat kToolbarStashMaxRelativeVelocity = 30.0;
     target = [self constrainedToolbarFrame:target];
 
     if (animated) {
-        UIViewPropertyAnimator *animator = [[UIViewPropertyAnimator alloc]
-            initWithDuration:0.4 dampingRatio:0.8 animations:^{
-                self.explorerToolbar.frame = target;
-            }
-        ];
-        [animator addCompletion:^(UIViewAnimatingPosition finalPosition) {
-            [self persistToolbarPosition];
-        }];
-        [animator startAnimation];
+        [self animateToolbarToFrame:target withVelocity:CGPointZero];
     } else {
         self.explorerToolbar.frame = target;
+        [self persistToolbarPosition];
     }
-
-    [self persistToolbarPosition];
 }
 
 - (void)handleToolbarUnstashTapGesture:(UITapGestureRecognizer *)tapGR {
