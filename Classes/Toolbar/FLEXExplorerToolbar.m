@@ -334,14 +334,19 @@
     // Stash chevron, centered in the visible sliver at whichever edge we stash
     // against. Falls on the right edge of the pill when stashed left, and the
     // left edge when stashed right.
-    const CGFloat kStashVisibleWidth = [[self class] stashVisibleWidth];
-    CGFloat chevronCenterX = (self.stashEdge == FLEXToolbarStashEdgeLeft)
-        ? CGRectGetWidth(self.bounds) - kStashVisibleWidth / 2.0
-        : kStashVisibleWidth / 2.0;
-    self.stashChevronImageView.frame = CGRectMake(
-        FLEXFloor(chevronCenterX - kStashVisibleWidth / 2.0), 0,
-        kStashVisibleWidth, kToolbarItemHeight
-    );
+    // Only (re)position the chevron while stashed. When unstashing, leaving it
+    // put lets it fade out on the side it was stashed against, rather than jumping
+    // to the opposite (else-branch) side mid-fade.
+    if (self.stashEdge != FLEXToolbarStashEdgeNone) {
+        const CGFloat kStashVisibleWidth = [[self class] stashVisibleWidth];
+        const CGFloat chevronCenterX = (self.stashEdge == FLEXToolbarStashEdgeLeft)
+            ? CGRectGetWidth(self.bounds) - kStashVisibleWidth / 2.0
+            : kStashVisibleWidth / 2.0;
+        self.stashChevronImageView.frame = CGRectMake(
+            FLEXFloor(chevronCenterX - kStashVisibleWidth / 2.0), 0,
+            kStashVisibleWidth, kToolbarItemHeight
+        );
+    }
 }
 
 
