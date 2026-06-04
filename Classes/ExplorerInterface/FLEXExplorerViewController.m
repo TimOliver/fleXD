@@ -647,28 +647,33 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
             const CGRect safeArea = [self viewSafeArea];
             const CGFloat minX = CGRectGetMinX(safeArea);
             const CGFloat maxX = CGRectGetMaxX(safeArea);
-            const BOOL offScreen = CGRectGetMinX(frame) < minX || CGRectGetMaxX(frame) > maxX;
+
+            // Past a left/right edge → a stash is possible. Out of bounds on ANY
+            // edge (incl. top/bottom, which never stash) → spring back in.
+            const BOOL pastSide = CGRectGetMinX(frame) < minX || CGRectGetMaxX(frame) > maxX;
+            const CGRect inBoundsFrame = [self constrainedToolbarFrame:frame];
+            const BOOL outOfBounds = !CGRectEqualToRect(inBoundsFrame, frame);
 
             FLEXToolbarStashEdge edge = FLEXToolbarStashEdgeNone;
-            if (offScreen) {
-                // Drag regime: commit if the PROJECTED frame is still >50% past an edge
+            if (pastSide) {
+                // Commit if the PROJECTED frame is still >50% past a side edge
                 // (so a hard flick from, say, 40% off still commits).
                 CGRect projected = frame;
                 projected.origin.x += velocity.x * kToolbarStashProjectionDeceleration;
                 edge = FLEXToolbarDragStashEdge(projected, minX, maxX, kToolbarStashDragCommitFraction);
-            } else {
-                // Flick regime: the existing band-based, mostly-horizontal projection.
+            } else if (!outOfBounds) {
+                // Fully in bounds → the existing band-based, mostly-horizontal flick.
                 edge = [self stashEdgeForReleaseWithVelocity:velocity];
             }
 
             if (edge != FLEXToolbarStashEdgeNone) {
                 [self stashToolbarToEdge:edge withVelocity:velocity];
-            } else if (offScreen) {
-                // Off-screen but below the commit threshold → settle back on-screen.
+            } else if (outOfBounds) {
+                // Past an edge but not stashing (under threshold, or top/bottom) → spring back.
                 [self.explorerToolbar setStashEdge:FLEXToolbarStashEdgeNone animated:YES];
-                [self animateToolbarToFrame:[self constrainedToolbarFrame:frame] withVelocity:CGPointZero];
+                [self animateToolbarToFrame:inBoundsFrame withVelocity:CGPointZero];
             } else {
-                // On-screen, no stash → free-float (Dynamics bounce).
+                // In bounds, no stash → free-float (Dynamics bounce).
                 [self.explorerToolbar setStashEdge:FLEXToolbarStashEdgeNone animated:YES];
                 [self applyToolbarMomentumWithVelocity:velocity];
             }
@@ -788,6 +793,13 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
         MAX(0, CGRectGetHeight(safeArea) - kToolbarSafeAreaPadding * 2.0)
     );
 
+    // While actively dragging, let the pill follow the finger off ANY edge
+    // (top/bottom included, no rubber-band); the release springs it back in or
+    // commits a side-stash. Only width/height are constrained mid-drag.
+    if (self.toolbarDraggingPastEdge) {
+        return unconstrainedFrame;
+    }
+
     const CGFloat minY = CGRectGetMinY(safeArea) + kToolbarSafeAreaPadding;
     const CGFloat maxY = CGRectGetMaxY(safeArea) - unconstrainedFrame.size.height - kToolbarSafeAreaPadding;
     if (maxY < minY) {
@@ -803,12 +815,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     if (self.toolbarStashEdge != FLEXToolbarStashEdgeNone) {
         unconstrainedFrame.origin.x = [self stashedOriginXForEdge:self.toolbarStashEdge
                                                             width:unconstrainedFrame.size.width];
-        return unconstrainedFrame;
-    }
-
-    // While actively dragging, let the pill follow the finger off the side edges
-    // (drag-to-stash, no rubber-band). X is re-clamped on release.
-    if (self.toolbarDraggingPastEdge) {
         return unconstrainedFrame;
     }
 
