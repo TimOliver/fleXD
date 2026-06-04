@@ -102,8 +102,19 @@ In `handleToolbarPanGesture:` `Began`, **before** `removeAllBehaviors` (586): if
 
 ## Non-goals (YAGNI)
 
-- **Drag-past-the-edge-to-stash** (rubber-band the pill off-screen mid-drag). Today the drag hard-clamps and you stash by flicking; keep that. Addable later.
-- **Vertical tuck momentum** — Y frozen at release; drop `velocity.y`. Keeps the hide horizontal.
+- _(Originally listed **drag-past-the-edge-to-stash** and **vertical tuck momentum** here. Both were **promoted to goals in Revision 2** below after feel-testing.)_
+
+## Revision 2 — PiP-fidelity additions (2026-06-04, after feel-testing)
+
+Feel-testing the first cut showed three more PiP behaviors are needed. Two were the non-goals above, now in scope:
+
+1. **Flick parallel to a side edge → bounce, not stash.** Already provided by the existing `|vx| < |vy|` vertical guard — a flick parallel to a side edge is mostly vertical, so it falls through to the free-float, which bounces off the collision wall. Verify on re-test; nudge the threshold only if a parallel flick wrongly stashes.
+
+2. **Aggressive-angle flick → stash _while gliding along Y_.** Make the stash **2-D**: the tuck's target Y comes from the flick's projected vertical travel (clamped so the peek stays fully on-screen), and the spring carries the Y velocity too. The same `|vx| > |vy|` flick that already stashes now glides vertically as it tucks. (Reverses the old "Y frozen at release" non-goal.)
+
+3. **Drag past the edge to stash, with a >50% affordance.** During a drag, stop hard-clamping at the side edge so the pill **follows the finger off-screen with no rubber-band** — rubber-banding signals "past the absolute limit / rejected," but here crossing the edge is the _valid_ gesture, so the drag must feel free and inviting. Track the obscured fraction; once **>50%** past an edge, cross-fade the toolbar content out and the chevron in (the existing stash affordance) to signal "release to stash." Release while >50% → commit the stash (carrying release velocity); release under 50% (or drag back) → spring back on-screen. Combined on-release decision: _dragged >50% past_ → stash · else _flick projects past_ (②) → stash-with-glide · else free-float.
+
+Implemented as **Task 9** (2-D glide stash) and **Task 10** (drag-to-stash) — same header-only pure helpers + unit tests for the math, manual feel for the UIKit.
 
 ## Testing
 
