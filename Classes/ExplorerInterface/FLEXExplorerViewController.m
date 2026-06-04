@@ -828,10 +828,12 @@ static const CGFloat kToolbarStashMaxRelativeVelocity = 30.0;
     [self interruptToolbarStashAnimator];
 
     const CGFloat dx = target.origin.x - self.explorerToolbar.frame.origin.x;
+    const CGFloat dy = target.origin.y - self.explorerToolbar.frame.origin.y;
     const CGFloat relVx = FLEXRelativeSpringVelocity(velocity.x, dx, kToolbarStashMaxRelativeVelocity);
+    const CGFloat relVy = FLEXRelativeSpringVelocity(velocity.y, dy, kToolbarStashMaxRelativeVelocity);
 
     UISpringTimingParameters *spring = [[UISpringTimingParameters alloc]
-        initWithDampingRatio:0.8 initialVelocity:CGVectorMake(relVx, 0.0)
+        initWithDampingRatio:0.8 initialVelocity:CGVectorMake(relVx, relVy)
     ];
     // Duration is nominal: with spring timing parameters the spring's own
     // settling time governs the animation, not this value.
@@ -858,7 +860,18 @@ static const CGFloat kToolbarStashMaxRelativeVelocity = 30.0;
 - (void)stashToolbarToEdge:(FLEXToolbarStashEdge)edge withVelocity:(CGPoint)velocity {
     [self.toolbarAnimator removeAllBehaviors];
 
-    const CGRect target = [self stashedToolbarFrameForEdge:edge fromFrame:self.explorerToolbar.frame];
+    CGRect target = [self stashedToolbarFrameForEdge:edge fromFrame:self.explorerToolbar.frame];
+
+    // PiP Y-glide: while tucking to the edge, drift toward where the flick was
+    // heading vertically, clamped so the peek sliver stays fully on-screen.
+    const CGRect safeArea = [self viewSafeArea];
+    const CGFloat minCenterY = CGRectGetMinY(safeArea) + kToolbarSafeAreaPadding + target.size.height / 2.0;
+    const CGFloat maxCenterY = CGRectGetMaxY(safeArea) - kToolbarSafeAreaPadding - target.size.height / 2.0;
+    const CGFloat targetCenterY = FLEXProjectedStashCenterY(
+        CGRectGetMidY(self.explorerToolbar.frame), velocity.y,
+        kToolbarStashProjectionDeceleration, minCenterY, maxCenterY
+    );
+    target.origin.y = FLEXFloor(targetCenterY - target.size.height / 2.0);
 
     self.toolbarStashEdge = edge;
     [self.explorerToolbar setStashEdge:edge animated:YES];
