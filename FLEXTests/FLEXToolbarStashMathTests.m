@@ -62,4 +62,25 @@
                    FLEXToolbarStashEdgeRight);
 }
 
+#pragma mark - FLEXProjectedStashCenterY
+
+- (void)testProjectedStashYProjectsTowardFlick {
+    // centerY 400, vy -1000, decel 0.167 -> 400 - 167 = 233, within [100, 700]
+    XCTAssertEqualWithAccuracy(FLEXProjectedStashCenterY(400, -1000, 0.167, 100, 700), 233.0, 0.5);
+}
+
+- (void)testProjectedStashYClampsToMin {
+    // 200 + (-3000 * 0.167) = -301 -> clamp to minY 100
+    XCTAssertEqual(FLEXProjectedStashCenterY(200, -3000, 0.167, 100, 700), 100.0);
+}
+
+- (void)testProjectedStashYClampsToMax {
+    // 600 + (3000 * 0.167) = 1101 -> clamp to maxY 700
+    XCTAssertEqual(FLEXProjectedStashCenterY(600, 3000, 0.167, 100, 700), 700.0);
+}
+
+- (void)testProjectedStashYNoVerticalVelocityStaysPut {
+    XCTAssertEqualWithAccuracy(FLEXProjectedStashCenterY(400, 0, 0.167, 100, 700), 400.0, 0.0001);
+}
+
 @end

@@ -53,3 +53,21 @@ static inline FLEXToolbarStashEdge FLEXStashEdgeForRelease(CGPoint velocity,
     }
     return FLEXToolbarStashEdgeNone;
 }
+
+/// Center Y the toolbar should glide to while stashing: the flick's projected
+/// vertical travel, clamped to [minCenterY, maxCenterY] so the peek stays fully
+/// on-screen. Pure — unit-testable with no view.
+///
+/// @param centerY      toolbar center Y at release
+/// @param velocityY    release vertical velocity (pt/s)
+/// @param deceleration projected travel per (pt/s) (same factor as the X projection)
+/// @param minCenterY   lowest allowed center Y (top edge + padding + half height)
+/// @param maxCenterY   highest allowed center Y (bottom edge - padding - half height)
+static inline CGFloat FLEXProjectedStashCenterY(CGFloat centerY, CGFloat velocityY,
+                                                CGFloat deceleration,
+                                                CGFloat minCenterY, CGFloat maxCenterY) {
+    CGFloat projected = centerY + velocityY * deceleration;
+    if (projected < minCenterY) return minCenterY;
+    if (projected > maxCenterY) return maxCenterY;
+    return projected;
+}
