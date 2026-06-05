@@ -12,6 +12,7 @@
 		04F1CA191C137CF1000A52B0 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 04F1CA181C137CF1000A52B0 /* LICENSE */; };
 		0D6065875DDC04AC894CA393 /* UITableViewCell+FLEX.h in Headers */ = {isa = PBXBuildFile; fileRef = D31279BCA3C7DB13A8DF381F /* UITableViewCell+FLEX.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		18C18D57C01F9CF85D85154F /* FLEXToolbarStashMathTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B3AE4EEDD0D0024BE6548B20 /* FLEXToolbarStashMathTests.m */; };
+		1A685D02BCF21DAFB8E700F6 /* FLEXImagePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A7622AAEC780593F70E660B /* FLEXImagePreviewController.m */; };
 		1C27A8B91F0E5A0400F0D02D /* FLEXTestsMethodsList.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C27A8B81F0E5A0400F0D02D /* FLEXTestsMethodsList.m */; };
 		1C27A8BB1F0E5A0400F0D02D /* FLEX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A4C941F1B5B20570088C3F2 /* FLEX.framework */; };
 		1CDFE8DB81E202BEA950ADB2 /* FLEXFileBrowserCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCB19544249302532D39E227 /* FLEXFileBrowserCell.m */; };
@@ -513,6 +514,7 @@
 		59779C313CA33D4139AFED58 /* FLEXFileBrowserCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FLEXFileBrowserCell.h; sourceTree = "<group>"; };
 		679F64841BD53B7B00A8C94C /* FLEXCookiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXCookiesViewController.h; sourceTree = "<group>"; };
 		679F64851BD53B7B00A8C94C /* FLEXCookiesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXCookiesViewController.m; sourceTree = "<group>"; };
+		6A7622AAEC780593F70E660B /* FLEXImagePreviewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXImagePreviewController.m; path = Classes/GlobalStateExplorers/FileBrowser/FLEXImagePreviewController.m; sourceTree = "<group>"; };
 		71E1C20B2307FBB700F5032A /* FLEXKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXKeychain.h; sourceTree = "<group>"; };
 		71E1C20C2307FBB700F5032A /* FLEXKeychainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXKeychainViewController.h; sourceTree = "<group>"; };
 		71E1C20D2307FBB700F5032A /* FLEXKeychainQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXKeychainQuery.h; sourceTree = "<group>"; };
@@ -535,6 +537,7 @@
 		779B1ECC1C0C4D7C001F5E49 /* FLEXTableListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXTableListViewController.h; sourceTree = "<group>"; };
 		779B1ECD1C0C4D7C001F5E49 /* FLEXTableListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXTableListViewController.m; sourceTree = "<group>"; };
 		779B1EDC1C0C4EAD001F5E49 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = ../../../../usr/lib/libsqlite3.dylib; sourceTree = "<group>"; };
+		8560C82B7AA9FFF8508CDE2E /* FLEXImagePreviewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXImagePreviewController.h; path = Classes/GlobalStateExplorers/FileBrowser/FLEXImagePreviewController.h; sourceTree = "<group>"; };
 		942DCD821BAE0AD300DB5DC2 /* FLEXKeyboardShortcutManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXKeyboardShortcutManager.h; sourceTree = "<group>"; };
 		942DCD831BAE0AD300DB5DC2 /* FLEXKeyboardShortcutManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXKeyboardShortcutManager.m; sourceTree = "<group>"; };
 		94A515131C4CA1C00063292F /* FLEXManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXManager.h; sourceTree = "<group>"; };
@@ -826,6 +829,15 @@
 			path = FLEXTests;
 			sourceTree = "<group>";
 		};
+		2E7521B181E2F1D68BD15D6A /* FileBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				8560C82B7AA9FFF8508CDE2E /* FLEXImagePreviewController.h */,
+				6A7622AAEC780593F70E660B /* FLEXImagePreviewController.m */,
+			);
+			name = FileBrowser;
+			sourceTree = "<group>";
+		};
 		3A4C94151B5B20570088C3F2 = {
 			isa = PBXGroup;
 			children = (
@@ -835,6 +847,7 @@
 				222DBA4D2F7E1D4600DEC76D /* LICENSE */,
 				222DBA4E2F7E1D4600DEC76D /* README.md */,
 				3A4C94201B5B20570088C3F2 /* Products */,
+				D66BBB38E2C286848E296069 /* Classes */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1151,6 +1164,14 @@
 				C313853E23F5C1A10046E63C /* FLEXViewControllersViewController.m */,
 			);
 			path = ExplorerInterface;
+			sourceTree = "<group>";
+		};
+		BCB01100984A6506DEC9AAB4 /* GlobalStateExplorers */ = {
+			isa = PBXGroup;
+			children = (
+				2E7521B181E2F1D68BD15D6A /* FileBrowser */,
+			);
+			name = GlobalStateExplorers;
 			sourceTree = "<group>";
 		};
 		C312A12D23ECB55B00E38049 /* Bookmarks */ = {
@@ -1560,6 +1581,14 @@
 				94A515161C4CA1D70063292F /* FLEXManager+Private.h */,
 			);
 			path = Private;
+			sourceTree = "<group>";
+		};
+		D66BBB38E2C286848E296069 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				BCB01100984A6506DEC9AAB4 /* GlobalStateExplorers */,
+			);
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2057,6 +2086,7 @@
 				280D78C1C85C53E8C68DF90F /* FLEXQuickLookController.m in Sources */,
 				1CDFE8DB81E202BEA950ADB2 /* FLEXFileBrowserCell.m in Sources */,
 				4E198BA0AB142A41F6D1080A /* FLEXImagePreviewController.m in Sources */,
+				1A685D02BCF21DAFB8E700F6 /* FLEXImagePreviewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
