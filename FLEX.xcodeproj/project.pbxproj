@@ -387,7 +387,9 @@
 		C3F977862311B38F0032776D /* NSString+ObjcRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = C3F977802311B38F0032776D /* NSString+ObjcRuntime.m */; };
 		C3F977872311B38F0032776D /* NSObject+FLEX_Reflection.h in Headers */ = {isa = PBXBuildFile; fileRef = C3F977812311B38F0032776D /* NSObject+FLEX_Reflection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C3F977882311B38F0032776D /* NSObject+FLEX_Reflection.m in Sources */ = {isa = PBXBuildFile; fileRef = C3F977822311B38F0032776D /* NSObject+FLEX_Reflection.m */; };
+		C7DDEA24706F6DA398D94F05 /* FLEXNotificationRegistrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AE3204ED1627920C5C94390E /* FLEXNotificationRegistrationTests.m */; };
 		D1CA734FB7A989C8A83D146A /* FLEXQuickLookController.h in Headers */ = {isa = PBXBuildFile; fileRef = 118CCC688569B0A5678285ED /* FLEXQuickLookController.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		D511BD4EEAD31A7F5BF0A2DE /* FLEXNotificationRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = DA86B23D6340FE2E79A8B79A /* FLEXNotificationRegistration.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -512,6 +514,7 @@
 		3A4C95461B5B217D0088C3F2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		4B6126AE69ABC3C3D0CFD263 /* FLEXImagePreviewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FLEXImagePreviewController.h; sourceTree = "<group>"; };
 		59779C313CA33D4139AFED58 /* FLEXFileBrowserCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FLEXFileBrowserCell.h; sourceTree = "<group>"; };
+		584D55E45FCFFD2EFCBD164E /* FLEXNotificationRegistration.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNotificationRegistration.h; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationRegistration.h; sourceTree = "<group>"; };
 		679F64841BD53B7B00A8C94C /* FLEXCookiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXCookiesViewController.h; sourceTree = "<group>"; };
 		679F64851BD53B7B00A8C94C /* FLEXCookiesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXCookiesViewController.m; sourceTree = "<group>"; };
 		6A7622AAEC780593F70E660B /* FLEXImagePreviewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXImagePreviewController.m; path = Classes/GlobalStateExplorers/FileBrowser/FLEXImagePreviewController.m; sourceTree = "<group>"; };
@@ -555,6 +558,7 @@
 		94AAF0371BAF2E1F00DE8760 /* FLEXKeyboardHelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXKeyboardHelpViewController.m; sourceTree = "<group>"; };
 		A06ABBA76FF87BE0689FC272 /* FLEXToolbarStashMath.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FLEXToolbarStashMath.h; sourceTree = "<group>"; };
 		A42069CE2809377F00EBCAEA /* FLEXFirebaseTransaction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FLEXFirebaseTransaction.mm; sourceTree = "<group>"; };
+		AE3204ED1627920C5C94390E /* FLEXNotificationRegistrationTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXNotificationRegistrationTests.m; sourceTree = "<group>"; };
 		B3AE4EEDD0D0024BE6548B20 /* FLEXToolbarStashMathTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXToolbarStashMathTests.m; sourceTree = "<group>"; };
 		C30199482409B38A00759E8E /* CALayer+FLEX.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CALayer+FLEX.h"; sourceTree = "<group>"; };
 		C30199492409B38A00759E8E /* CALayer+FLEX.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CALayer+FLEX.m"; sourceTree = "<group>"; };
@@ -791,6 +795,7 @@
 		D07E2F3751984C8458B60683 /* FLEXQuickLookController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXQuickLookController.m; sourceTree = "<group>"; };
 		D2EC57B3C301C878DA97834A /* FLEXImagePreviewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXImagePreviewController.m; sourceTree = "<group>"; };
 		D31279BCA3C7DB13A8DF381F /* UITableViewCell+FLEX.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+FLEX.h"; sourceTree = "<group>"; };
+		DA86B23D6340FE2E79A8B79A /* FLEXNotificationRegistration.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNotificationRegistration.m; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationRegistration.m; sourceTree = "<group>"; };
 		E1C1AEC9E7B81EEF0EA24CF3 /* UITableViewCell+FLEX.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+FLEX.m"; sourceTree = "<group>"; };
 		FCB19544249302532D39E227 /* FLEXFileBrowserCell.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXFileBrowserCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -825,6 +830,7 @@
 				1C27A8BA1F0E5A0400F0D02D /* Info.plist */,
 				C36E1B27259D64D300FEFEF6 /* Supporting Files */,
 				B3AE4EEDD0D0024BE6548B20 /* FLEXToolbarStashMathTests.m */,
+				AE3204ED1627920C5C94390E /* FLEXNotificationRegistrationTests.m */,
 			);
 			path = FLEXTests;
 			sourceTree = "<group>";
@@ -1166,10 +1172,20 @@
 			path = ExplorerInterface;
 			sourceTree = "<group>";
 		};
+		982D5BC91EE1FFF025D486DF /* NotificationObservers */ = {
+			isa = PBXGroup;
+			children = (
+				584D55E45FCFFD2EFCBD164E /* FLEXNotificationRegistration.h */,
+				DA86B23D6340FE2E79A8B79A /* FLEXNotificationRegistration.m */,
+			);
+			name = NotificationObservers;
+			sourceTree = "<group>";
+		};
 		BCB01100984A6506DEC9AAB4 /* GlobalStateExplorers */ = {
 			isa = PBXGroup;
 			children = (
 				2E7521B181E2F1D68BD15D6A /* FileBrowser */,
+				982D5BC91EE1FFF025D486DF /* NotificationObservers */,
 			);
 			name = GlobalStateExplorers;
 			sourceTree = "<group>";
@@ -1898,6 +1914,7 @@
 				1C27A8B91F0E5A0400F0D02D /* FLEXTestsMethodsList.m in Sources */,
 				C3854DF023F36C1700FCD1E2 /* FLEXTypeEncodingParserTests.m in Sources */,
 				18C18D57C01F9CF85D85154F /* FLEXToolbarStashMathTests.m in Sources */,
+				C7DDEA24706F6DA398D94F05 /* FLEXNotificationRegistrationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2087,6 +2104,7 @@
 				1CDFE8DB81E202BEA950ADB2 /* FLEXFileBrowserCell.m in Sources */,
 				4E198BA0AB142A41F6D1080A /* FLEXImagePreviewController.m in Sources */,
 				1A685D02BCF21DAFB8E700F6 /* FLEXImagePreviewController.m in Sources */,
+				D511BD4EEAD31A7F5BF0A2DE /* FLEXNotificationRegistration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
