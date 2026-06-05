@@ -14,14 +14,17 @@
 
 ## Build & test conventions (read first)
 
-- **Running tests:** find an available simulator, then run the `FLEXTests` scheme:
+- **Simulator:** use `iPhone 17 Pro` (confirmed available in this environment). To run a single test class, append `-only-testing:FLEXTests/<ClassName>`.
   ```bash
-  xcrun simctl list devices available | grep -i iphone   # pick one, e.g. "iPhone 16"
   xcodebuild test -project FLEX.xcodeproj -scheme FLEXTests \
-    -destination 'platform=iOS Simulator,name=iPhone 16' 2>&1 | tail -40
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' 2>&1 | tail -40
   ```
-  To run a single test class, append `-only-testing:FLEXTests/<ClassName>`.
-- **Adding new files to the build:** the `FLEX.xcodeproj` targets do **not** auto-glob (only SPM does). After creating each new `.m`, add it to the **FLEX** target, and each new test `.m` to the **FLEXTests** target: in Xcode select the file → File Inspector → Target Membership → check the target. If a file is missing from the target, the build fails with `Undefined symbols ... _OBJC_CLASS_$_<Class>` — that error is your signal to fix membership.
+- **Adding new files to the build:** the `FLEX.xcodeproj` targets do **not** auto-glob (only SPM does). After creating files, add them to the target with the headless helper (no Xcode GUI needed):
+  ```bash
+  ruby Scripts/xcode_add_file.rb FLEX <new-source-and-header-paths...>
+  ruby Scripts/xcode_add_file.rb FLEXTests <new-test-paths...>
+  ```
+  The helper is idempotent. If a file is missing from the target, the build fails with `Undefined symbols ... _OBJC_CLASS_$_<Class>` — that error is your signal it wasn't added.
 - **New folder:** all non-test feature files live in `Classes/GlobalStateExplorers/NotificationObservers/`.
 - **Commit cadence:** one commit per task (TDD: red → green → commit).
 
