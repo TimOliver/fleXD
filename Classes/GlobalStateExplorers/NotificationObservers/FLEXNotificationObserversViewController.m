@@ -59,12 +59,17 @@
 #pragma mark - Actions
 
 - (void)recorderUpdated {
+    // reloadSections re-pulls each section's rows from the recorder;
+    // reloadData then refreshes the table. The base reloadData alone
+    // would not recompute the section's row snapshot.
+    [self reloadSections];
     [self reloadData];
 }
 
 - (void)clearTapped {
+    // Clearing posts kFLEXNotificationRecorderUpdatedNotification, which
+    // drives recorderUpdated to refresh the table.
     [FLEXNotificationRecorder.sharedRecorder clear];
-    [self reloadData];
 }
 
 - (void)toggleTapped:(UIBarButtonItem *)sender {
