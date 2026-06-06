@@ -18,6 +18,7 @@ In any case, feel free to play with this version and let me know what you think!
 - Observe detailed network request history with timing, headers, and full responses.
 - Add your own simulator keyboard shortcuts.
 - View system log messages (e.g. from `NSLog`).
+- Track live `NSNotificationCenter` observers and spot ones left registered after deallocation.
 - Access any live object via a scan of the heap.
 - View the file system within your app's sandbox.
 - Browse SQLite/Realm databases in the file system.
