@@ -47,6 +47,7 @@ extern NSString * const kFLEXDefaultsShowMethodOverridesKey;
 extern NSString * const kFLEXDefaultsHideVariablePreviewsKey;
 extern NSString * const kFLEXDefaultsNetworkObserverEnabledKey;
 extern NSString * const kFLEXDefaultsNetworkHostDenylistKey;
+extern NSString * const kFLEXDefaultsNotificationMonitorEnabledKey;
 extern NSString * const kFLEXDefaultsAPNSCaptureEnabledKey;
 extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
@@ -66,6 +67,9 @@ extern NSString * const kFLEXDefaultsRegisterJSONExplorerKey;
 
 /// Whether network request observation is enabled.
 @property (nonatomic) BOOL flex_networkObserverEnabled;
+
+/// Whether notification observer monitoring is enabled.
+@property (nonatomic) BOOL flex_notificationMonitorEnabled;
 
 /// The list of network hosts whose requests are excluded from logging.
 /// @note Not stored in user defaults; persisted to a separate file on disk.

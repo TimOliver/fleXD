@@ -2,11 +2,14 @@
 #import "FLEXNotificationRecorder.h"
 #import "FLEXNotificationRegistration.h"
 #import "FLEXUtility.h"
+#import "NSUserDefaults+FLEX.h"
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import <execinfo.h>
+#import <stdatomic.h>
 
-static NSString *const kFLEXNotificationMonitorEnabledKey = @"com.flex.notificationObserverEnabled";
+// Fix 2: atomic cache so addObserver:selector:name:object: doesn't hit NSUserDefaults each call.
+static _Atomic(BOOL) FLEXNotificationMonitorEnabledCache = NO;
 
 static NSArray<NSNumber *> *FLEXCaptureReturnAddresses(void) {
     void *frames[64];
@@ -28,18 +31,23 @@ static BOOL FLEXShouldRecordObserver(id observer) {
 @implementation FLEXNotificationMonitor
 
 + (BOOL)enabled {
-    return [NSUserDefaults.standardUserDefaults boolForKey:kFLEXNotificationMonitorEnabledKey];
+    // Fix 2: read from the atomic cache, not NSUserDefaults.
+    return atomic_load_explicit(&FLEXNotificationMonitorEnabledCache, memory_order_relaxed);
 }
 
 + (void)setEnabled:(BOOL)enabled {
-    [NSUserDefaults.standardUserDefaults setBool:enabled forKey:kFLEXNotificationMonitorEnabledKey];
+    // Fix 2: write both the persisted default (Fix 4) and the cache.
+    NSUserDefaults.standardUserDefaults.flex_notificationMonitorEnabled = enabled;
+    atomic_store_explicit(&FLEXNotificationMonitorEnabledCache, enabled, memory_order_relaxed);
     if (enabled) {
         [self installIfEnabled];
     }
 }
 
 + (void)load {
-    // Re-install on launch if the user enabled it in a previous session.
+    // Fix 2: seed the cache from the persisted value BEFORE installIfEnabled runs.
+    atomic_store_explicit(&FLEXNotificationMonitorEnabledCache,
+        NSUserDefaults.standardUserDefaults.flex_notificationMonitorEnabled, memory_order_relaxed);
     dispatch_async(dispatch_get_main_queue(), ^{ [self installIfEnabled]; });
 }
 
@@ -57,10 +65,10 @@ static BOOL FLEXShouldRecordObserver(id observer) {
     [FLEXUtility replaceImplementationOfKnownSelector:addSel onClass:cls
         withBlock:^(NSNotificationCenter *ctr, id observer, SEL selector, NSString *name, id object) {
             if (FLEXNotificationMonitor.enabled && FLEXShouldRecordObserver(observer)) {
-                // Guard: skip recording when the observer is an internal block-observer
-                // token (e.g. NSObserver* classes) to prevent double-recording when
+                // Fix 3: use hasPrefix:@"__NSObserver" — Apple's actual block-token class
+                // prefix — instead of containsString:, to prevent double-recording when
                 // addObserverForName:object:queue:usingBlock: internally calls this method.
-                if (![NSStringFromClass(object_getClass(observer)) containsString:@"NSObserver"]) {
+                if (![NSStringFromClass(object_getClass(observer)) hasPrefix:@"__NSObserver"]) {
                     FLEXNotificationRegistration *reg = [FLEXNotificationRegistration
                         registrationWithObserver:observer
                         selectorString:NSStringFromSelector(selector)
@@ -90,7 +98,9 @@ static BOOL FLEXShouldRecordObserver(id observer) {
     SEL rm1Swz = [FLEXUtility swizzledSelectorForSelector:rm1];
     [FLEXUtility replaceImplementationOfKnownSelector:rm1 onClass:cls
         withBlock:^(NSNotificationCenter *ctr, id observer) {
-            if (FLEXNotificationMonitor.enabled && observer) {
+            // Fix 1: cleanup runs whenever observer is non-nil, regardless of enabled.
+            // Removing an unrecorded observer is a safe no-op in the recorder.
+            if (observer) {
                 [FLEXNotificationRecorder.sharedRecorder
                     removeAllRegistrationsForObserverPointer:(uintptr_t)observer];
             }
@@ -101,7 +111,8 @@ static BOOL FLEXShouldRecordObserver(id observer) {
     SEL rm2Swz = [FLEXUtility swizzledSelectorForSelector:rm2];
     [FLEXUtility replaceImplementationOfKnownSelector:rm2 onClass:cls
         withBlock:^(NSNotificationCenter *ctr, id observer, NSString *name, id object) {
-            if (FLEXNotificationMonitor.enabled && observer) {
+            // Fix 1: cleanup runs whenever observer is non-nil, regardless of enabled.
+            if (observer) {
                 [FLEXNotificationRecorder.sharedRecorder
                     removeRegistrationsForObserverPointer:(uintptr_t)observer
                     name:name objectPointer:(uintptr_t)object];

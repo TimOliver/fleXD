@@ -43,6 +43,7 @@ NSString * const kFLEXDefaultsHidePrivateMethodsKey = @"com.flipboard.FLEX.hide_
 NSString * const kFLEXDefaultsShowMethodOverridesKey = @"com.flipboard.FLEX.show_method_overrides";
 NSString * const kFLEXDefaultsHideVariablePreviewsKey = @"com.flipboard.FLEX.hide_variable_previews";
 NSString * const kFLEXDefaultsNetworkObserverEnabledKey = @"com.flex.FLEXNetworkObserver.enableOnLaunch";
+NSString * const kFLEXDefaultsNotificationMonitorEnabledKey = @"com.flex.FLEXNotificationMonitor.enableOnLaunch";
 NSString * const kFLEXDefaultsNetworkObserverLastModeKey = @"com.flex.FLEXNetworkObserver.lastMode";
 NSString * const kFLEXDefaultsNetworkHostDenylistKey = @"com.flipboard.FLEX.network_host_denylist";
 NSString * const kFLEXDefaultsAPNSCaptureEnabledKey = @"com.flipboard.FLEX.capture_apns";
@@ -109,6 +110,14 @@ NSString * const kFLEXDefaultsRegisterJSONExplorerKey = @"com.flipboard.FLEX.vie
 
 - (void)setFlex_networkObserverEnabled:(BOOL)enabled {
     [self setBool:enabled forKey:kFLEXDefaultsNetworkObserverEnabledKey];
+}
+
+- (BOOL)flex_notificationMonitorEnabled {
+    return [self boolForKey:kFLEXDefaultsNotificationMonitorEnabledKey];
+}
+
+- (void)setFlex_notificationMonitorEnabled:(BOOL)enabled {
+    [self setBool:enabled forKey:kFLEXDefaultsNotificationMonitorEnabledKey];
 }
 
 - (NSArray<NSString *> *)flex_networkHostDenylist {

@@ -77,4 +77,27 @@
     [ctr removeObserver:observer];
 }
 
+- (void)testRemoveObserverNameObjectDropsOnlyThatRegistration {
+    NSNotificationCenter *ctr = [NSNotificationCenter new];
+    NSObject *observer = [NSObject new];
+    NSString *n1 = @"FLEXTest.named1", *n2 = @"FLEXTest.named2";
+    [ctr addObserver:observer selector:@selector(description) name:n1 object:nil];
+    [ctr addObserver:observer selector:@selector(description) name:n2 object:nil];
+    [ctr removeObserver:observer name:n1 object:nil];
+    XCTAssertNil([self findRegForName:n1]);
+    XCTAssertNotNil([self findRegForName:n2]);
+    [ctr removeObserver:observer];
+}
+
+- (void)testRemoveCleansUpEvenWhenDisabled {
+    NSNotificationCenter *ctr = [NSNotificationCenter new];
+    NSObject *observer = [NSObject new];
+    NSString *name = @"FLEXTest.disableThenRemove";
+    [ctr addObserver:observer selector:@selector(description) name:name object:nil];
+    XCTAssertNotNil([self findRegForName:name]);
+    FLEXNotificationMonitor.enabled = NO;          // disable AFTER recording
+    [ctr removeObserver:observer];                 // must still prune
+    XCTAssertNil([self findRegForName:name]);
+}
+
 @end
