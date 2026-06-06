@@ -71,6 +71,34 @@ static UIImage *FLEXFileBrowserDocumentIcon(void) {
     return nil;
 }
 
+static UIImage *FLEXFileBrowserThumbnail(NSString *path, CGFloat pointSize, CGFloat scale) {
+    NSURL *url = [NSURL fileURLWithPath:path];
+    CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)url, NULL);
+    if (!source) {
+        return nil;
+    }
+    // Not an image (CGImageSource can't identify a type): bail.
+    if (!CGImageSourceGetType(source)) {
+        CFRelease(source);
+        return nil;
+    }
+
+    NSDictionary *options = @{
+        (id)kCGImageSourceCreateThumbnailFromImageAlways: @YES,
+        (id)kCGImageSourceCreateThumbnailWithTransform: @YES,
+        (id)kCGImageSourceThumbnailMaxPixelSize: @(pointSize * scale),
+    };
+    CGImageRef thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, (__bridge CFDictionaryRef)options);
+    CFRelease(source);
+    if (!thumbnail) {
+        return nil;
+    }
+
+    UIImage *image = [UIImage imageWithCGImage:thumbnail scale:scale orientation:UIImageOrientationUp];
+    CGImageRelease(thumbnail);
+    return image;
+}
+
 typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
     FLEXFileBrowserSortAttributeNone = 0,
     FLEXFileBrowserSortAttributeName,
@@ -85,6 +113,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 @property (nonatomic) NSNumber *recursiveSize;
 @property (nonatomic) NSNumber *searchPathsSize;
 @property (nonatomic) NSOperationQueue *operationQueue;
+@property (nonatomic) NSCache<NSString *, id> *thumbnailCache;
 @property (nonatomic) FLEXFileBrowserSortAttribute sortAttribute;
 
 @end
@@ -105,6 +134,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         self.path = path;
         self.title = [path lastPathComponent];
         self.operationQueue = [NSOperationQueue new];
+        self.thumbnailCache = [NSCache new];
 
         // Compute path size
         weakify(self)
@@ -259,9 +289,41 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
         [cell setSymbolIcon:FLEXFileBrowserFolderIcon() tintColor:UIColor.systemBlueColor];
     } else {
         [cell setSymbolIcon:FLEXFileBrowserDocumentIcon() tintColor:UIColor.systemGrayColor];
+        [self loadThumbnailForPath:fullPath intoCell:cell];
     }
 
     return cell;
+}
+
+- (void)loadThumbnailForPath:(NSString *)path intoCell:(FLEXFileBrowserCell *)cell {
+    id cached = [self.thumbnailCache objectForKey:path];
+    if ([cached isKindOfClass:[UIImage class]]) {
+        [cell setThumbnail:cached];
+        return;
+    }
+    if (cached) {
+        // Cached NSNull: known to not be an image, leave the document icon.
+        return;
+    }
+
+    CGFloat scale = UIScreen.mainScreen.scale;
+    weakify(self)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{ strongify(self)
+        UIImage *thumbnail = FLEXFileBrowserThumbnail(path, 40.0, scale);
+        if (!self) {
+            return;
+        }
+        [self.thumbnailCache setObject:(thumbnail ?: (id)NSNull.null) forKey:path];
+
+        if (!thumbnail) {
+            return;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([cell.representedPath isEqualToString:path]) {
+                [cell setThumbnail:thumbnail];
+            }
+        });
+    });
 }
 
 - (NSString *)subtitleForPath:(NSString *)path
