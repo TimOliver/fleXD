@@ -50,6 +50,7 @@
 #import "FLEXAddressExplorerCoordinator.h"
 #import "FLEXGlobalsSection.h"
 #import "UIBarButtonItem+FLEX.h"
+#import "FLEXNotificationObserversViewController.h"
 
 @interface FLEXGlobalsViewController ()
 /// Only displayed sections of the table view; empty sections are purged from this array.
@@ -102,6 +103,8 @@
             entry = [FLEXSystemLogViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowNetworkHistory:
             entry = [FLEXNetworkMITMViewController flex_concreteGlobalsEntry:row]; break;
+        case FLEXGlobalsRowNotificationObservers:
+            entry = [FLEXNotificationObserversViewController flex_concreteGlobalsEntry:row]; break;
         case FLEXGlobalsRowKeyWindow:
         case FLEXGlobalsRowRootViewController:
         case FLEXGlobalsRowProcessInfo:
@@ -169,6 +172,7 @@
         case FLEXGlobalsRowURLSession:          return UIColor.systemGreenColor;
         case FLEXGlobalsRowURLCache:            return UIColor.systemPurpleColor;
         case FLEXGlobalsRowNotificationCenter:  return UIColor.systemRedColor;
+        case FLEXGlobalsRowNotificationObservers: return UIColor.systemIndigoColor;
         case FLEXGlobalsRowFileManager:         return UIColor.systemPinkColor;
         case FLEXGlobalsRowTimeZone:            return UIColor.systemOrangeColor;
         case FLEXGlobalsRowLocale:              return UIColor.systemGreenColor;
@@ -206,6 +210,7 @@
         case FLEXGlobalsRowURLSession:          return @"globe";
         case FLEXGlobalsRowURLCache:            return @"arrow.triangle.2.circlepath";
         case FLEXGlobalsRowNotificationCenter:  return @"bell.badge.fill";
+        case FLEXGlobalsRowNotificationObservers: return @"bell.badge";
         case FLEXGlobalsRowFileManager:         return @"folder.badge.gearshape";
         case FLEXGlobalsRowTimeZone:            return @"clock.fill";
         case FLEXGlobalsRowLocale:              return @"globe.americas.fill";
@@ -251,6 +256,7 @@
                 [self globalsEntryForRow:FLEXGlobalsRowURLSession],
                 [self globalsEntryForRow:FLEXGlobalsRowURLCache],
                 [self globalsEntryForRow:FLEXGlobalsRowNotificationCenter],
+                [self globalsEntryForRow:FLEXGlobalsRowNotificationObservers],
                 [self globalsEntryForRow:FLEXGlobalsRowFileManager],
                 [self globalsEntryForRow:FLEXGlobalsRowTimeZone],
                 [self globalsEntryForRow:FLEXGlobalsRowLocale],

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		03ED813D24B7D91200831CA0 /* FLEXTableRowDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 03ED813B24B7D91200831CA0 /* FLEXTableRowDataViewController.m */; };
 		03ED813E24B7D91200831CA0 /* FLEXTableRowDataViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 03ED813C24B7D91200831CA0 /* FLEXTableRowDataViewController.h */; };
+		04A3145C82734C5B769C3B6E /* FLEXNotificationObserverDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98FBC1284BD29A792C695D77 /* FLEXNotificationObserverDetailViewController.m */; };
 		04F1CA191C137CF1000A52B0 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 04F1CA181C137CF1000A52B0 /* LICENSE */; };
 		0A43A8A8A5D928986BE8638E /* FLEXNotificationRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 29432CB34361CDFBF76716A4 /* FLEXNotificationRecorder.m */; };
 		0D6065875DDC04AC894CA393 /* UITableViewCell+FLEX.h in Headers */ = {isa = PBXBuildFile; fileRef = D31279BCA3C7DB13A8DF381F /* UITableViewCell+FLEX.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -123,6 +124,7 @@
 		71E1C2172307FBB800F5032A /* FLEXKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E1C20F2307FBB700F5032A /* FLEXKeychain.m */; };
 		71E1C2182307FBB800F5032A /* FLEXKeychainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E1C2102307FBB700F5032A /* FLEXKeychainViewController.m */; };
 		71E1C2192307FBB800F5032A /* FLEXKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 71E1C2112307FBB700F5032A /* FLEXKeychainQuery.m */; };
+		734286984E964CF367251F42 /* FLEXNotificationObserverSection.m in Sources */ = {isa = PBXBuildFile; fileRef = FA54FAC28F802D05BB80F5DA /* FLEXNotificationObserverSection.m */; };
 		7349FD6A22B93CDF00051810 /* FLEXColor.h in Headers */ = {isa = PBXBuildFile; fileRef = 7349FD6822B93CDF00051810 /* FLEXColor.h */; };
 		7349FD6B22B93CDF00051810 /* FLEXColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 7349FD6922B93CDF00051810 /* FLEXColor.m */; };
 		779B1ECE1C0C4D7C001F5E49 /* FLEXDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 779B1EC01C0C4D7C001F5E49 /* FLEXDatabaseManager.h */; };
@@ -139,6 +141,7 @@
 		779B1EDA1C0C4D7C001F5E49 /* FLEXTableListViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 779B1ECC1C0C4D7C001F5E49 /* FLEXTableListViewController.h */; };
 		779B1EDB1C0C4D7C001F5E49 /* FLEXTableListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 779B1ECD1C0C4D7C001F5E49 /* FLEXTableListViewController.m */; };
 		779B1EDD1C0C4EAD001F5E49 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 779B1EDC1C0C4EAD001F5E49 /* libsqlite3.dylib */; };
+		91C8BCA41DC4293C676A4DCF /* FLEXNotificationObserversViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0101E2EAEC2A70BECEBE6D32 /* FLEXNotificationObserversViewController.m */; };
 		942DCD871BAE0CA300DB5DC2 /* FLEXKeyboardShortcutManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 942DCD831BAE0AD300DB5DC2 /* FLEXKeyboardShortcutManager.m */; };
 		94A515141C4CA1C00063292F /* FLEXManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 94A515131C4CA1C00063292F /* FLEXManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94A515171C4CA1D70063292F /* FLEXManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 94A515151C4CA1D70063292F /* FLEXManager.m */; };
@@ -407,6 +410,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0101E2EAEC2A70BECEBE6D32 /* FLEXNotificationObserversViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNotificationObserversViewController.m; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationObserversViewController.m; sourceTree = "<group>"; };
 		03ED813B24B7D91200831CA0 /* FLEXTableRowDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXTableRowDataViewController.m; sourceTree = "<group>"; };
 		03ED813C24B7D91200831CA0 /* FLEXTableRowDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXTableRowDataViewController.h; sourceTree = "<group>"; };
 		04F1CA181C137CF1000A52B0 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -426,7 +430,9 @@
 		224D49A51C673AB5000EAB86 /* FLEXRealmDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXRealmDatabaseManager.m; sourceTree = "<group>"; };
 		224D49A61C673AB5000EAB86 /* FLEXSQLiteDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXSQLiteDatabaseManager.h; sourceTree = "<group>"; };
 		224D49A71C673AB5000EAB86 /* FLEXSQLiteDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXSQLiteDatabaseManager.m; sourceTree = "<group>"; };
+		271F4600D7194A84A8F2AC69 /* FLEXNotificationObserversViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNotificationObserversViewController.h; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationObserversViewController.h; sourceTree = "<group>"; };
 		29432CB34361CDFBF76716A4 /* FLEXNotificationRecorder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNotificationRecorder.m; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationRecorder.m; sourceTree = "<group>"; };
+		2A552DFBCD9FBC1D41760F41 /* FLEXNotificationObserverSection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNotificationObserverSection.h; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationObserverSection.h; sourceTree = "<group>"; };
 		2EF6B04B1D494BE50006BDA5 /* FLEXNetworkCurlLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXNetworkCurlLogger.m; sourceTree = "<group>"; };
 		2EF6B04C1D494BE50006BDA5 /* FLEXNetworkCurlLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXNetworkCurlLogger.h; sourceTree = "<group>"; };
 		36A53266DD5544A95C2FDC13 /* FLEXNotificationMonitor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNotificationMonitor.h; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationMonitor.h; sourceTree = "<group>"; };
@@ -525,6 +531,7 @@
 		4E095C18CF8FCF6DDB87B337 /* FLEXNotificationRecorderTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXNotificationRecorderTests.m; sourceTree = "<group>"; };
 		584D55E45FCFFD2EFCBD164E /* FLEXNotificationRegistration.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNotificationRegistration.h; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationRegistration.h; sourceTree = "<group>"; };
 		5B487F8AB7AE02CACE1068ED /* FLEXNotificationMonitorTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXNotificationMonitorTests.m; sourceTree = "<group>"; };
+		6607F71EA1543CBE5CC772EB /* FLEXNotificationObserverDetailViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FLEXNotificationObserverDetailViewController.h; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationObserverDetailViewController.h; sourceTree = "<group>"; };
 		679F64841BD53B7B00A8C94C /* FLEXCookiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXCookiesViewController.h; sourceTree = "<group>"; };
 		679F64851BD53B7B00A8C94C /* FLEXCookiesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXCookiesViewController.m; sourceTree = "<group>"; };
 		6A7622AAEC780593F70E660B /* FLEXImagePreviewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXImagePreviewController.m; path = Classes/GlobalStateExplorers/FileBrowser/FLEXImagePreviewController.m; sourceTree = "<group>"; };
@@ -566,6 +573,7 @@
 		94A515241C4CA2080063292F /* FLEXExplorerToolbarItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FLEXExplorerToolbarItem.m; path = Classes/Toolbar/FLEXExplorerToolbarItem.m; sourceTree = SOURCE_ROOT; };
 		94AAF0361BAF2E1F00DE8760 /* FLEXKeyboardHelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLEXKeyboardHelpViewController.h; sourceTree = "<group>"; };
 		94AAF0371BAF2E1F00DE8760 /* FLEXKeyboardHelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLEXKeyboardHelpViewController.m; sourceTree = "<group>"; };
+		98FBC1284BD29A792C695D77 /* FLEXNotificationObserverDetailViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNotificationObserverDetailViewController.m; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationObserverDetailViewController.m; sourceTree = "<group>"; };
 		A06ABBA76FF87BE0689FC272 /* FLEXToolbarStashMath.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = FLEXToolbarStashMath.h; sourceTree = "<group>"; };
 		A42069CE2809377F00EBCAEA /* FLEXFirebaseTransaction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FLEXFirebaseTransaction.mm; sourceTree = "<group>"; };
 		AE3204ED1627920C5C94390E /* FLEXNotificationRegistrationTests.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXNotificationRegistrationTests.m; sourceTree = "<group>"; };
@@ -808,6 +816,7 @@
 		DA86B23D6340FE2E79A8B79A /* FLEXNotificationRegistration.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNotificationRegistration.m; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationRegistration.m; sourceTree = "<group>"; };
 		E1C1AEC9E7B81EEF0EA24CF3 /* UITableViewCell+FLEX.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+FLEX.m"; sourceTree = "<group>"; };
 		FCB19544249302532D39E227 /* FLEXFileBrowserCell.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = FLEXFileBrowserCell.m; sourceTree = "<group>"; };
+		FA54FAC28F802D05BB80F5DA /* FLEXNotificationObserverSection.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FLEXNotificationObserverSection.m; path = Classes/GlobalStateExplorers/NotificationObservers/FLEXNotificationObserverSection.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1193,6 +1202,12 @@
 				29432CB34361CDFBF76716A4 /* FLEXNotificationRecorder.m */,
 				36A53266DD5544A95C2FDC13 /* FLEXNotificationMonitor.h */,
 				0ADDB715AC3846870448502F /* FLEXNotificationMonitor.m */,
+				2A552DFBCD9FBC1D41760F41 /* FLEXNotificationObserverSection.h */,
+				FA54FAC28F802D05BB80F5DA /* FLEXNotificationObserverSection.m */,
+				271F4600D7194A84A8F2AC69 /* FLEXNotificationObserversViewController.h */,
+				0101E2EAEC2A70BECEBE6D32 /* FLEXNotificationObserversViewController.m */,
+				6607F71EA1543CBE5CC772EB /* FLEXNotificationObserverDetailViewController.h */,
+				98FBC1284BD29A792C695D77 /* FLEXNotificationObserverDetailViewController.m */,
 			);
 			name = NotificationObservers;
 			sourceTree = "<group>";
@@ -2125,6 +2140,9 @@
 				D511BD4EEAD31A7F5BF0A2DE /* FLEXNotificationRegistration.m in Sources */,
 				0A43A8A8A5D928986BE8638E /* FLEXNotificationRecorder.m in Sources */,
 				F64B47843AF0E12643987357 /* FLEXNotificationMonitor.m in Sources */,
+				734286984E964CF367251F42 /* FLEXNotificationObserverSection.m in Sources */,
+				91C8BCA41DC4293C676A4DCF /* FLEXNotificationObserversViewController.m in Sources */,
+				04A3145C82734C5B769C3B6E /* FLEXNotificationObserverDetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

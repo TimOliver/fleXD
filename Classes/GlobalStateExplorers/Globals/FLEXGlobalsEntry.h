@@ -60,6 +60,7 @@ typedef NS_ENUM(NSUInteger, FLEXGlobalsRow) {
     FLEXGlobalsRowURLSession,
     FLEXGlobalsRowURLCache,
     FLEXGlobalsRowNotificationCenter,
+    FLEXGlobalsRowNotificationObservers,
     FLEXGlobalsRowFileManager,
     FLEXGlobalsRowTimeZone,
     FLEXGlobalsRowLocale,
