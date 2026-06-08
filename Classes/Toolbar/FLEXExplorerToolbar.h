@@ -64,11 +64,7 @@ typedef NS_ENUM(NSInteger, FLEXToolbarStashEdge) {
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *hierarchyItem;
 
 /// Toolbar item for moving views.
-/// Its `sibling` is the `lastTabItem`
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *moveItem;
-
-/// Toolbar item for presenting the currently active tab.
-@property (nonatomic, readonly) FLEXExplorerToolbarItem *recentItem;
 
 /// Toolbar item for presenting a screen with various tools for inspecting the app.
 @property (nonatomic, readonly) FLEXExplorerToolbarItem *globalsItem;

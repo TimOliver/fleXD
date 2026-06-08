@@ -43,7 +43,6 @@
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *globalsItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *hierarchyItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *selectItem;
-@property (nonatomic, readwrite) FLEXExplorerToolbarItem *recentItem;
 @property (nonatomic, readwrite) FLEXExplorerToolbarItem *moveItem;
 @property (nonatomic, readwrite) UIButton *closeButton;
 @property (nonatomic) UIVisualEffectView *closeCircle;
@@ -99,11 +98,8 @@
         ];
         self.selectItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Select" image:
             [UIImage systemImageNamed:@"hand.rays.fill" withConfiguration:selectConfig]];
-        self.recentItem    = [FLEXExplorerToolbarItem itemWithTitle:@"Recent" image:
-            [UIImage systemImageNamed:@"clock.arrow.circlepath" withConfiguration:symbolConfig]];
         self.moveItem      = [FLEXExplorerToolbarItem itemWithTitle:@"Move" image:
-            [UIImage systemImageNamed:@"arrow.up.and.down.and.arrow.left.and.right" withConfiguration:symbolConfig]
-            sibling:self.recentItem];
+            [UIImage systemImageNamed:@"arrow.up.and.down.and.arrow.left.and.right" withConfiguration:symbolConfig]];
         
         // Close button — floating circle over the top-right corner
         // The visual circle is 20x20, but the tap target is 44x44

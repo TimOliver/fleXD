@@ -156,7 +156,7 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 /// Adds up to 3 additional items to the toolbar in right-to-left order.
 ///
 /// That is, the first item in the given array will be the rightmost item behind
-/// any existing toolbar items. By default, buttons for bookmarks and tabs are shown.
+/// any existing toolbar items.
 ///
 /// If you wish to have more control over how the buttons are arranged or which
 /// buttons are displayed, you can access the properties for the pre-existing
@@ -168,8 +168,6 @@ extern CGFloat const kFLEXDebounceForExpensiveIO;
 - (void)setupToolbarItems;
 
 @property (nonatomic, readonly) UIBarButtonItem *shareToolbarItem;
-@property (nonatomic, readonly) UIBarButtonItem *bookmarksToolbarItem;
-@property (nonatomic, readonly) UIBarButtonItem *openTabsToolbarItem;
 
 /// Whether or not to display the "share" icon in the middle of the toolbar. NO by default.
 ///

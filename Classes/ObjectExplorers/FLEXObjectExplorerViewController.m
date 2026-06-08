@@ -41,8 +41,6 @@
 #import "FLEXFieldEditorViewController.h"
 #import "FLEXMethodCallingViewController.h"
 #import "FLEXObjectListViewController.h"
-#import "FLEXTabsViewController.h"
-#import "FLEXBookmarkManager.h"
 #import "FLEXTableView.h"
 #import "FLEXResources.h"
 #import "FLEXTableViewCell.h"
@@ -259,9 +257,6 @@
 
 - (void)shareButtonPressed:(UIBarButtonItem *)sender {
     [FLEXAlert makeSheet:^(FLEXAlert *make) {
-        make.button(@"Add to Bookmarks").handler(^(NSArray<NSString *> *strings) {
-            [FLEXBookmarkManager.bookmarks addObject:self.object];
-        });
         make.button(@"Copy Description").handler(^(NSArray<NSString *> *strings) {
             UIPasteboard.generalPasteboard.string = self.explorer.objectDescription;
         });

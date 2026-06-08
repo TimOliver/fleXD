@@ -88,8 +88,6 @@ extension Array where Element == CSetting {
             .headerSearchPath("Editing/ArgumentInputViews"),
             .headerSearchPath("Headers"),
             .headerSearchPath("ExplorerInterface"),
-            .headerSearchPath("ExplorerInterface/Tabs"),
-            .headerSearchPath("ExplorerInterface/Bookmarks"),
             .headerSearchPath("GlobalStateExplorers"),
             .headerSearchPath("GlobalStateExplorers/Globals"),
             .headerSearchPath("GlobalStateExplorers/NotificationObservers"),

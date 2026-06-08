@@ -34,12 +34,9 @@
 
 #import "FLEXTableViewController.h"
 #import "FLEXExplorerViewController.h"
-#import "FLEXBookmarksViewController.h"
-#import "FLEXTabsViewController.h"
 #import "FLEXScopeCarousel.h"
 #import "FLEXTableView.h"
 #import "FLEXUtility.h"
-#import "FLEXResources.h"
 #import "UIBarButtonItem+FLEX.h"
 #import <objc/runtime.h>
 
@@ -218,12 +215,6 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     self.tableView.estimatedSectionFooterHeight = 0;
 
     _shareToolbarItem = FLEXBarButtonItemSystem(Action, self, @selector(shareButtonPressed:));
-    _bookmarksToolbarItem = [UIBarButtonItem
-        flex_itemWithImage:FLEXResources.bookmarksIcon target:self action:@selector(showBookmarks)
-    ];
-    _openTabsToolbarItem = [UIBarButtonItem
-        flex_itemWithImage:FLEXResources.openTabsIcon target:self action:@selector(showTabSwitcher)
-    ];
 
     self.leftmostToolbarItem = UIBarButtonItem.flex_fixedSpace;
     self.middleLeftToolbarItem = UIBarButtonItem.flex_fixedSpace;
@@ -318,27 +309,25 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
         return;
     }
 
+    NSMutableArray<UIBarButtonItem *> *items;
     if (@available(iOS 26.0, *)) {
-        self.toolbarItems = @[
+        items = [@[
             self.middleLeftToolbarItem,
             UIBarButtonItem.flex_flexibleSpace,
             self.middleToolbarItem,
-            self.bookmarksToolbarItem,
-            self.openTabsToolbarItem,
-        ];
+        ] mutableCopy];
     } else {
-        self.toolbarItems = @[
+        items = [@[
             self.leftmostToolbarItem,
             UIBarButtonItem.flex_flexibleSpace,
             self.middleLeftToolbarItem,
             UIBarButtonItem.flex_flexibleSpace,
             self.middleToolbarItem,
             UIBarButtonItem.flex_flexibleSpace,
-            self.bookmarksToolbarItem,
-            UIBarButtonItem.flex_flexibleSpace,
-            self.openTabsToolbarItem,
-        ];
+        ] mutableCopy];
     }
+
+    self.toolbarItems = items;
 
     for (UIBarButtonItem *item in self.toolbarItems) {
         [item _setWidth:60];
@@ -346,11 +335,17 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
         // item.width = 60;
     }
 
-    // Disable tabs entirely when not presented by FLEXExplorerViewController
-    UIViewController *presenter = self.navigationController.presentingViewController;
-    if (![presenter isKindOfClass:[FLEXExplorerViewController class]]) {
-        self.openTabsToolbarItem.enabled = NO;
+    // With the universal tab-switcher button gone, hide the toolbar on screens that
+    // contribute no real items of their own — otherwise only spacers remain and an
+    // empty bar shows. (The iOS 26 search bar lives in the table header, not here.)
+    BOOL hasToolbarContent = NO;
+    for (UIBarButtonItem *item in items) {
+        if (item.customView || item.image || item.title.length || item.action) {
+            hasToolbarContent = YES;
+            break;
+        }
     }
+    self.navigationController.toolbarHidden = !hasToolbarContent;
 }
 
 - (void)addToolbarItems:(NSArray<UIBarButtonItem *> *)items {
@@ -514,20 +509,6 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
     searchBar.searchTextField.backgroundColor = UIColor.secondarySystemGroupedBackgroundColor;
     // Inset the text field 20pt from each edge to match inset-grouped table content
     searchBar.layoutMargins = UIEdgeInsetsMake(0, 20, 0, 20);
-}
-
-- (void)showBookmarks {
-    UINavigationController *nav = [[UINavigationController alloc]
-        initWithRootViewController:[FLEXBookmarksViewController new]
-    ];
-    [self presentViewController:nav animated:YES completion:nil];
-}
-
-- (void)showTabSwitcher {
-    UINavigationController *nav = [[UINavigationController alloc]
-        initWithRootViewController:[FLEXTabsViewController new]
-    ];
-    [self presentViewController:nav animated:YES completion:nil];
 }
 
 

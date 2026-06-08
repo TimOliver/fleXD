@@ -51,8 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Navigation Bar Icons
 
-@property (readonly, class) UIImage *bookmarksIcon;
-@property (readonly, class) UIImage *openTabsIcon;
 @property (readonly, class) UIImage *moreIcon;
 @property (readonly, class) UIImage *gearIcon;
 @property (readonly, class) UIImage *scrollToBottomIcon;

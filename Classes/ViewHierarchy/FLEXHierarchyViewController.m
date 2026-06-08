@@ -36,7 +36,6 @@
 #import "FLEXHierarchyTableViewController.h"
 #import "FHSViewController.h"
 #import "FLEXUtility.h"
-#import "FLEXTabList.h"
 #import "FLEXResources.h"
 #import "UIBarButtonItem+FLEX.h"
 
@@ -115,9 +114,6 @@ typedef NS_ENUM(NSUInteger, FLEXHierarchyViewMode) {
 #pragma mark - Private
 
 - (void)donePressed {
-    // We need to manually close ourselves here because
-    // FLEXNavigationController doesn't ever close tabs itself 
-    [FLEXTabList.sharedList closeTab:self];
     [self.hierarchyDelegate viewHierarchyDidDismiss:self.selectedView];
 }
 

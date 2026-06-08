@@ -36,14 +36,12 @@
 #import "FLEXExplorerToolbarItem.h"
 #import "FLEXUtility.h"
 #import "FLEXWindow.h"
-#import "FLEXTabList.h"
 #import "FLEXNavigationController.h"
 #import "FLEXHierarchyViewController.h"
 #import "FLEXGlobalsViewController.h"
 #import "FLEXObjectExplorerViewController.h"
 #import "FLEXObjectExplorerFactory.h"
 #import "FLEXNetworkMITMViewController.h"
-#import "FLEXTabsViewController.h"
 #import "FLEXWindowManagerController.h"
 #import "FLEXViewControllersViewController.h"
 #import "NSUserDefaults+FLEX.h"
@@ -484,7 +482,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     NSDictionary<NSString *, FLEXExplorerToolbarItem *> *actionsToItems = @{
         NSStringFromSelector(@selector(selectButtonTapped:)):        toolbar.selectItem,
         NSStringFromSelector(@selector(hierarchyButtonTapped:)):     toolbar.hierarchyItem,
-        NSStringFromSelector(@selector(recentButtonTapped:)):        toolbar.recentItem,
         NSStringFromSelector(@selector(moveButtonTapped:)):          toolbar.moveItem,
         NSStringFromSelector(@selector(globalsButtonTapped:)):       toolbar.globalsItem,
     };
@@ -506,11 +503,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
 
 - (UIWindow *)statusWindow {
     return nil;
-}
-
-- (void)recentButtonTapped:(FLEXExplorerToolbarItem *)sender {
-    NSAssert(FLEXTabList.sharedList.activeTab, @"Must have active tab");
-    [self presentViewController:FLEXTabList.sharedList.activeTab animated:YES completion:nil];
 }
 
 - (void)moveButtonTapped:(FLEXExplorerToolbarItem *)sender {
@@ -535,13 +527,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     const BOOL hasSelectedObject = self.selectedView != nil;
     toolbar.moveItem.enabled = hasSelectedObject;
     toolbar.moveItem.selected = self.currentMode == FLEXExplorerModeMove;
-
-    // Recent only enabled when we have a last active tab
-    if (!self.presentedViewController) {
-        toolbar.recentItem.enabled = FLEXTabList.sharedList.activeTab != nil;
-    } else {
-        toolbar.recentItem.enabled = NO;
-    }
 }
 
 
@@ -578,11 +563,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     ];
     self.changeSelectedViewPanGR.delegate = self;
     [toolbar.selectedViewDescriptionContainer addGestureRecognizer:self.changeSelectedViewPanGR];
-
-    // Long press gesture to present tabs manager
-    [toolbar.globalsItem addGestureRecognizer:[[UILongPressGestureRecognizer alloc]
-        initWithTarget:self action:@selector(handleToolbarShowTabsGesture:)
-    ]];
 
     // Long press gesture to present window manager
     [toolbar.selectItem addGestureRecognizer:[[UILongPressGestureRecognizer alloc]
@@ -988,15 +968,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     }
 }
 
-- (void)handleToolbarShowTabsGesture:(UILongPressGestureRecognizer *)sender {
-    if (sender.state == UIGestureRecognizerStateBegan) {
-        // Don't use FLEXNavigationController because the tab viewer itself is not a tab
-        [super presentViewController:[[UINavigationController alloc]
-            initWithRootViewController:[FLEXTabsViewController new]
-        ] animated:YES completion:nil];
-    }
-}
-
 - (void)handleToolbarWindowManagerGesture:(UILongPressGestureRecognizer *)sender {
     if (sender.state == UIGestureRecognizerStateBegan) {
         [super presentViewController:[FLEXNavigationController
@@ -1311,12 +1282,17 @@ static BOOL FLEXIsDefaultSkippedView(UIView *view) {
 - (BOOL)shouldReceiveTouchAtWindowPoint:(CGPoint)pointInWindowCoordinates {
     CGPoint pointInLocalCoordinates = [self.view convertPoint:pointInWindowCoordinates fromView:nil];
 
-    // If we have a modal presented, is it in the modal?
-    if (self.presentedViewController) {
-        UIView *presentedView = self.presentedViewController.view;
+    // If we have any modal(s) presented, is the touch inside one of them?
+    // The explorer can stack modals — e.g. a tool's nav controller presenting
+    // the Tabs/Bookmarks switcher. Once the first modal is scaled back behind a
+    // deeper sheet, only the deeper sheet covers points like its bottom toolbar,
+    // so we must hit-test the whole presentation chain, not just the first modal.
+    // Checking only the first one let those touches fall through the FLEX window
+    // to the app beneath (e.g. activating the app's search bar).
+    for (UIViewController *vc = self.presentedViewController; vc != nil; vc = vc.presentedViewController) {
+        UIView *presentedView = vc.view;
         CGPoint pipvc = [presentedView convertPoint:pointInLocalCoordinates fromView:self.view];
-        UIView *hit = [presentedView hitTest:pipvc withEvent:nil];
-        if (hit != nil) {
+        if ([presentedView hitTest:pipvc withEvent:nil] != nil) {
             return YES;
         }
     }
@@ -1354,7 +1330,7 @@ static BOOL FLEXIsDefaultSkippedView(UIView *view) {
     if (CGRectContainsPoint(self.explorerToolbar.frame, pointInLocalCoordinates)) {
         return YES;
     }
-    
+
     return NO;
 }
 

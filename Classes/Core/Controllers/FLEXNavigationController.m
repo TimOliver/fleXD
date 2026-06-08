@@ -35,7 +35,6 @@
 #import "FLEXNavigationController.h"
 #import "FLEXExplorerViewController.h"
 #import "FLEXObjectExplorerFactory.h"
-#import "FLEXTabList.h"
 
 @interface UINavigationController (Private) <UIGestureRecognizerDelegate>
 - (void)_gestureRecognizedInteractiveHide:(UIGestureRecognizer *)sender;
@@ -46,11 +45,12 @@
 
 @interface FLEXNavigationController ()
 @property (nonatomic, readonly) BOOL toolbarWasHidden;
-@property (nonatomic) BOOL waitingToAddTab;
 @property (nonatomic, readonly) BOOL canShowToolbar;
 @property (nonatomic) BOOL didSetupPendingDismissButtons;
 @property (nonatomic) UISwipeGestureRecognizer *navigationBarSwipeGesture;
 @end
+
+static const NSInteger kFLEXNavBarDoneItemTag = 0x00D09E;
 
 @implementation FLEXNavigationController
 
@@ -61,8 +61,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.waitingToAddTab = YES;
 
     // Add gesture to reveal toolbar if hidden
     UITapGestureRecognizer *navbarTapGesture = [[UITapGestureRecognizer alloc]
@@ -115,20 +113,6 @@
     }
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    if (self.waitingToAddTab) {
-        // Only add new tab if we're presented properly
-        if ([self.presentingViewController isKindOfClass:[FLEXExplorerViewController class]]) {
-            // New navigation controllers always add themselves as new tabs,
-            // tabs are closed by FLEXExplorerViewController
-            [FLEXTabList.sharedList addTab:self];
-            self.waitingToAddTab = NO;
-        }
-    }
-}
-
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
     [super pushViewController:viewController animated:animated];
     [self addNavigationBarItemsToViewController:viewController.navigationItem];
@@ -142,12 +126,6 @@
 }
 
 - (void)dismissAnimated {
-    // Tabs are only closed if the done button is pressed; this
-    // allows you to leave a tab open by dragging down to dismiss
-    if ([self.presentingViewController isKindOfClass:[FLEXExplorerViewController class]]) {
-        [FLEXTabList.sharedList closeTab:self];        
-    }
-
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -166,19 +144,21 @@
         doneItem = UIBarButtonSystemItemCancel;
     }
     
-    // Check if a done item already exists
+    // Check if our injected done item already exists (identified by tag, since
+    // other right-bar items like the object-explorer bookmark toggle may be present)
     for (UIBarButtonItem *item in navigationItem.rightBarButtonItems) {
-        if (item.style == doneItem) {
+        if (item.tag == kFLEXNavBarDoneItemTag) {
             return;
         }
     }
-    
+
     // Give root view controllers a Done button if it does not already have one
     UIBarButtonItem *done = [[UIBarButtonItem alloc]
         initWithBarButtonSystemItem:doneItem
         target:self
         action:@selector(dismissAnimated)
     ];
+    done.tag = kFLEXNavBarDoneItemTag;
 
     // Prepend the button if other buttons exist already
     NSArray *existingItems = navigationItem.rightBarButtonItems;
