@@ -57,18 +57,79 @@ static NSDateFormatter *FLEXFileBrowserDateFormatter(void) {
     return formatter;
 }
 
+// SF Symbols don't exist before iOS 13, so draw simple folder/document
+// silhouettes in Core Graphics for that case. Returned as plain (black) shapes;
+// the cell re-templates and tints them like the SF Symbol icons.
+static UIImage *FLEXFileBrowserDrawLegacyIcon(BOOL isFolder) {
+    CGFloat side = 40.0;
+    UIGraphicsImageRendererFormat *format = UIGraphicsImageRendererFormat.preferredFormat;
+    format.opaque = NO;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc]
+        initWithSize:CGSizeMake(side, side) format:format];
+
+    return [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [UIColor.blackColor setFill];
+
+        if (isFolder) {
+            CGFloat width = 26.0, height = 22.0;
+            CGFloat x = (side - width) / 2.0, y = (side - height) / 2.0;
+            CGFloat tabWidth = 11.0, tabHeight = 5.0, radius = 3.0;
+
+            // A raised tab on the top-left, with the body filling the rest below it.
+            UIBezierPath *tab = [UIBezierPath bezierPathWithRoundedRect:
+                CGRectMake(x, y, tabWidth, tabHeight + radius) cornerRadius:radius];
+            UIBezierPath *body = [UIBezierPath bezierPathWithRoundedRect:
+                CGRectMake(x, y + tabHeight, width, height - tabHeight) cornerRadius:radius];
+            [tab fill];
+            [body fill];
+        } else {
+            CGFloat width = 23.0, height = 29.0;
+            CGFloat x = (side - width) / 2.0, y = (side - height) / 2.0;
+            CGFloat fold = 8.0, radius = 3.0;
+
+            // A page with rounded corners and a folded-down top-right corner.
+            UIBezierPath *page = [UIBezierPath bezierPath];
+            [page moveToPoint:CGPointMake(x + radius, y)];
+            [page addLineToPoint:CGPointMake(x + width - fold, y)];
+            [page addLineToPoint:CGPointMake(x + width, y + fold)];
+            [page addLineToPoint:CGPointMake(x + width, y + height - radius)];
+            [page addQuadCurveToPoint:CGPointMake(x + width - radius, y + height)
+                          controlPoint:CGPointMake(x + width, y + height)];
+            [page addLineToPoint:CGPointMake(x + radius, y + height)];
+            [page addQuadCurveToPoint:CGPointMake(x, y + height - radius)
+                          controlPoint:CGPointMake(x, y + height)];
+            [page addLineToPoint:CGPointMake(x, y + radius)];
+            [page addQuadCurveToPoint:CGPointMake(x + radius, y)
+                          controlPoint:CGPointMake(x, y)];
+            [page closePath];
+            [page fill];
+        }
+    }];
+}
+
+static UIImage *FLEXFileBrowserLegacyIcon(BOOL isFolder) {
+    static UIImage *folderImage = nil;
+    static UIImage *documentImage = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        folderImage = FLEXFileBrowserDrawLegacyIcon(YES);
+        documentImage = FLEXFileBrowserDrawLegacyIcon(NO);
+    });
+    return isFolder ? folderImage : documentImage;
+}
+
 static UIImage *FLEXFileBrowserFolderIcon(void) {
     if (@available(iOS 13.0, *)) {
         return [UIImage systemImageNamed:@"folder.fill"];
     }
-    return nil;
+    return FLEXFileBrowserLegacyIcon(YES);
 }
 
 static UIImage *FLEXFileBrowserDocumentIcon(void) {
     if (@available(iOS 13.0, *)) {
         return [UIImage systemImageNamed:@"doc.fill"];
     }
-    return nil;
+    return FLEXFileBrowserLegacyIcon(NO);
 }
 
 static UIImage *FLEXFileBrowserThumbnail(NSString *path, CGFloat pointSize, CGFloat scale) {

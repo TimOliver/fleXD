@@ -8,9 +8,16 @@
 
 Overhaul the FLEX file browser screen (`FLEXFileBrowserController`) to look modern,
 taking visual cues from Apple's Files app: an edge-to-edge list, metadata under each
-filename, and a single consistent region for icons. This pass uses placeholder
-("dummy") icons; the existing PaintCode artwork (`Design/FileBrowserIcons.pcvd`) is
-wired up in a later pass behind the same seam.
+filename, and a single consistent region for icons.
+
+> **Icon decision (updated):** The folder/document icons use SF Symbols
+> (`folder.fill` / `doc.fill`) on iOS 13+, with hand-drawn Core Graphics
+> silhouettes as the fallback on iOS 12 (where SF Symbols don't exist). These are
+> the final icons for this screen — the PaintCode artwork
+> (`Design/FileBrowserIcons.pcvd`) is **not** used. The original plan was to treat
+> the symbols as placeholders and wire in PaintCode later; the SF Symbols looked
+> good enough to keep, and the CG fallback covers the iOS 12 deployment target that
+> ruled out a symbols-only approach.
 
 ## Current State & Problems
 
@@ -72,17 +79,19 @@ Anatomy:
 
 A single `iconForPath:` (or equivalent) seam resolves the image for the icon region:
 
-- **Directory** → dummy `folder.fill` SF Symbol, tinted (e.g. `systemBlue`).
+- **Directory** → `folder.fill` SF Symbol, tinted `systemBlue`.
 - **Image file** → real thumbnail, **downsampled off the main thread** via `CGImageSource`
   with `kCGImageSourceCreateThumbnailFromImageAlways` +
   `kCGImageSourceThumbnailMaxPixelSize` (~80px for a 40pt @2x region), aspect-fill,
   clipped to a ~6pt rounded square. Cached by path. On completion, applied to the cell only
   if its index path is still the one that requested it (guard against reuse).
-- **Any other file** → dummy `doc.fill` SF Symbol, gray.
+- **Any other file** → `doc.fill` SF Symbol, tinted `systemGray`.
 
-SF Symbols (iOS 13+) are the placeholders; an iOS 12 fallback may be a plain tinted
-rounded rect or nil. The PaintCode artwork replaces the SF Symbols later behind this same
-seam without touching layout.
+`folder.fill` / `doc.fill` are iOS 13+. On iOS 12 (a live deployment target) they are
+replaced by cached, hand-drawn Core Graphics silhouettes — a tabbed folder and a page with
+a folded top-right corner — drawn black and re-templated/tinted by the cell exactly like
+the symbols. This keeps the SF Symbol look on iOS 13+ while ensuring iOS 12 rows aren't
+iconless. The PaintCode artwork is not used.
 
 ### 4. Metadata line
 
@@ -109,12 +118,14 @@ so the source must be repointed to the custom cell's exposed `iconImageView`.
   - Move subtitle/icon resolution into the new flow; use the shared formatters.
   - Repoint the zoom-transition source view to the cell's `iconImageView`.
 
-No `Package.swift` or `project.pbxproj` changes required (SwiftPM build; mirrors the
-existing `FLEXImagePreviewController` precedent).
+No `Package.swift` change required (SwiftPM globs `Classes/`). The new cell **is** added
+to `FLEX.xcodeproj` (the project is hand-maintained and was already missing
+`FLEXImagePreviewController` from the photo-viewer merge; both are added so the target
+links and the unit tests run).
 
 ## Out of Scope
 
-- Wiring up the real PaintCode `FileBrowserIcons.pcvd` artwork.
+- The PaintCode `FileBrowserIcons.pcvd` artwork (superseded — SF Symbols + CG fallback).
 - File-type-specific document icons (e.g. distinct ZIP / plist / db icons).
 - Moving the file count to a centered footer (kept as the section header).
 - Any change to navigation, search, sort, or context-menu behavior.

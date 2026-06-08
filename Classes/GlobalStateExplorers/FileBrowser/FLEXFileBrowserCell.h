@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *representedPath;
 
 /// Display a template/symbol icon: aspect-fit, tinted, no corner rounding.
-/// Use for folder and document placeholder icons.
+/// Use for the folder and document icons.
 - (void)setSymbolIcon:(nullable UIImage *)image tintColor:(UIColor *)tintColor;
 
 /// Display a photo thumbnail: aspect-fill, clipped to a rounded square.
