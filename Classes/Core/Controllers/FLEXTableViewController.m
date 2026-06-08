@@ -509,6 +509,13 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 }
 
 - (void)showTabSwitcher {
+    // Make FLEX's window key so the host app's first responder (e.g. an active
+    // search bar) resigns; otherwise its keyboard / AutoFill bar stays over the
+    // switcher and eats every touch. FLEXExplorerViewController does this in its
+    // -presentViewController: override, but this presents from within the explorer
+    // stack and therefore bypasses that override.
+    [self.view.window makeKeyWindow];
+
     UINavigationController *nav = [[UINavigationController alloc]
         initWithRootViewController:[FLEXTabsViewController new]
     ];
