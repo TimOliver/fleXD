@@ -501,10 +501,6 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     [self toggleViewsTool];
 }
 
-- (UIWindow *)statusWindow {
-    return nil;
-}
-
 - (void)moveButtonTapped:(FLEXExplorerToolbarItem *)sender {
     [self toggleMoveTool];
 }
@@ -1283,10 +1279,10 @@ static BOOL FLEXIsDefaultSkippedView(UIView *view) {
     CGPoint pointInLocalCoordinates = [self.view convertPoint:pointInWindowCoordinates fromView:nil];
 
     // If we have any modal(s) presented, is the touch inside one of them?
-    // The explorer can stack modals — e.g. a tool's nav controller presenting
-    // the Tabs/Bookmarks switcher. Once the first modal is scaled back behind a
-    // deeper sheet, only the deeper sheet covers points like its bottom toolbar,
-    // so we must hit-test the whole presentation chain, not just the first modal.
+    // The explorer can stack modals — e.g. a tool's nav controller presenting a
+    // nested sheet, share sheet, or editor. Once the first modal is scaled back
+    // behind a deeper sheet, only the deeper sheet covers points like its bottom
+    // toolbar, so we must hit-test the whole presentation chain, not just the first.
     // Checking only the first one let those touches fall through the FLEX window
     // to the app beneath (e.g. activating the app's search bar).
     for (UIViewController *vc = self.presentedViewController; vc != nil; vc = vc.presentedViewController) {
@@ -1382,11 +1378,6 @@ static BOOL FLEXIsDefaultSkippedView(UIView *view) {
     UIWindow *appWindow = self.window.previousKeyWindow;
     [appWindow makeKeyWindow];
     [appWindow.rootViewController setNeedsStatusBarAppearanceUpdate];
-
-    // Restore the status bar window's normal window level.
-    // We want it above FLEX while a modal is presented for
-    // scroll to top, but below FLEX otherwise for exploration.
-    [self statusWindow].windowLevel = UIWindowLevelStatusBar;
 
     [self updateButtonStates];
 

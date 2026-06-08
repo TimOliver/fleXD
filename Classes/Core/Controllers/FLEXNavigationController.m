@@ -44,7 +44,6 @@
 @end
 
 @interface FLEXNavigationController ()
-@property (nonatomic, readonly) BOOL toolbarWasHidden;
 @property (nonatomic, readonly) BOOL canShowToolbar;
 @property (nonatomic) BOOL didSetupPendingDismissButtons;
 @property (nonatomic) UISwipeGestureRecognizer *navigationBarSwipeGesture;
@@ -145,7 +144,7 @@ static const NSInteger kFLEXNavBarDoneItemTag = 0x00D09E;
     }
     
     // Check if our injected done item already exists (identified by tag, since
-    // other right-bar items like the object-explorer bookmark toggle may be present)
+    // a screen may have other right-bar items of its own)
     for (UIBarButtonItem *item in navigationItem.rightBarButtonItems) {
         if (item.tag == kFLEXNavBarDoneItemTag) {
             return;

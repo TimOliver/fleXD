@@ -40,7 +40,6 @@
 #import "FLEXImagePreviewController.h"
 #import "FLEXTableListViewController.h"
 #import "FLEXObjectExplorerFactory.h"
-#import "FLEXObjectExplorerViewController.h"
 #import <mach-o/loader.h>
 #import <ImageIO/ImageIO.h>
 #import "FLEXFileBrowserSearchOperation.h"

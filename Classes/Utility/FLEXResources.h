@@ -45,7 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly, class) UIImage *dragHandle;
 @property (readonly, class) UIImage *globalsIcon;
 @property (readonly, class) UIImage *hierarchyIcon;
-@property (readonly, class) UIImage *recentIcon;
 @property (readonly, class) UIImage *moveIcon;
 @property (readonly, class) UIImage *selectIcon;
 

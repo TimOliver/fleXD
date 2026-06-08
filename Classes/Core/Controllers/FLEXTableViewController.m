@@ -226,8 +226,9 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
 
     self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
 
-    // Toolbar
-    self.navigationController.toolbarHidden = self.toolbarItems.count > 0;
+    // Toolbar — show it for now; setupToolbarItems (in viewWillAppear) makes the
+    // authoritative show/hide decision once the items are populated.
+    self.navigationController.toolbarHidden = NO;
     if (@available(iOS 26.0, *)) {
         // On iOS 26 the toolbar is compact enough that hiding it on scroll is unnecessary
     } else {
@@ -335,9 +336,9 @@ CGFloat const kFLEXDebounceForExpensiveIO = 0.5;
         // item.width = 60;
     }
 
-    // With the universal tab-switcher button gone, hide the toolbar on screens that
-    // contribute no real items of their own — otherwise only spacers remain and an
-    // empty bar shows. (The iOS 26 search bar lives in the table header, not here.)
+    // Hide the toolbar on screens that contribute no real items of their own —
+    // otherwise only spacer items remain and an empty bar shows. (The iOS 26 search
+    // bar lives in the table header, not here.)
     BOOL hasToolbarContent = NO;
     for (UIBarButtonItem *item in items) {
         if (item.customView || item.image || item.title.length || item.action) {

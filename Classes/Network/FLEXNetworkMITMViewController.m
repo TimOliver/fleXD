@@ -177,7 +177,7 @@ typedef NS_ENUM(NSInteger, FLEXNetworkObserverMode) {
     );
     settings.title = @"Network Debugging Settings";
 
-    // This is not a FLEXNavigationController because it is not intended as a new tab
+    // A plain UINavigationController — this settings sheet doesn't need FLEX's nav chrome
     UIViewController *nav = [[UINavigationController alloc] initWithRootViewController:settings];
     [self presentViewController:nav animated:YES completion:nil];
 }
