@@ -44,9 +44,121 @@
 #import <mach-o/loader.h>
 #import <ImageIO/ImageIO.h>
 #import "FLEXFileBrowserSearchOperation.h"
+#import "FLEXFileBrowserCell.h"
 
-@interface FLEXFileBrowserTableViewCell : UITableViewCell
-@end
+static NSDateFormatter *FLEXFileBrowserDateFormatter(void) {
+    static NSDateFormatter *formatter = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        formatter = [NSDateFormatter new];
+        formatter.dateStyle = NSDateFormatterMediumStyle;
+        formatter.timeStyle = NSDateFormatterNoStyle;
+    });
+    return formatter;
+}
+
+// SF Symbols don't exist before iOS 13, so draw simple folder/document
+// silhouettes in Core Graphics for that case. Returned as plain (black) shapes;
+// the cell re-templates and tints them like the SF Symbol icons.
+static UIImage *FLEXFileBrowserDrawLegacyIcon(BOOL isFolder) {
+    CGFloat side = 40.0;
+    UIGraphicsImageRendererFormat *format = UIGraphicsImageRendererFormat.preferredFormat;
+    format.opaque = NO;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc]
+        initWithSize:CGSizeMake(side, side) format:format];
+
+    return [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+        [UIColor.blackColor setFill];
+
+        if (isFolder) {
+            CGFloat width = 26.0, height = 22.0;
+            CGFloat x = (side - width) / 2.0, y = (side - height) / 2.0;
+            CGFloat tabWidth = 11.0, tabHeight = 5.0, radius = 3.0;
+
+            // A raised tab on the top-left, with the body filling the rest below it.
+            UIBezierPath *tab = [UIBezierPath bezierPathWithRoundedRect:
+                CGRectMake(x, y, tabWidth, tabHeight + radius) cornerRadius:radius];
+            UIBezierPath *body = [UIBezierPath bezierPathWithRoundedRect:
+                CGRectMake(x, y + tabHeight, width, height - tabHeight) cornerRadius:radius];
+            [tab fill];
+            [body fill];
+        } else {
+            CGFloat width = 23.0, height = 29.0;
+            CGFloat x = (side - width) / 2.0, y = (side - height) / 2.0;
+            CGFloat fold = 8.0, radius = 3.0;
+
+            // A page with rounded corners and a folded-down top-right corner.
+            UIBezierPath *page = [UIBezierPath bezierPath];
+            [page moveToPoint:CGPointMake(x + radius, y)];
+            [page addLineToPoint:CGPointMake(x + width - fold, y)];
+            [page addLineToPoint:CGPointMake(x + width, y + fold)];
+            [page addLineToPoint:CGPointMake(x + width, y + height - radius)];
+            [page addQuadCurveToPoint:CGPointMake(x + width - radius, y + height)
+                          controlPoint:CGPointMake(x + width, y + height)];
+            [page addLineToPoint:CGPointMake(x + radius, y + height)];
+            [page addQuadCurveToPoint:CGPointMake(x, y + height - radius)
+                          controlPoint:CGPointMake(x, y + height)];
+            [page addLineToPoint:CGPointMake(x, y + radius)];
+            [page addQuadCurveToPoint:CGPointMake(x + radius, y)
+                          controlPoint:CGPointMake(x, y)];
+            [page closePath];
+            [page fill];
+        }
+    }];
+}
+
+static UIImage *FLEXFileBrowserLegacyIcon(BOOL isFolder) {
+    static UIImage *folderImage = nil;
+    static UIImage *documentImage = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        folderImage = FLEXFileBrowserDrawLegacyIcon(YES);
+        documentImage = FLEXFileBrowserDrawLegacyIcon(NO);
+    });
+    return isFolder ? folderImage : documentImage;
+}
+
+static UIImage *FLEXFileBrowserFolderIcon(void) {
+    if (@available(iOS 13.0, *)) {
+        return [UIImage systemImageNamed:@"folder.fill"];
+    }
+    return FLEXFileBrowserLegacyIcon(YES);
+}
+
+static UIImage *FLEXFileBrowserDocumentIcon(void) {
+    if (@available(iOS 13.0, *)) {
+        return [UIImage systemImageNamed:@"doc.fill"];
+    }
+    return FLEXFileBrowserLegacyIcon(NO);
+}
+
+static UIImage *FLEXFileBrowserThumbnail(NSString *path, CGFloat pointSize, CGFloat scale) {
+    NSURL *url = [NSURL fileURLWithPath:path];
+    CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)url, NULL);
+    if (!source) {
+        return nil;
+    }
+    // Not an image (CGImageSource can't identify a type): bail.
+    if (!CGImageSourceGetType(source)) {
+        CFRelease(source);
+        return nil;
+    }
+
+    NSDictionary *options = @{
+        (id)kCGImageSourceCreateThumbnailFromImageAlways: @YES,
+        (id)kCGImageSourceCreateThumbnailWithTransform: @YES,
+        (id)kCGImageSourceThumbnailMaxPixelSize: @(pointSize * scale),
+    };
+    CGImageRef thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, (__bridge CFDictionaryRef)options);
+    CFRelease(source);
+    if (!thumbnail) {
+        return nil;
+    }
+
+    UIImage *image = [UIImage imageWithCGImage:thumbnail scale:scale orientation:UIImageOrientationUp];
+    CGImageRelease(thumbnail);
+    return image;
+}
 
 typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
     FLEXFileBrowserSortAttributeNone = 0,
@@ -62,6 +174,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 @property (nonatomic) NSNumber *recursiveSize;
 @property (nonatomic) NSNumber *searchPathsSize;
 @property (nonatomic) NSOperationQueue *operationQueue;
+@property (nonatomic) NSCache<NSString *, id> *thumbnailCache;
 @property (nonatomic) FLEXFileBrowserSortAttribute sortAttribute;
 
 @end
@@ -77,11 +190,12 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 }
 
 - (id)initWithPath:(NSString *)path {
-    self = [super init];
+    self = [super initWithStyle:UITableViewStylePlain];
     if (self) {
         self.path = path;
         self.title = [path lastPathComponent];
         self.operationQueue = [NSOperationQueue new];
+        self.thumbnailCache = [NSCache new];
 
         // Compute path size
         weakify(self)
@@ -116,8 +230,8 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self.tableView registerClass:[FLEXFileBrowserTableViewCell class] forCellReuseIdentifier:@"textCell"];
-    [self.tableView registerClass:[FLEXFileBrowserTableViewCell class] forCellReuseIdentifier:@"imageCell"];
+    [self.tableView registerClass:[FLEXFileBrowserCell class] forCellReuseIdentifier:@"fileCell"];
+    self.tableView.rowHeight = 60.0;
 
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceForAsyncSearch;
@@ -225,34 +339,70 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
     NSString *fullPath = [self filePathAtIndexPath:indexPath];
     NSDictionary<NSString *, id> *attributes = [NSFileManager.defaultManager attributesOfItemAtPath:fullPath error:NULL];
     BOOL isDirectory = [attributes.fileType isEqual:NSFileTypeDirectory];
-    NSString *subtitle = nil;
-    if (isDirectory) {
-        NSUInteger count = [NSFileManager.defaultManager contentsOfDirectoryAtPath:fullPath error:NULL].count;
-        subtitle = [NSString stringWithFormat:@"%lu item%@", (unsigned long)count, (count == 1 ? @"" : @"s")];
-    } else {
-        NSString *sizeString = [NSByteCountFormatter stringFromByteCount:attributes.fileSize countStyle:NSByteCountFormatterCountStyleFile];
-        subtitle = [NSString stringWithFormat:@"%@ - %@", sizeString, attributes.fileModificationDate ?: @"Never modified"];
-    }
 
-    // Separate image and text only cells because otherwise the separator lines get out-of-whack on image cells reused with text only.
-    UIImage *image = [UIImage imageWithContentsOfFile:fullPath];
-    NSString *cellIdentifier = image ? @"imageCell" : @"textCell";
-
-    FLEXFileBrowserTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
-    cell.textLabel.font = UIFont.flex_defaultTableCellFont;
-    cell.detailTextLabel.font = UIFont.flex_defaultTableCellFont;
-    cell.detailTextLabel.textColor = UIColor.grayColor;
+    FLEXFileBrowserCell *cell = [tableView dequeueReusableCellWithIdentifier:@"fileCell" forIndexPath:indexPath];
+    cell.representedPath = fullPath;
+    cell.titleLabel.text = fullPath.lastPathComponent;
+    cell.subtitleLabel.text = [self subtitleForPath:fullPath attributes:attributes isDirectory:isDirectory];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    NSString *cellTitle = [fullPath lastPathComponent];
-    cell.textLabel.text = cellTitle;
-    cell.detailTextLabel.text = subtitle;
 
-    if (image) {
-        cell.imageView.contentMode = UIViewContentModeScaleAspectFit;
-        cell.imageView.image = image;
+    if (isDirectory) {
+        [cell setSymbolIcon:FLEXFileBrowserFolderIcon() tintColor:UIColor.systemBlueColor];
+    } else {
+        [cell setSymbolIcon:FLEXFileBrowserDocumentIcon() tintColor:UIColor.systemGrayColor];
+        [self loadThumbnailForPath:fullPath intoCell:cell];
     }
 
     return cell;
+}
+
+- (void)loadThumbnailForPath:(NSString *)path intoCell:(FLEXFileBrowserCell *)cell {
+    id cached = [self.thumbnailCache objectForKey:path];
+    if ([cached isKindOfClass:[UIImage class]]) {
+        [cell setThumbnail:cached];
+        return;
+    }
+    if (cached) {
+        // Cached NSNull: known to not be an image, leave the document icon.
+        return;
+    }
+
+    CGFloat scale = UIScreen.mainScreen.scale;
+    weakify(self)
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{ strongify(self)
+        UIImage *thumbnail = FLEXFileBrowserThumbnail(path, 40.0, scale);
+        if (!self) {
+            return;
+        }
+        [self.thumbnailCache setObject:(thumbnail ?: (id)NSNull.null) forKey:path];
+
+        if (!thumbnail) {
+            return;
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([cell.representedPath isEqualToString:path]) {
+                [cell setThumbnail:thumbnail];
+            }
+        });
+    });
+}
+
+- (NSString *)subtitleForPath:(NSString *)path
+                   attributes:(NSDictionary<NSString *, id> *)attributes
+                  isDirectory:(BOOL)isDirectory {
+    if (isDirectory) {
+        NSUInteger count = [NSFileManager.defaultManager contentsOfDirectoryAtPath:path error:NULL].count;
+        return [NSString stringWithFormat:@"%lu item%@", (unsigned long)count, (count == 1 ? @"" : @"s")];
+    }
+
+    NSString *sizeString = [NSByteCountFormatter stringFromByteCount:attributes.fileSize
+                                                          countStyle:NSByteCountFormatterCountStyleFile];
+    NSDate *modified = attributes.fileModificationDate;
+    if (modified) {
+        NSString *dateString = [FLEXFileBrowserDateFormatter() stringFromDate:modified];
+        return [NSString stringWithFormat:@"%@ · %@", dateString, sizeString];
+    }
+    return sizeString;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -375,7 +525,10 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
             initWithRootViewController:drillInViewController];
         nav.modalPresentationStyle = UIModalPresentationFullScreen;
         if (@available(iOS 18.0, *)) {
-            UIView *source = [tableView cellForRowAtIndexPath:indexPath].imageView;
+            UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+            UIView *source = [selectedCell isKindOfClass:[FLEXFileBrowserCell class]]
+                ? ((FLEXFileBrowserCell *)selectedCell).iconImageView
+                : selectedCell.imageView;
             nav.preferredTransition = [UIViewControllerTransition
                 zoomWithOptions:nil
                 sourceViewProvider:^UIView *(UIZoomTransitionSourceViewProviderContext *ctx) {
@@ -562,10 +715,5 @@ contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
 - (NSString *)filePathAtIndexPath:(NSIndexPath *)indexPath {
     return self.searchController.isActive ? self.searchPaths[indexPath.row] : self.childPaths[indexPath.row];
 }
-
-@end
-
-
-@implementation FLEXFileBrowserTableViewCell
 
 @end
