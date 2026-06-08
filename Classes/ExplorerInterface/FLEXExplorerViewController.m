@@ -509,7 +509,8 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
 }
 
 - (void)recentButtonTapped:(FLEXExplorerToolbarItem *)sender {
-    // Opens the tab/bookmark switcher (formerly resumed the active tab).
+    // Opens the tab/bookmark switcher (formerly resumed the active tab). Wrapped in a plain
+    // UINavigationController (not FLEXNavigationController) so the switcher isn't itself a tab.
     [self presentViewController:[[UINavigationController alloc]
         initWithRootViewController:[FLEXTabsViewController new]
     ] animated:YES completion:nil];
@@ -538,12 +539,9 @@ static const CGFloat kToolbarStashDragCommitFraction = 0.5;
     toolbar.moveItem.enabled = hasSelectedObject;
     toolbar.moveItem.selected = self.currentMode == FLEXExplorerModeMove;
 
-    // Tabs button is always enabled — the switcher can open a new tab or show bookmarks
-    if (!self.presentedViewController) {
-        toolbar.recentItem.enabled = YES;
-    } else {
-        toolbar.recentItem.enabled = YES;
-    }
+    // Tabs button is always enabled — the switcher can open a new tab or show bookmarks.
+    // (The property is named recentItem; it is now the Tabs button — see FLEXExplorerToolbar.)
+    toolbar.recentItem.enabled = YES;
 }
 
 
