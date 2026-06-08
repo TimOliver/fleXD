@@ -132,6 +132,23 @@ static UIImage *FLEXFileBrowserDocumentIcon(void) {
     return FLEXFileBrowserLegacyIcon(NO);
 }
 
+// Sort comparators. Dates and sizes order newest/largest first.
+static NSComparisonResult FLEXFileBrowserCompareDates(NSString *path1, NSString *path2, NSFileAttributeKey key) {
+    NSDate *date1 = [NSFileManager.defaultManager attributesOfItemAtPath:path1 error:NULL][key];
+    NSDate *date2 = [NSFileManager.defaultManager attributesOfItemAtPath:path2 error:NULL][key];
+    if (!date1 && !date2) return NSOrderedSame;
+    if (!date1) return NSOrderedDescending;
+    if (!date2) return NSOrderedAscending;
+    return [date2 compare:date1];
+}
+
+static NSComparisonResult FLEXFileBrowserCompareSizes(NSString *path1, NSString *path2) {
+    unsigned long long size1 = [NSFileManager.defaultManager attributesOfItemAtPath:path1 error:NULL].fileSize;
+    unsigned long long size2 = [NSFileManager.defaultManager attributesOfItemAtPath:path2 error:NULL].fileSize;
+    if (size1 == size2) return NSOrderedSame;
+    return size1 > size2 ? NSOrderedAscending : NSOrderedDescending;
+}
+
 static UIImage *FLEXFileBrowserThumbnail(NSString *path, CGFloat pointSize, CGFloat scale) {
     NSURL *url = [NSURL fileURLWithPath:path];
     CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)url, NULL);
@@ -161,9 +178,10 @@ static UIImage *FLEXFileBrowserThumbnail(NSString *path, CGFloat pointSize, CGFl
 }
 
 typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
-    FLEXFileBrowserSortAttributeNone = 0,
-    FLEXFileBrowserSortAttributeName,
+    FLEXFileBrowserSortAttributeName = 0,
     FLEXFileBrowserSortAttributeCreationDate,
+    FLEXFileBrowserSortAttributeModificationDate,
+    FLEXFileBrowserSortAttributeSize,
 };
 
 @interface FLEXFileBrowserController () <FLEXFileBrowserSearchOperationDelegate>
@@ -176,6 +194,7 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 @property (nonatomic) NSOperationQueue *operationQueue;
 @property (nonatomic) NSCache<NSString *, id> *thumbnailCache;
 @property (nonatomic) FLEXFileBrowserSortAttribute sortAttribute;
+@property (nonatomic) UIBarButtonItem *sortToolbarItem;
 
 @end
 
@@ -235,38 +254,83 @@ typedef NS_ENUM(NSUInteger, FLEXFileBrowserSortAttribute) {
 
     self.showsSearchBar = YES;
     self.searchBarDebounceInterval = kFLEXDebounceForAsyncSearch;
-    [self addToolbarItems:@[
-        [[UIBarButtonItem alloc] initWithTitle:@"Sort"
-                                         style:UIBarButtonItemStylePlain
-                                        target:self
-                                        action:@selector(sortDidTouchUpInside:)]
-    ]];
+    UIBarButtonItem *sortItem = [[UIBarButtonItem alloc] initWithTitle:@"Sort"
+                                                                 style:UIBarButtonItemStylePlain
+                                                                target:self
+                                                                action:@selector(sortDidTouchUpInside:)];
+    self.sortToolbarItem = sortItem;
+    [self addToolbarItems:@[sortItem]];
+
+    if (@available(iOS 14.0, *)) {
+        // Present the options as a button-anchored menu instead of an action sheet.
+        sortItem.target = nil;
+        sortItem.action = nil;
+        [self updateSortMenu];
+    }
 }
 
+- (void)updateSortMenu {
+    if (@available(iOS 14.0, *)) {
+        NSArray<NSArray *> *options = @[
+            @[@"Name", @(FLEXFileBrowserSortAttributeName)],
+            @[@"Date Created", @(FLEXFileBrowserSortAttributeCreationDate)],
+            @[@"Date Changed", @(FLEXFileBrowserSortAttributeModificationDate)],
+            @[@"Size", @(FLEXFileBrowserSortAttributeSize)],
+        ];
+
+        NSMutableArray<UIMenuElement *> *actions = [NSMutableArray new];
+        for (NSArray *option in options) {
+            NSString *title = option[0];
+            FLEXFileBrowserSortAttribute attribute = [option[1] unsignedIntegerValue];
+            UIAction *action = [UIAction actionWithTitle:title image:nil identifier:nil
+                handler:^(__kindof UIAction *action) {
+                    [self sortWithAttribute:attribute];
+                }
+            ];
+            action.state = (self.sortAttribute == attribute)
+                ? UIMenuElementStateOn : UIMenuElementStateOff;
+            [actions addObject:action];
+        }
+
+        self.sortToolbarItem.menu = [UIMenu menuWithTitle:@"Sort By" children:actions];
+    }
+}
+
+// Action-sheet fallback for iOS 12–13, where bar-button menus aren't available.
 - (void)sortDidTouchUpInside:(UIBarButtonItem *)sortButton {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sort"
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Sort By"
                                                                              message:nil
                                                                       preferredStyle:UIAlertControllerStyleActionSheet];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"None"
-                                                        style:UIAlertActionStyleCancel
-                                                      handler:^(UIAlertAction * _Nonnull action) {
-        [self sortWithAttribute:FLEXFileBrowserSortAttributeNone];
-    }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Name"
                                                         style:UIAlertActionStyleDefault
-                                                      handler:^(UIAlertAction * _Nonnull action) {
+                                                      handler:^(UIAlertAction *action) {
         [self sortWithAttribute:FLEXFileBrowserSortAttributeName];
     }]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Creation Date"
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Date Created"
                                                         style:UIAlertActionStyleDefault
-                                                      handler:^(UIAlertAction * _Nonnull action) {
+                                                      handler:^(UIAlertAction *action) {
         [self sortWithAttribute:FLEXFileBrowserSortAttributeCreationDate];
     }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Date Changed"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction *action) {
+        [self sortWithAttribute:FLEXFileBrowserSortAttributeModificationDate];
+    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Size"
+                                                        style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction *action) {
+        [self sortWithAttribute:FLEXFileBrowserSortAttributeSize];
+    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                                        style:UIAlertActionStyleCancel
+                                                      handler:nil]];
+    alertController.popoverPresentationController.barButtonItem = sortButton;
     [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)sortWithAttribute:(FLEXFileBrowserSortAttribute)attribute {
     self.sortAttribute = attribute;
+    [self updateSortMenu];
     [self reloadDisplayedPaths];
 }
 
@@ -677,27 +741,20 @@ contextMenuConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath
     for (NSString *subpath in subpaths) {
         [childPaths addObject:[self.path stringByAppendingPathComponent:subpath]];
     }
-    if (self.sortAttribute != FLEXFileBrowserSortAttributeNone) {
-        [childPaths sortUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {
-            switch (self.sortAttribute) {
-                case FLEXFileBrowserSortAttributeNone:
-                    // invalid state
-                    return NSOrderedSame;
-                case FLEXFileBrowserSortAttributeName:
-                    return [path1 compare:path2];
-                case FLEXFileBrowserSortAttributeCreationDate: {
-                    NSDictionary<NSFileAttributeKey, id> *path1Attributes = [NSFileManager.defaultManager attributesOfItemAtPath:path1
-                                                                                                                           error:NULL];
-                    NSDictionary<NSFileAttributeKey, id> *path2Attributes = [NSFileManager.defaultManager attributesOfItemAtPath:path2
-                                                                                                                           error:NULL];
-                    NSDate *path1Date = path1Attributes[NSFileCreationDate];
-                    NSDate *path2Date = path2Attributes[NSFileCreationDate];
-
-                    return [path1Date compare:path2Date];
-                }
-            }
-        }];
-    }
+    [childPaths sortUsingComparator:^NSComparisonResult(NSString *path1, NSString *path2) {
+        switch (self.sortAttribute) {
+            case FLEXFileBrowserSortAttributeName:
+                // Case- and number-aware, like Finder (e.g. "file2" before "file10").
+                return [path1.lastPathComponent localizedStandardCompare:path2.lastPathComponent];
+            case FLEXFileBrowserSortAttributeCreationDate:
+                return FLEXFileBrowserCompareDates(path1, path2, NSFileCreationDate);
+            case FLEXFileBrowserSortAttributeModificationDate:
+                return FLEXFileBrowserCompareDates(path1, path2, NSFileModificationDate);
+            case FLEXFileBrowserSortAttributeSize:
+                return FLEXFileBrowserCompareSizes(path1, path2);
+        }
+        return NSOrderedSame;
+    }];
     self.childPaths = childPaths;
 }
 
