@@ -91,6 +91,21 @@ Next, include the library in your target:
 )
 ```
 
+### CocoaPods
+
+Add fleXD to your `Podfile` and run `pod install`:
+
+```ruby
+pod 'fleXD'
+```
+
+> Until fleXD is published to CocoaPods trunk, reference it directly from git:
+> ```ruby
+> pod 'fleXD', :git => 'https://github.com/TimOliver/FLEXD.git', :tag => '6.1.0'
+> ```
+
+Remember to exclude fleXD from your Release (App Store) builds — see [below](#excluding-flex-from-release-app-store-builds).
+
 ### Manual
 
 Manually add the files in `Classes/` to your Xcode project, or just drag in the entire `FLEX/` folder. Be sure to exclude FLEX from `Release` builds or your app will be rejected.
