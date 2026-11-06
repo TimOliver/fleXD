@@ -58,6 +58,14 @@
 @property (nonatomic) UIImageView *stashChevronImageView;
 @property (nonatomic, readwrite) FLEXToolbarStashEdge stashEdge;
 
+/// The effect applied to the background and close button, retained so it can be
+/// animated in from nil when the toolbar appears.
+@property (nonatomic) UIVisualEffect *backgroundEffect;
+/// Whether a disappearance animation is in flight.
+@property (nonatomic) BOOL animatingOut;
+/// Incremented on every appearance/disappearance so stale completions can be ignored.
+@property (nonatomic) NSUInteger animationGeneration;
+
 @end
 
 @implementation FLEXExplorerToolbar
@@ -79,6 +87,7 @@
         } else {
             effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemUltraThinMaterial];
         }
+        self.backgroundEffect = effect;
         UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
         effectView.layer.cornerRadius = 24.0;
         effectView.clipsToBounds = YES;
@@ -424,12 +433,7 @@
     [self layoutIfNeeded];
 
     void (^applyAppearance)(void) = ^{
-        for (FLEXExplorerToolbarItem *item in self.toolbarItems) {
-            item.currentItem.alpha = stashed ? 0.0 : 1.0;
-        }
-        self.separatorView.alpha = stashed ? 0.0 : 1.0;
-        self.closeButton.alpha = stashed ? 0.0 : 1.0;
-        self.stashChevronImageView.alpha = stashed ? 1.0 : 0.0;
+        [self applyContentAlphaVisible:YES];
     };
 
     if (animated) {
@@ -440,6 +444,114 @@
     } else {
         applyAppearance();
     }
+}
+
+/// Sets the alpha of the toolbar's content. When visible, the toolbar items or the
+/// stash chevron are shown depending on the stash state; otherwise everything is hidden.
+- (void)applyContentAlphaVisible:(BOOL)visible {
+    const BOOL stashed = self.stashEdge != FLEXToolbarStashEdgeNone;
+    const CGFloat itemAlpha = (visible && !stashed) ? 1.0 : 0.0;
+    for (FLEXExplorerToolbarItem *item in self.toolbarItems) {
+        item.currentItem.alpha = itemAlpha;
+    }
+    self.separatorView.alpha = itemAlpha;
+    self.closeButton.alpha = itemAlpha;
+    self.stashChevronImageView.alpha = (visible && stashed) ? 1.0 : 0.0;
+    self.selectedViewDescriptionContainer.alpha = visible ? 1.0 : 0.0;
+}
+
+/// Applies or removes the background effects on the pill and close button.
+- (void)applyBackgroundEffectVisible:(BOOL)visible {
+    UIVisualEffect *effect = visible ? self.backgroundEffect : nil;
+    ((UIVisualEffectView *)self.backgroundView).effect = effect;
+    self.closeCircle.effect = effect;
+}
+
+
+#pragma mark - Appearance Animations
+
+static NSString *const kFLEXToolbarScaleAnimationKey = @"FLEXToolbarScale";
+static const CGFloat kFLEXToolbarHiddenScale = 0.5;
+
+// The zoom is applied via sublayerTransform rather than the view's transform so
+// the toolbar's frame (which the explorer reads and writes for positioning and
+// dragging) stays valid throughout the animation.
+
+- (CGFloat)currentPresentationScale {
+    CALayer *layer = self.layer.presentationLayer ?: self.layer;
+    return [[layer valueForKeyPath:@"sublayerTransform.scale.x"] doubleValue];
+}
+
+- (void)animateAppearance {
+    const BOOL interruptingDisappearance = self.animatingOut;
+    self.animatingOut = NO;
+    self.animationGeneration++;
+
+    // Reverse an in-flight disappearance from wherever it currently is,
+    // otherwise start from the fully hidden state.
+    CGFloat fromScale = kFLEXToolbarHiddenScale;
+    if (interruptingDisappearance) {
+        fromScale = [self currentPresentationScale];
+    } else {
+        [self applyBackgroundEffectVisible:NO];
+        [self applyContentAlphaVisible:NO];
+    }
+
+    [self.layer removeAnimationForKey:kFLEXToolbarScaleAnimationKey];
+    self.layer.sublayerTransform = CATransform3DIdentity;
+
+    CASpringAnimation *spring = [CASpringAnimation animationWithKeyPath:@"sublayerTransform.scale"];
+    spring.fromValue = @(fromScale);
+    spring.toValue = @1.0;
+    spring.mass = 1.0;
+    spring.stiffness = 300.0;
+    spring.damping = 18.0;
+    spring.duration = spring.settlingDuration;
+    [self.layer addAnimation:spring forKey:kFLEXToolbarScaleAnimationKey];
+
+    [UIView animateWithDuration:0.3 delay:0.0
+        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveEaseOut |
+                UIViewAnimationOptionAllowUserInteraction
+        animations:^{
+            [self applyBackgroundEffectVisible:YES];
+            [self applyContentAlphaVisible:YES];
+        } completion:nil
+    ];
+}
+
+- (void)animateDisappearanceWithCompletion:(void (^)(void))completion {
+    self.animatingOut = YES;
+    const NSUInteger generation = ++self.animationGeneration;
+
+    const NSTimeInterval duration = 0.2;
+    const CGFloat fromScale = [self currentPresentationScale];
+
+    [self.layer removeAnimationForKey:kFLEXToolbarScaleAnimationKey];
+    self.layer.sublayerTransform = CATransform3DMakeScale(kFLEXToolbarHiddenScale, kFLEXToolbarHiddenScale, 1.0);
+
+    CABasicAnimation *zoomOut = [CABasicAnimation animationWithKeyPath:@"sublayerTransform.scale"];
+    zoomOut.fromValue = @(fromScale);
+    zoomOut.toValue = @(kFLEXToolbarHiddenScale);
+    zoomOut.duration = duration;
+    zoomOut.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    [self.layer addAnimation:zoomOut forKey:kFLEXToolbarScaleAnimationKey];
+
+    [UIView animateWithDuration:duration delay:0.0
+        options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionCurveLinear
+        animations:^{
+            [self applyBackgroundEffectVisible:NO];
+            [self applyContentAlphaVisible:NO];
+        } completion:^(BOOL finished) {
+            // Bail if another animation took over mid-animation
+            if (generation != self.animationGeneration) {
+                return;
+            }
+            self.animatingOut = NO;
+            if (completion) {
+                completion();
+            }
+        }
+    ];
 }
 
 - (UIView *)dragHandle {

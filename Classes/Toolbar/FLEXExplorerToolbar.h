@@ -101,6 +101,15 @@ typedef NS_ENUM(NSInteger, FLEXToolbarStashEdge) {
 /// How much of the pill remains visible on-screen while stashed against an edge.
 @property (nonatomic, readonly, class) CGFloat stashVisibleWidth;
 
+/// Springs the toolbar into view: its contents zoom in while the background
+/// effect materializes and the items fade in. If a disappearance is in flight,
+/// it is reversed from its current state.
+- (void)animateAppearance;
+
+/// Reverses the appearance animation with a linear zoom out. The completion
+/// is only called if the animation wasn't interrupted by \c animateAppearance.
+- (void)animateDisappearanceWithCompletion:(nullable void (^)(void))completion;
+
 @end
 
 NS_ASSUME_NONNULL_END

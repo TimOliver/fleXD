@@ -44,6 +44,8 @@
 @interface FLEXManager () <FLEXWindowEventDelegate, FLEXExplorerViewControllerDelegate>
 
 @property (nonatomic, readonly, getter=isHidden) BOOL hidden;
+/// Whether the toolbar is animating out ahead of the explorer window being hidden.
+@property (nonatomic) BOOL hidingExplorer;
 
 @property (nonatomic) FLEXWindow *explorerWindow;
 @property (nonatomic) FLEXExplorerViewController *explorerViewController;
@@ -103,19 +105,36 @@
 
 - (void)showExplorer {
     UIWindow *flex = self.explorerWindow;
+    const BOOL wasHidden = self.isHidden;
+    self.hidingExplorer = NO;
     flex.hidden = NO;
     // Only look for a new scene if we don't have one
     if (!flex.windowScene) {
         flex.windowScene = FLEXUtility.appKeyWindow.windowScene;
     }
+    if (wasHidden) {
+        [self.toolbar animateAppearance];
+    }
 }
 
 - (void)hideExplorer {
-    self.explorerWindow.hidden = YES;
+    if (self.isHidden) {
+        return;
+    }
+
+    // Keep the window up until the toolbar has finished animating out
+    self.hidingExplorer = YES;
+    [self.toolbar animateDisappearanceWithCompletion:^{
+        if (!self.hidingExplorer) {
+            return;
+        }
+        self.hidingExplorer = NO;
+        self.explorerWindow.hidden = YES;
+    }];
 }
 
 - (void)toggleExplorer {
-    if (self.explorerWindow.isHidden) {
+    if (self.isHidden) {
         [self showExplorerFromScene:FLEXUtility.appKeyWindow.windowScene];
     } else {
         [self hideExplorer];
@@ -150,12 +169,18 @@
 }
 
 - (void)showExplorerFromScene:(UIWindowScene *)scene {
+    const BOOL wasHidden = self.isHidden;
+    self.hidingExplorer = NO;
     self.explorerWindow.windowScene = scene;
     self.explorerWindow.hidden = NO;
+    if (wasHidden) {
+        [self.toolbar animateAppearance];
+    }
 }
 
 - (BOOL)isHidden {
-    return self.explorerWindow.isHidden;
+    // Treat the explorer as hidden as soon as it starts animating out
+    return self.explorerWindow.isHidden || self.hidingExplorer;
 }
 
 - (FLEXExplorerToolbar *)toolbar {
